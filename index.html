@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Стеша">
+<title>Стеша</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZjZlYjQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM5YjVkZTUiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iYkciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmZmOGZjIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZmNlNGY0Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTUiIGZpbGw9InVybCgjYmcpIi8+PGNpcmNsZSBjeD0iMTk2IiBjeT0iMjIwIiByPSIxMjAiIGZpbGw9IiNmZmUwNjYiLz48Y2lyY2xlIGN4PSIyMzgiIGN5PSIxOTQiIHI9IjEwNCIgZmlsbD0iI2MwNjBkOCIvPjxyZWN0IHg9IjMwMCIgeT0iODAiIHdpZHRoPSI4OCIgaGVpZ2h0PSIyOCIgcng9IjEyIiBmaWxsPSIjZmZmMGY4Ii8+PHJlY3QgeD0iMzE2IiB5PSIxMDYiIHdpZHRoPSI1OCIgaGVpZ2h0PSI0MCIgcng9IjgiIGZpbGw9IiNmY2U0ZjQiLz48cmVjdCB4PSIyODgiIHk9IjE0MiIgd2lkdGg9IjExNiIgaGVpZ2h0PSIyMjAiIHJ4PSI1NiIgZmlsbD0idXJsKCNiRykiLz48cmVjdCB4PSIyODgiIHk9IjI0MiIgd2lkdGg9IjExNiIgaGVpZ2h0PSIxMjQiIHJ4PSI1NiIgZmlsbD0iI2U4ZjRmZiIgb3BhY2l0eT0iMC45Ii8+PHJlY3QgeD0iMjg4IiB5PSIyMzYiIHdpZHRoPSIxMTYiIGhlaWdodD0iMTIiIGZpbGw9IiNjY2U4ZmYiIG9wYWNpdHk9IjAuNyIvPjxsaW5lIHgxPSIzMDgiIHkxPSIyODYiIHgyPSIzMzYiIHkyPSIyODYiIHN0cm9rZT0iI2IwY2NlZSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48bGluZSB4MT0iMzA4IiB5MT0iMzE0IiB4Mj0iMzQ4IiB5Mj0iMzE0IiBzdHJva2U9IiNiMGNjZWUiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGVsbGlwc2UgY3g9IjM0NiIgY3k9IjcyIiByeD0iMjQiIHJ5PSIxNiIgZmlsbD0iI2ZmY2NlOCIvPjxlbGxpcHNlIGN4PSIzNDYiIGN5PSI2MiIgcng9IjEyIiByeT0iMTAiIGZpbGw9IiNmZmIzZDkiLz48Y2lyY2xlIGN4PSIxNDAiIGN5PSIxMjAiIHI9IjgiIGZpbGw9IiNmZmUwNjYiIG9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjQ0MCIgY3k9IjE0MCIgcj0iNiIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC43Ii8+PGNpcmNsZSBjeD0iNDUwIiBjeT0iMzgwIiByPSI4IiBmaWxsPSIjZmZlMDY2IiBvcGFjaXR5PSIwLjciLz48L3N2Zz4=">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f4f3ff;--card:#ffffff;--card2:#ede9ff;
+    --accent1:#ff7eb3;--accent2:#5aabff;--accent3:#ffcc00;--accent4:#2ed8a8;
+    --text:#1a1830;--muted:#9490b8;--border:rgba(0,0,0,0.07);--shadow:0 2px 16px rgba(80,60,180,0.07);
+  }
+  @media(prefers-color-scheme:dark){:root{--bg:#0f0f1a;--card:#181828;--card2:#1e1e32;--text:#f0eeff;--muted:#7b7a9a;--border:rgba(255,255,255,0.07);--shadow:0 2px 16px rgba(0,0,0,0.3);}}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;padding:52px 15px 40px;max-width:430px;margin:0 auto;}
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .header-title{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:700;line-height:1.1;}
+  .header-title span{color:var(--accent1);}
+  .header-date{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;}
+  .refresh-btn{width:36px;height:36px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;box-shadow:var(--shadow);color:var(--muted);}
+  .refresh-btn.spinning{animation:spin 0.7s linear;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;font-weight:600;}
+  .loading-spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px;}
+  .error-card{background:var(--card);border:1px solid rgba(255,100,100,0.2);border-radius:20px;padding:20px;text-align:center;color:var(--muted);font-size:14px;font-weight:600;}
+  .age-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+  .age-emoji{font-size:24px;}
+  .age-main{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:var(--accent1);}
+  .age-sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+  .status-card{background:var(--card2);border:1px solid var(--border);border-radius:22px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
+  .status-card::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,126,179,0.12) 0%,transparent 70%);pointer-events:none;}
+  .status-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+  .status-main{display:flex;align-items:center;gap:14px;}
+  .status-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+  .status-icon.sleep{background:rgba(90,171,255,0.15);}
+  .status-icon.awake{background:rgba(255,204,0,0.15);}
+  .status-value{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;line-height:1.1;margin-bottom:4px;}
+  .status-since{font-size:22px;font-weight:900;color:var(--accent4);line-height:1;margin-bottom:3px;}
+  .status-sub{font-size:12px;color:var(--muted);font-weight:600;}
+  .next-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+  .next-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
+  .next-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 20px 20px;}
+  .next-card.sleep-next::after{background:var(--accent2);}
+  .next-card.feed-next::after{background:var(--accent1);}
+  .next-card-icon{font-size:20px;margin-bottom:8px;}
+  .next-card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:4px;}
+  .next-card-time{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:700;line-height:1;margin-bottom:4px;}
+  .next-card.sleep-next .next-card-time{color:var(--accent2);}
+  .next-card.feed-next .next-card-time{color:var(--accent1);}
+  .next-card-sub{font-size:11px;color:var(--muted);font-weight:600;}
+  .stats-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:14px;}
+  .stats-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
+  .stats-row:last-of-type{border-bottom:none;padding-bottom:0;}
+  .stats-name{font-size:13px;color:var(--muted);font-weight:600;}
+  .stats-val{font-size:14px;font-weight:800;}
+  .progress-wrap{margin-top:14px;}
+  .progress-label{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:7px;}
+  .progress-label span:last-child{color:var(--accent4);}
+  .progress-bar{height:7px;background:rgba(128,128,128,0.12);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent4));border-radius:4px;transition:width 1s ease;}
+  .history-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .history-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin:12px 0 8px;padding-top:12px;border-top:1px solid var(--border);}
+  .history-section-label:first-child{margin-top:0;padding-top:0;border-top:none;}
+  .history-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+  .history-item:last-child{border-bottom:none;padding-bottom:0;}
+  .history-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .dot-wake{background:var(--accent3);}
+  .dot-sleep{background:var(--accent2);}
+  .dot-feed{background:var(--accent1);}
+  .history-time{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;min-width:44px;}
+  .history-info{flex:1;}
+  .history-desc{font-size:13px;color:var(--text);font-weight:700;line-height:1.2;}
+  .history-dur{font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;}
+  .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent4);vertical-align:middle;animation:pulseAnim 2s infinite;}
+  @keyframes pulseAnim{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.7);}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .fade-up{animation:fadeUp 0.35s ease both;}
+  .d1{animation-delay:0.05s;}.d2{animation-delay:0.10s;}.d3{animation-delay:0.15s;}.d4{animation-delay:0.20s;}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">Стеша <span>·</span> <span id="headerToday"></span></div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+  <div class="refresh-btn" id="refreshBtn">↻</div>
+</div>
+<div id="content"><div class="loading"><div class="loading-spinner"></div>Загружаем данные…</div></div>
+
+<script>
+var HISTORY=[];
+var API_URL="https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
+var BIRTHDAY=new Date(2025,6,23);
+
+function z2(n){return('0'+n).slice(-2);}
+function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1==1)return one;return many;}
+function formatMin(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
+function formatMinLong(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+" "+pluralRus(h,"час","часа","часов"));if(mn>0)p.push(mn+" "+pluralRus(mn,"минута","минуты","минут"));return p.length?p.join(" "):"меньше минуты";}
+function minsAgo(d){return Math.floor((Date.now()-d.getTime())/60000);}
+function minsUntil(t){if(!t)return null;var now=new Date(),p=t.split(":"),tgt=new Date();tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);if(tgt<now)tgt.setDate(tgt.getDate()+1);return Math.floor((tgt-now)/60000);}
+
+function calcAge(){
+  var now=new Date(),y=now.getFullYear()-BIRTHDAY.getFullYear(),m=now.getMonth()-BIRTHDAY.getMonth(),d=now.getDate()-BIRTHDAY.getDate();
+  if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  return{years:y,months:m,days:d};
+}
+
+function updateHeader(){
+  var now=new Date();
+  var months=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+  document.getElementById("headerToday").textContent="сегодня";
+  document.getElementById("headerDate").textContent=now.getDate()+" "+months[now.getMonth()]+" "+now.getFullYear()+" г.";
+}
+
+var currentStatusDate=null,currentStatusType=null;
+
+function updateLiveCounter(){
+  if(!currentStatusDate)return;
+  var el=document.getElementById("liveSince");
+  if(el)el.textContent=formatMin(minsAgo(currentStatusDate))+" "+(currentStatusType==="sleep"?"спит":"бодрствует");
+  var ns=document.getElementById("nextSleepVal"),nf=document.getElementById("nextFeedVal");
+  var sl=document.getElementById("sleepCountdown"),fl=document.getElementById("feedCountdown");
+  if(sl&&ns&&ns.dataset.time){var mt=minsUntil(ns.dataset.time);sl.textContent=mt!==null?"через "+formatMin(mt):"нет данных";}
+  if(fl&&nf&&nf.dataset.time){var mf=minsUntil(nf.dataset.time);fl.textContent=mf!==null?"через "+formatMin(mf):"нет данных";}
+}
+
+function extractNextSleep(msg){var m=msg.match(/спать в (\d{2}:\d{2})/);return m?m[1]:null;}
+function extractNextFeed(msg){var m=msg.match(/кормление в (\d{2}:\d{2})/);return m?m[1]:null;}
+function extractTotalSleepStr(msg){var m=msg.match(/Дневной сон за день[:\s]+([^\n]+)/);return m?m[1].trim():null;}
+function parseTotalSleepMin(s){if(!s)return 0;var hm=s.match(/(\d+)\s*час/),mm=s.match(/(\d+)\s*минут/),t=0;if(hm)t+=parseInt(hm[1])*60;if(mm)t+=parseInt(mm[1]);return t;}
+
+function render(history){
+  if(!history||!history.length){document.getElementById("content").innerHTML='<div class="error-card">Данных пока нет.</div>';return;}
+  var todayStr=new Date().toDateString(),yesterdayStr=new Date(Date.now()-86400000).toDateString();
+  var lastWake=null,lastSleep=null,lastFeed=null,nextSleep=null,nextFeed=null,totalSleepStr=null;
+  var feedCountToday=0,sleepCountToday=0,parsed=[];
+
+  for(var i=0;i<history.length;i++){
+    var item=history[i],d=new Date(item.time),msg=item.message||"";
+    parsed.push({date:d,type:item.type||"",msg:msg,dateStr:d.toDateString()});
+    if(!lastWake&&item.type==="wake")lastWake={date:d,msg:msg};
+    if(!lastSleep&&item.type==="sleep")lastSleep={date:d,msg:msg};
+    if(!lastFeed&&item.type==="feed")lastFeed={date:d,msg:msg};
+    if(!nextSleep&&item.type==="wake")nextSleep=extractNextSleep(msg);
+    if(!nextFeed&&item.type==="feed")nextFeed=extractNextFeed(msg);
+    if(!totalSleepStr&&item.type==="wake")totalSleepStr=extractTotalSleepStr(msg);
+    if(d.toDateString()===todayStr){if(item.type==="feed")feedCountToday++;if(item.type==="sleep")sleepCountToday++;}
+  }
+
+  var isSleeping=false;
+  if(lastSleep&&lastWake)isSleeping=lastSleep.date>lastWake.date;
+  else if(lastSleep&&!lastWake)isSleeping=true;
+
+  var lastEventDate=isSleeping?(lastSleep?lastSleep.date:null):(lastWake?lastWake.date:null);
+  currentStatusDate=lastEventDate;currentStatusType=isSleeping?"sleep":"awake";
+  var mins=lastEventDate?minsAgo(lastEventDate):0;
+  var sinceStr=lastEventDate?formatMin(mins)+" "+(isSleeping?"спит":"бодрствует"):"";
+  var statusIcon=isSleeping?"🌙":"☀️",statusClass=isSleeping?"sleep":"awake",statusText=isSleeping?"Спит":"Бодрствует";
+  var statusSubTime=isSleeping?(lastSleep?"с "+z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):""):(lastWake?"с "+z2(lastWake.date.getHours())+":"+z2(lastWake.date.getMinutes()):"");
+  var minsToSleep=nextSleep?minsUntil(nextSleep):null,minsToFeed=nextFeed?minsUntil(nextFeed):null;
+  var totalSleepMin=parseTotalSleepMin(totalSleepStr),progressPct=totalSleepMin?Math.min(100,Math.round(totalSleepMin/240*100)):0;
+
+  var todayItems=[],yesterdayItems=[];
+  for(var j=0;j<parsed.length;j++){if(parsed[j].dateStr===todayStr)todayItems.push(parsed[j]);else if(parsed[j].dateStr===yesterdayStr)yesterdayItems.push(parsed[j]);}
+
+  function renderGroup(items,max){
+    if(!items.length)return'<div style="color:var(--muted);font-size:13px;padding:8px 0">Нет событий</div>';
+    var html="",shown=0;
+    var si=items.filter(function(x){return x.type==="sleep"||x.type==="wake";});
+    var fi=items.filter(function(x){return x.type==="feed";});
+    if(si.length){html+='<div class="history-section-label">🛏 Сон</div>';
+      for(var k=0;k<si.length&&shown<max;k++){var it=si[k],t=z2(it.date.getHours())+":"+z2(it.date.getMinutes()),dc=it.type==="wake"?"dot-wake":"dot-sleep",desc=it.type==="wake"?"Проснулась":"Уснула",dur="";
+        if(it.type==="wake"){var dm=it.msg.match(/Спала ([^\n]+)/);if(dm)dur=dm[1].trim();}
+        html+='<div class="history-item"><div class="history-dot '+dc+'"></div><div class="history-time">'+t+'</div><div class="history-info"><div class="history-desc">'+desc+'</div>'+(dur?'<div class="history-dur">'+dur+'</div>':'')+'</div></div>';shown++;}}
+    if(fi.length){html+='<div class="history-section-label">🍼 Кормление</div>';
+      for(var f=0;f<fi.length&&shown<max;f++){var fitem=fi[f],ft=z2(fitem.date.getHours())+":"+z2(fitem.date.getMinutes());
+        html+='<div class="history-item"><div class="history-dot dot-feed"></div><div class="history-time">'+ft+'</div><div class="history-info"><div class="history-desc">Поела</div></div></div>';shown++;}}
+    return html;
+  }
+
+  var age=calcAge(),ageStr="";
+  if(age.years>0)ageStr+=age.years+" "+pluralRus(age.years,"год","года","лет")+" ";
+  ageStr+=age.months+" "+pluralRus(age.months,"месяц","месяца","месяцев")+" "+age.days+" "+pluralRus(age.days,"день","дня","дней");
+
+  var html=''
+    +'<div class="age-card fade-up"><div class="age-emoji">👶</div><div class="age-info"><div class="age-main">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025</div></div></div>'
+    +'<div class="status-card fade-up d1"><div class="status-label"><span class="pulse"></span>Текущий статус</div>'
+    +'<div class="status-main"><div class="status-icon '+statusClass+'">'+statusIcon+'</div>'
+    +'<div class="status-text"><div class="status-value">'+statusText+'</div><div class="status-since" id="liveSince">'+sinceStr+'</div><div class="status-sub">'+statusSubTime+'</div></div></div></div>'
+    +'<div class="next-row fade-up d2">'
+    +'<div class="next-card sleep-next"><div class="next-card-icon">🛏</div><div class="next-card-label">Спать в</div><div class="next-card-time" id="nextSleepVal" data-time="'+(nextSleep||'')+'">'+( nextSleep||"—")+'</div><div class="next-card-sub" id="sleepCountdown">'+(minsToSleep!==null?"через "+formatMin(minsToSleep):"нет данных")+'</div></div>'
+    +'<div class="next-card feed-next"><div class="next-card-icon">🍼</div><div class="next-card-label">Кормить в</div><div class="next-card-time" id="nextFeedVal" data-time="'+(nextFeed||'')+'">'+( nextFeed||"—")+'</div><div class="next-card-sub" id="feedCountdown">'+(minsToFeed!==null?"через "+formatMin(minsToFeed):"нет данных")+'</div></div></div>'
+    +'<div class="stats-card fade-up d3"><div class="section-title">📊 Итоги дня</div>'
+    +'<div class="stats-row"><div class="stats-name">Дневной сон</div><div class="stats-val" style="color:var(--accent2)">'+(totalSleepStr||"нет данных")+'</div></div>'
+    +'<div class="stats-row"><div class="stats-name">Кормлений</div><div class="stats-val" style="color:var(--accent1)">'+feedCountToday+'</div></div>'
+    +'<div class="stats-row"><div class="stats-name">Снов</div><div class="stats-val" style="color:var(--accent4)">'+sleepCountToday+'</div></div>'
+    +(totalSleepMin?'<div class="progress-wrap"><div class="progress-label"><span>Норма 4 часа</span><span>'+formatMinLong(totalSleepMin)+'</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+progressPct+'%"></div></div></div>':'')
+    +'</div>'
+    +'<div class="history-card fade-up d4"><div class="section-title">🕐 Сегодня</div>'+renderGroup(todayItems,20)+'</div>'
+    +(yesterdayItems.length?'<div class="history-card fade-up"><div class="section-title">📅 Вчера</div>'+renderGroup(yesterdayItems,10)+'</div>':'');
+
+  document.getElementById("content").innerHTML=html;
+}
+
+document.getElementById("refreshBtn").onclick=function(){
+  var btn=document.getElementById("refreshBtn");
+  btn.classList.add("spinning");
+  setTimeout(function(){btn.classList.remove("spinning");},700);
+  window.location.reload();
+};
+
+setInterval(updateLiveCounter,60000);
+updateHeader();
+fetch(API_URL)
+  .then(function(r){return r.json();})
+  .then(function(data){render(data.history||[]);})
+  .catch(function(){render([]);});
+</script>
+</body>
+</html>
