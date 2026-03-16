@@ -14,7 +14,7 @@
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;padding:52px 15px 40px;max-width:430px;margin:0 auto;}
   .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-  .header-title{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:700;line-height:1.1;}
+  .header-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;line-height:1.1;}
   .header-title span{color:var(--accent1);}
   .header-date{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;}
   .refresh-btn{width:36px;height:36px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;box-shadow:var(--shadow);color:var(--muted);}
@@ -72,8 +72,7 @@
   .history-info{flex:1;}
   .history-desc{font-size:12px;color:var(--text);font-weight:700;line-height:1.2;}
   .history-dur{font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;}
-  .day-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;margin-top:16px;}
-  .day-label:first-child{margin-top:0;}
+  .day-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;margin-top:4px;}
   .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent4);vertical-align:middle;animation:pulseAnim 2s infinite;}
   @keyframes pulseAnim{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.7);}}
   @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
@@ -84,8 +83,8 @@
 <body>
 <div class="header">
   <div class="header-left">
-    <div class="header-title">Стеша <span>·</span> <span id="headerToday"></span></div>
-    <div class="header-date" id="headerDate"></div>
+    <div class="header-title">Стеша <span>·</span> <span id="headerDate"></span></div>
+    <div class="header-date" id="headerTime"></div>
   </div>
   <div class="refresh-btn" id="refreshBtn">↻</div>
 </div>
@@ -94,6 +93,7 @@
 <script>
 var BIRTHDAY = new Date(2025, 6, 23);
 var API_URL = "https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
+var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
 
 function z2(n){return('0'+n).slice(-2);}
 function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1==1)return one;return many;}
@@ -111,9 +111,8 @@ function calcAge(){
 
 function updateHeader(){
   var now=new Date();
-  var months=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
-  document.getElementById("headerToday").textContent="сегодня";
-  document.getElementById("headerDate").textContent=now.getDate()+" "+months[now.getMonth()]+" "+now.getFullYear()+" г.";
+  document.getElementById("headerDate").textContent=now.getDate()+" "+MONTHS[now.getMonth()]+" "+now.getFullYear()+" г.";
+  document.getElementById("headerTime").textContent=z2(now.getHours())+":"+z2(now.getMinutes());
 }
 
 var currentStatusDate=null,currentStatusType=null;
@@ -133,7 +132,7 @@ function extractNextFeed(msg){var m=msg.match(/кормление в (\d{2}:\d{2
 function extractTotalSleepStr(msg){var m=msg.match(/Дневной сон за день[:\s]+([^\n]+)/);return m?m[1].trim():null;}
 function parseTotalSleepMin(s){if(!s)return 0;var hm=s.match(/(\d+)\s*час/),mm=s.match(/(\d+)\s*минут/),t=0;if(hm)t+=parseInt(hm[1])*60;if(mm)t+=parseInt(mm[1]);return t;}
 
-function renderSleepItems(items, max) {
+function renderSleepItems(items,max){
   var si=items.filter(function(x){return x.type==="sleep"||x.type==="wake";});
   if(!si.length)return'<div style="color:var(--muted);font-size:12px;padding:4px 0">Нет данных</div>';
   var html="";
@@ -146,7 +145,7 @@ function renderSleepItems(items, max) {
   return html;
 }
 
-function renderFeedItems(items, max) {
+function renderFeedItems(items,max){
   var fi=items.filter(function(x){return x.type==="feed";});
   if(!fi.length)return'<div style="color:var(--muted);font-size:12px;padding:4px 0">Нет данных</div>';
   var html="";
@@ -200,36 +199,27 @@ function render(history){
 
   var html=''
     +'<div class="age-card fade-up"><div class="age-emoji">👶</div><div class="age-info"><div class="age-main">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025</div></div></div>'
-
     +'<div class="status-card fade-up d1"><div class="status-label"><span class="pulse"></span>Текущий статус</div>'
     +'<div class="status-main"><div class="status-icon '+statusClass+'">'+statusIcon+'</div>'
     +'<div class="status-text"><div class="status-value">'+statusText+'</div><div class="status-since" id="liveSince">'+sinceStr+'</div><div class="status-sub">'+statusSubTime+'</div></div></div></div>'
-
     +'<div class="two-col fade-up d2">'
     +'<div class="next-card sleep-next"><div class="next-card-icon">🛏</div><div class="next-card-label">Спать в</div><div class="next-card-time" id="nextSleepVal" data-time="'+(nextSleep||'')+'">'+( nextSleep||"—")+'</div><div class="next-card-sub" id="sleepCountdown">'+(minsToSleep!==null?"через "+formatMin(minsToSleep):"нет данных")+'</div></div>'
     +'<div class="next-card feed-next"><div class="next-card-icon">🍼</div><div class="next-card-label">Кормить в</div><div class="next-card-time" id="nextFeedVal" data-time="'+(nextFeed||'')+'">'+( nextFeed||"—")+'</div><div class="next-card-sub" id="feedCountdown">'+(minsToFeed!==null?"через "+formatMin(minsToFeed):"нет данных")+'</div></div>'
     +'</div>'
-
     +'<div class="stats-card fade-up d3"><div class="section-title">📊 Итоги дня</div>'
     +'<div class="stats-row"><div class="stats-name">Дневной сон</div><div class="stats-val" style="color:var(--accent2)">'+(totalSleepStr||"нет данных")+'</div></div>'
     +'<div class="stats-row"><div class="stats-name">Кормлений</div><div class="stats-val" style="color:var(--accent1)">'+feedCountToday+'</div></div>'
     +'<div class="stats-row"><div class="stats-name">Снов</div><div class="stats-val" style="color:var(--accent4)">'+sleepCountToday+'</div></div>'
     +(totalSleepMin?'<div class="progress-wrap"><div class="progress-label"><span>Норма 4 часа</span><span>'+formatMinLong(totalSleepMin)+'</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+progressPct+'%"></div></div></div>':'')
     +'</div>'
-
     +'<div class="day-label fade-up d4">🕐 Сегодня</div>'
     +'<div class="two-col fade-up d4">'
     +'<div class="history-card"><div class="history-card-title">🛏 Сон</div>'+renderSleepItems(todayItems,10)+'</div>'
     +'<div class="history-card"><div class="history-card-title">🍼 Кормление</div>'+renderFeedItems(todayItems,10)+'</div>'
     +'</div>'
-
     +(yesterdayItems.length
-      ? '<div class="day-label">📅 Вчера</div>'
-        +'<div class="two-col">'
-        +'<div class="history-card"><div class="history-card-title">🛏 Сон</div>'+renderSleepItems(yesterdayItems,8)+'</div>'
-        +'<div class="history-card"><div class="history-card-title">🍼 Кормление</div>'+renderFeedItems(yesterdayItems,8)+'</div>'
-        +'</div>'
-      : '');
+      ?'<div class="day-label">📅 Вчера</div><div class="two-col"><div class="history-card"><div class="history-card-title">🛏 Сон</div>'+renderSleepItems(yesterdayItems,8)+'</div><div class="history-card"><div class="history-card-title">🍼 Кормление</div>'+renderFeedItems(yesterdayItems,8)+'</div></div>'
+      :'');
 
   document.getElementById("content").innerHTML=html;
 }
@@ -244,6 +234,7 @@ document.getElementById("refreshBtn").onclick=function(){
 };
 
 setInterval(updateLiveCounter,60000);
+setInterval(updateHeader,60000);
 updateHeader();
 
 fetch(API_URL)
