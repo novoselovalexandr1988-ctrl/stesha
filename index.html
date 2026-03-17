@@ -2,10 +2,10 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Стеша">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#ff7eb3">
 <title>Стеша</title>
 <link rel="manifest" href="manifest.json">
@@ -74,9 +74,10 @@
   .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent4));border-radius:4px;transition:width 1s ease;}
   .history-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;box-shadow:var(--shadow);}
   .history-card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px;}
-  .history-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);}
+  .history-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer;}
   .history-item:last-child{border-bottom:none;padding-bottom:0;}
   .history-item:first-child{padding-top:0;}
+  .history-item:active{opacity:0.6;}
   .history-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
   .dot-wake{background:var(--accent3);}
   .dot-sleep{background:var(--accent2);}
@@ -85,10 +86,26 @@
   .history-info{flex:1;}
   .history-desc{font-size:12px;color:var(--text);font-weight:700;line-height:1.2;}
   .history-dur{font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;}
+  .history-edit{font-size:14px;color:var(--muted);flex-shrink:0;}
   .day-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;margin-top:4px;}
   .notify-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
   .notify-bar-text{font-size:12px;color:var(--muted);font-weight:600;}
-  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1830;color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:999;pointer-events:none;white-space:nowrap;}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+  .modal-overlay.show{opacity:1;pointer-events:all;}
+  .modal{background:var(--card);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;transform:translateY(100%);transition:transform 0.3s ease;}
+  .modal-overlay.show .modal{transform:translateY(0);}
+  .modal-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;}
+  .modal-sub{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+  .modal-input{width:100%;padding:14px 16px;border-radius:14px;border:2px solid var(--border);background:var(--bg);color:var(--text);font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:16px;outline:none;}
+  .modal-input:focus{border-color:var(--accent2);}
+  .modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .modal-cancel{background:var(--bg);border:1px solid var(--border);color:var(--muted);border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;}
+  .modal-save{background:var(--accent2);border:none;color:#fff;border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;}
+  .modal-save:active,.modal-cancel:active{opacity:0.7;}
+
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1830;color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:1100;pointer-events:none;white-space:nowrap;}
   .toast.show{opacity:1;}
   .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent4);vertical-align:middle;animation:pulseAnim 2s infinite;}
   @keyframes pulseAnim{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.7);}}
@@ -107,6 +124,20 @@
 </div>
 <div id="notifyBar"></div>
 <div id="content"><div class="loading"><div class="loading-spinner"></div>Загружаем данные…</div></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">Изменить время</div>
+    <div class="modal-sub" id="modalSub"></div>
+    <input class="modal-input" type="time" id="modalInput">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Отмена</button>
+      <button class="modal-save" onclick="saveEdit()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -114,32 +145,16 @@ var BIRTHDAY = new Date(2025, 6, 23);
 var API_URL = "https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
 var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
 var NORM_MIN = 180;
-var NOTIFY_START_H = 6;   // с 6:00
-var NOTIFY_END_H = 26;    // до 2:00 (26 = 24+2)
-
-// Таймеры уведомлений
 var notifyTimers = [];
+var editRowIndex = null;
 
 function z2(n){return('0'+n).slice(-2);}
 function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1==1)return one;return many;}
 function formatMin(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
 function formatMinLong(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+" "+pluralRus(h,"час","часа","часов"));if(mn>0)p.push(mn+" "+pluralRus(mn,"минута","минуты","минут"));return p.length?p.join(" "):"меньше минуты";}
 function minsAgo(d){return Math.floor((Date.now()-d.getTime())/60000);}
-
-function minsUntil(t){
-  if(!t)return null;
-  var now=new Date(),p=t.split(":"),tgt=new Date();
-  tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);
-  if(tgt<now)tgt.setDate(tgt.getDate()+1);
-  return Math.floor((tgt-now)/60000);
-}
-
-// Дата с учётом 6:00 — до 6 утра считается вчерашним днём
-function getLogicalDateStr(date) {
-  var d = new Date(date.getTime());
-  if (d.getHours() < 6) d.setDate(d.getDate() - 1);
-  return d.toDateString();
-}
+function minsUntil(t){if(!t)return null;var now=new Date(),p=t.split(":"),tgt=new Date();tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);if(tgt<now)tgt.setDate(tgt.getDate()+1);return Math.floor((tgt-now)/60000);}
+function getLogicalDateStr(date){var d=new Date(date.getTime());if(d.getHours()<6)d.setDate(d.getDate()-1);return d.toDateString();}
 
 function calcAge(){
   var now=new Date(),y=now.getFullYear()-BIRTHDAY.getFullYear(),m=now.getMonth()-BIRTHDAY.getMonth(),d=now.getDate()-BIRTHDAY.getDate();
@@ -160,101 +175,120 @@ function showToast(msg){
   setTimeout(function(){t.classList.remove("show");},2500);
 }
 
-// ───── УВЕДОМЛЕНИЯ ─────
-function isNotifyHour() {
-  var h = new Date().getHours();
-  // 6:00 - 2:00 (ночи)
-  return h >= NOTIFY_START_H || h < 2;
+// ───── МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ─────
+function openEdit(rowIndex, currentTime, desc) {
+  editRowIndex = rowIndex;
+  document.getElementById("modalSub").textContent = desc;
+  document.getElementById("modalInput").value = currentTime;
+  document.getElementById("modalOverlay").classList.add("show");
+  setTimeout(function(){ document.getElementById("modalInput").focus(); }, 300);
 }
 
-function registerSW() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  }
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("show");
+  editRowIndex = null;
 }
 
-function requestNotifyPermission(callback) {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'granted') { if(callback)callback(); return; }
-  if (Notification.permission === 'denied') return;
-  Notification.requestPermission().then(function(p){
-    if(p==='granted' && callback) callback();
-    updateNotifyBar();
+function saveEdit() {
+  if (editRowIndex === null) return;
+  var newTime = document.getElementById("modalInput").value;
+  if (!newTime) { showToast("⚠️ Введите время"); return; }
+
+  var saveBtn = document.querySelector(".modal-save");
+  saveBtn.textContent = "⏳ Сохраняю...";
+  saveBtn.disabled = true;
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode: "edit", rowIndex: editRowIndex, newTime: newTime })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    saveBtn.textContent = "Сохранить";
+    saveBtn.disabled = false;
+    if (data.ok) {
+      showToast("✅ Время обновлено!");
+      closeModal();
+      setTimeout(loadData, 500);
+    } else {
+      showToast("❌ " + (data.error || "Ошибка"));
+    }
+  })
+  .catch(function(){
+    saveBtn.textContent = "Сохранить";
+    saveBtn.disabled = false;
+    showToast("❌ Нет связи");
   });
 }
 
-function sendNotification(title, body) {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  if (!isNotifyHour()) return;
-  try {
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+// Закрытие по тапу на оверлей
+document.getElementById("modalOverlay").addEventListener("click", function(e){
+  if (e.target === this) closeModal();
+});
+
+// ───── УВЕДОМЛЕНИЯ ─────
+function isNotifyHour(){var h=new Date().getHours();return h>=6||h<2;}
+
+function registerSW(){
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+
+function requestNotifyPermission(callback){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='granted'){if(callback)callback();return;}
+  if(Notification.permission==='denied')return;
+  Notification.requestPermission().then(function(p){if(p==='granted'&&callback)callback();updateNotifyBar();});
+}
+
+function sendNotification(title,body){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  if(!isNotifyHour())return;
+  try{
+    if(navigator.serviceWorker&&navigator.serviceWorker.controller){
       navigator.serviceWorker.ready.then(function(reg){
-        reg.showNotification(title, { body: body, icon: 'https://img.icons8.com/?size=192&id=Sawg2D8Sr9wA&format=png&color=000000', badge: 'https://img.icons8.com/?size=96&id=Sawg2D8Sr9wA&format=png&color=000000', vibrate: [200,100,200] });
+        reg.showNotification(title,{body:body,icon:'https://img.icons8.com/?size=192&id=Sawg2D8Sr9wA&format=png&color=000000',vibrate:[200,100,200]});
       });
-    } else {
-      new Notification(title, { body: body });
-    }
-  } catch(e){}
+    } else { new Notification(title,{body:body}); }
+  }catch(e){}
 }
 
-function clearNotifyTimers() {
-  for(var i=0;i<notifyTimers.length;i++) clearTimeout(notifyTimers[i]);
-  notifyTimers = [];
-}
+function clearNotifyTimers(){for(var i=0;i<notifyTimers.length;i++)clearTimeout(notifyTimers[i]);notifyTimers=[];}
 
-function scheduleNotification(timeStr, title, body) {
-  if (!timeStr) return;
-  var mins = minsUntil(timeStr);
-  if (mins === null) return;
-  // За 10 минут
-  var alertMins = mins - 10;
-  if (alertMins > 0 && alertMins < 480) { // не больше 8 часов вперёд
-    var ms = alertMins * 60000;
-    var timer = setTimeout(function(){ sendNotification(title, body); }, ms);
-    notifyTimers.push(timer);
-  }
-  // Точно в момент
-  if (mins > 0 && mins < 480) {
-    var ms2 = mins * 60000;
-    var timer2 = setTimeout(function(){ sendNotification(title + " — сейчас!", body); }, ms2);
-    notifyTimers.push(timer2);
+function scheduleNotification(title,body,timeStr){
+  if(!timeStr)return;
+  var mins=minsUntil(timeStr);
+  if(mins===null)return;
+  var alertMins=mins-10;
+  if(alertMins>0&&alertMins<480){
+    notifyTimers.push(setTimeout(function(){sendNotification(title,body);},alertMins*60000));
   }
 }
 
-function updateNotifyBar() {
-  var bar = document.getElementById("notifyBar");
-  if (!('Notification' in window)) { bar.innerHTML=''; return; }
-  if (Notification.permission === 'granted') {
-    bar.innerHTML = '<div class="notify-bar fade-up"><div class="notify-bar-text">🔔 Уведомления включены</div></div>';
-  } else if (Notification.permission === 'denied') {
-    bar.innerHTML = '<div class="notify-bar fade-up"><div class="notify-bar-text">🔕 Уведомления отключены</div></div>';
+function updateNotifyBar(){
+  var bar=document.getElementById("notifyBar");
+  if(!('Notification' in window)){bar.innerHTML='';return;}
+  if(Notification.permission==='granted'){
+    bar.innerHTML='<div class="notify-bar fade-up"><div class="notify-bar-text">🔔 Уведомления включены</div></div>';
+  } else if(Notification.permission==='denied'){
+    bar.innerHTML='<div class="notify-bar fade-up"><div class="notify-bar-text">🔕 Уведомления отключены</div></div>';
   } else {
-    bar.innerHTML = '<div class="notify-bar fade-up"><div class="notify-bar-text">Включить напоминания?</div><button class="action-btn btn-notify" onclick="requestNotifyPermission()">🔔 Включить</button></div>';
+    bar.innerHTML='<div class="notify-bar fade-up"><div class="notify-bar-text">Включить напоминания?</div><button class="action-btn btn-notify" onclick="requestNotifyPermission()">🔔 Включить</button></div>';
   }
 }
 
 // ───── ДЕЙСТВИЯ ─────
-function sendAction(action, btnEl, label) {
+function sendAction(action,btnEl,label){
   btnEl.classList.add("btn-loading");
-  var origText = btnEl.textContent;
+  var orig=btnEl.textContent;
   btnEl.textContent="⏳ "+label+"...";
   fetch(API_URL+"?mode=device&action="+action)
     .then(function(r){return r.json();})
     .then(function(data){
-      if(data.ok){
-        showToast("✅ Команда отправлена!");
-        setTimeout(function(){loadData();},3000);
-      } else {
-        showToast("❌ "+( data.error||"Ошибка"));
-        btnEl.classList.remove("btn-loading");
-        btnEl.textContent=origText;
-      }
+      if(data.ok){showToast("✅ Команда отправлена!");setTimeout(function(){loadData();},3000);}
+      else{showToast("❌ "+(data.error||"Ошибка"));btnEl.classList.remove("btn-loading");btnEl.textContent=orig;}
     })
-    .catch(function(){
-      showToast("❌ Нет связи");
-      btnEl.classList.remove("btn-loading");
-      btnEl.textContent=origText;
-    });
+    .catch(function(){showToast("❌ Нет связи");btnEl.classList.remove("btn-loading");btnEl.textContent=orig;});
 }
 
 var currentStatusDate=null,currentStatusType=null;
@@ -263,9 +297,9 @@ function updateLiveCounter(){
   if(!currentStatusDate)return;
   var mins=minsAgo(currentStatusDate);
   var el=document.getElementById("liveSince");
-  if(el) el.textContent=formatMin(mins)+" "+(currentStatusType==="sleep"?"спит":"бодрствует");
+  if(el)el.textContent=formatMin(mins)+" "+(currentStatusType==="sleep"?"спит":"бодрствует");
   var sc=document.getElementById("sleepActiveTime");
-  if(sc&&currentStatusType==="sleep") sc.textContent=formatMin(mins);
+  if(sc&&currentStatusType==="sleep")sc.textContent=formatMin(mins);
   var nf=document.getElementById("nextFeedVal"),fl=document.getElementById("feedCountdown");
   if(fl&&nf&&nf.dataset.time){var mf=minsUntil(nf.dataset.time);fl.textContent=mf!==null?"через "+formatMin(mf):"нет данных";}
   var ns=document.getElementById("nextSleepVal"),sl=document.getElementById("sleepCountdown");
@@ -275,20 +309,15 @@ function updateLiveCounter(){
 function extractNextSleep(msg){var m=msg.match(/спать в (\d{2}:\d{2})/);return m?m[1]:null;}
 function extractNextFeed(msg){var m=msg.match(/кормление в (\d{2}:\d{2})/);return m?m[1]:null;}
 
-function calcDaySleep(parsed, todayLogical) {
-  var total = 0;
-  var sorted = parsed.slice().reverse();
+function calcDaySleep(parsed,todayLogical){
+  var total=0,sorted=parsed.slice().reverse();
   for(var i=0;i<sorted.length;i++){
     var item=sorted[i];
     if(item.type==="wake"&&item.logicalDateStr===todayLogical){
       for(var j=i-1;j>=0;j--){
         if(sorted[j].type==="sleep"){
-          var sleepStart=sorted[j].date;
-          var startMin=sleepStart.getHours()*60+sleepStart.getMinutes();
-          if(startMin>=420&&startMin<1170){
-            var dur=Math.floor((item.date.getTime()-sleepStart.getTime())/60000);
-            if(dur>0&&dur<300)total+=dur;
-          }
+          var ss=sorted[j].date,sm=ss.getHours()*60+ss.getMinutes();
+          if(sm>=420&&sm<1170){var dur=Math.floor((item.date.getTime()-ss.getTime())/60000);if(dur>0&&dur<300)total+=dur;}
           break;
         }
       }
@@ -308,7 +337,9 @@ function renderSleepItems(items,max){
       var d=Math.floor((it.date.getTime()-si[k+1].date.getTime())/60000);
       if(d>0&&d<300)dur=formatMinLong(d);
     }
-    html+='<div class="history-item"><div class="history-dot '+dc+'"></div><div class="history-time">'+t+'</div><div class="history-info"><div class="history-desc">'+desc+'</div>'+(dur?'<div class="history-dur">'+dur+'</div>':'')+'</div></div>';
+    var ri=it.rowIndex!==undefined?it.rowIndex:"";
+    var onclick=ri!==""?'onclick="openEdit('+ri+',\''+t+'\',\''+desc+' в '+t+'\')"':'';
+    html+='<div class="history-item" '+onclick+'><div class="history-dot '+dc+'"></div><div class="history-time">'+t+'</div><div class="history-info"><div class="history-desc">'+desc+'</div>'+(dur?'<div class="history-dur">'+dur+'</div>':'')+'</div><div class="history-edit">✏️</div></div>';
   }
   return html;
 }
@@ -319,38 +350,35 @@ function renderFeedItems(items,max){
   var html="";
   for(var f=0;f<fi.length&&f<max;f++){
     var fitem=fi[f],ft=z2(fitem.date.getHours())+":"+z2(fitem.date.getMinutes());
-    html+='<div class="history-item"><div class="history-dot dot-feed"></div><div class="history-time">'+ft+'</div><div class="history-info"><div class="history-desc">Поела</div></div></div>';
+    var ri=fitem.rowIndex!==undefined?fitem.rowIndex:"";
+    var onclick=ri!==""?'onclick="openEdit('+ri+',\''+ft+'\',\'Поела в '+ft+'\')"':'';
+    html+='<div class="history-item" '+onclick+'><div class="history-dot dot-feed"></div><div class="history-time">'+ft+'</div><div class="history-info"><div class="history-desc">Поела</div></div><div class="history-edit">✏️</div></div>';
   }
   return html;
 }
 
 function render(history){
   if(!history||!history.length){document.getElementById("content").innerHTML='<div class="error-card">Данных пока нет.</div>';return;}
-
-  // Логическая дата: до 6:00 = вчера
-  var now = new Date();
-  var todayLogical = getLogicalDateStr(now);
-  var yesterday = new Date(now.getTime());
-  if(now.getHours() < 6) yesterday.setDate(yesterday.getDate()-2);
+  var now=new Date();
+  var todayLogical=getLogicalDateStr(now);
+  var yesterday=new Date(now.getTime());
+  if(now.getHours()<6)yesterday.setDate(yesterday.getDate()-2);
   else yesterday.setDate(yesterday.getDate()-1);
-  var yesterdayLogical = getLogicalDateStr(yesterday);
+  var yesterdayLogical=getLogicalDateStr(yesterday);
 
   var lastWake=null,lastSleep=null,lastFeed=null,nextSleep=null,nextFeed=null;
   var feedCountToday=0,sleepCountToday=0,parsed=[];
 
   for(var i=0;i<history.length;i++){
     var item=history[i],d=new Date(item.time),msg=item.message||"";
-    var logDate = getLogicalDateStr(d);
-    parsed.push({date:d,type:item.type||"",msg:msg,dateStr:d.toDateString(),logicalDateStr:logDate});
+    var logDate=getLogicalDateStr(d);
+    parsed.push({date:d,type:item.type||"",msg:msg,dateStr:d.toDateString(),logicalDateStr:logDate,rowIndex:item.rowIndex});
     if(!lastWake&&item.type==="wake")lastWake={date:d,msg:msg};
     if(!lastSleep&&item.type==="sleep")lastSleep={date:d,msg:msg};
     if(!lastFeed&&item.type==="feed")lastFeed={date:d,msg:msg};
     if(!nextSleep&&item.type==="wake")nextSleep=extractNextSleep(msg);
     if(!nextFeed&&item.type==="feed")nextFeed=extractNextFeed(msg);
-    if(logDate===todayLogical){
-      if(item.type==="feed")feedCountToday++;
-      if(item.type==="sleep")sleepCountToday++;
-    }
+    if(logDate===todayLogical){if(item.type==="feed")feedCountToday++;if(item.type==="sleep")sleepCountToday++;}
   }
 
   var isSleeping=false;
@@ -359,32 +387,26 @@ function render(history){
 
   var lastEventDate=isSleeping?(lastSleep?lastSleep.date:null):(lastWake?lastWake.date:null);
   currentStatusDate=lastEventDate;currentStatusType=isSleeping?"sleep":"awake";
-
   var mins=lastEventDate?minsAgo(lastEventDate):0;
   var sinceStr=lastEventDate?formatMin(mins)+" "+(isSleeping?"спит":"бодрствует"):"";
   var statusIcon=isSleeping?"🌙":"☀️",statusClass=isSleeping?"sleep":"awake",statusText=isSleeping?"Спит":"Бодрствует";
   var statusSubTime=isSleeping?(lastSleep?"с "+z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):""):(lastWake?"с "+z2(lastWake.date.getHours())+":"+z2(lastWake.date.getMinutes()):"");
-
   var minsToFeed=nextFeed?minsUntil(nextFeed):null;
   var minsToSleep=(!isSleeping&&nextSleep)?minsUntil(nextSleep):null;
 
   var totalSleepMin=calcDaySleep(parsed,todayLogical);
-  if(isSleeping&&lastSleep){
-    var cStart=lastSleep.date,cSMin=cStart.getHours()*60+cStart.getMinutes();
-    if(cSMin>=420&&cSMin<1170)totalSleepMin+=minsAgo(cStart);
-  }
+  if(isSleeping&&lastSleep){var cSMin=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();if(cSMin>=420&&cSMin<1170)totalSleepMin+=minsAgo(lastSleep.date);}
   var progressPct=totalSleepMin?Math.min(100,Math.round(totalSleepMin/NORM_MIN*100)):0;
 
-  var todayItems=[], yesterdayItems=[];
+  var todayItems=[],yesterdayItems=[];
   for(var j=0;j<parsed.length;j++){
     if(parsed[j].logicalDateStr===todayLogical)todayItems.push(parsed[j]);
     else if(parsed[j].logicalDateStr===yesterdayLogical)yesterdayItems.push(parsed[j]);
   }
 
-  // Планируем уведомления
   clearNotifyTimers();
-  if(nextSleep&&!isSleeping) scheduleNotification("🛏 Укладываем Стешу", "Пора укладывать — спать в "+nextSleep, nextSleep);
-  if(nextFeed) scheduleNotification("🍼 Кормление", "Пора кормить Стешу — в "+nextFeed, nextFeed);
+  if(nextSleep&&!isSleeping)scheduleNotification("🛏 Укладываем Стешу","Пора укладывать — спать в "+nextSleep,nextSleep);
+  if(nextFeed)scheduleNotification("🍼 Кормление","Пора кормить Стешу — в "+nextFeed,nextFeed);
 
   var age=calcAge(),ageStr="";
   if(age.years>0)ageStr+=age.years+" "+pluralRus(age.years,"год","года","лет")+" ";
@@ -439,22 +461,10 @@ document.getElementById("refreshBtn").onclick=function(){
     .catch(function(){btn.classList.remove("spinning");});
 };
 
-// Исправление scheduleNotification — передаём timeStr
-function scheduleNotification(title, body, timeStr) {
-  if (!timeStr) return;
-  var mins = minsUntil(timeStr);
-  if (mins === null) return;
-  var alertMins = mins - 10;
-  if (alertMins > 0 && alertMins < 480) {
-    var timer = setTimeout(function(){ sendNotification(title, body); }, alertMins * 60000);
-    notifyTimers.push(timer);
-  }
-}
-
 registerSW();
 updateNotifyBar();
-setInterval(updateLiveCounter, 60000);
-setInterval(updateHeader, 60000);
+setInterval(updateLiveCounter,60000);
+setInterval(updateHeader,60000);
 updateHeader();
 loadData();
 </script>
