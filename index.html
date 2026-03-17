@@ -2,18 +2,20 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Стеша">
+<meta name="theme-color" content="#ff7eb3">
 <title>Стеша</title>
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="https://img.icons8.com/?size=180&id=Sawg2D8Sr9wA&format=png&color=000000">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#f4f3ff;--card:#ffffff;--card2:#ede9ff;--accent1:#ff7eb3;--accent2:#5aabff;--accent3:#ffcc00;--accent4:#2ed8a8;--text:#1a1830;--muted:#9490b8;--border:rgba(0,0,0,0.07);--shadow:0 2px 16px rgba(80,60,180,0.07);}
   @media(prefers-color-scheme:dark){:root{--bg:#0f0f1a;--card:#181828;--card2:#1e1e32;--text:#f0eeff;--muted:#7b7a9a;--border:rgba(255,255,255,0.07);--shadow:0 2px 16px rgba(0,0,0,0.3);}}
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html{background:var(--bg);}body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;padding:52px 15px 40px;max-width:430px;margin:0 auto;}
+  html{background:var(--bg);}
+  body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;padding:52px 15px 40px;max-width:430px;margin:0 auto;}
   .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
   .header-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;line-height:1.1;}
   .header-title span{color:var(--accent1);}
@@ -43,6 +45,7 @@
   .btn-sleep{background:var(--accent2);color:#fff;}
   .btn-wake{background:var(--accent3);color:#1a1830;}
   .btn-feed{background:var(--accent1);color:#fff;}
+  .btn-notify{background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 12px;}
   .btn-loading{opacity:0.6;pointer-events:none;}
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
   .next-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
@@ -82,7 +85,9 @@
   .history-desc{font-size:12px;color:var(--text);font-weight:700;line-height:1.2;}
   .history-dur{font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;}
   .day-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;margin-top:4px;}
-  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1830;color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:999;pointer-events:none;}
+  .notify-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+  .notify-bar-text{font-size:12px;color:var(--muted);font-weight:600;}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1830;color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:999;pointer-events:none;white-space:nowrap;}
   .toast.show{opacity:1;}
   .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent4);vertical-align:middle;animation:pulseAnim 2s infinite;}
   @keyframes pulseAnim{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.7);}}
@@ -99,53 +104,190 @@
   </div>
   <div class="refresh-btn" id="refreshBtn">↻</div>
 </div>
+<div id="notifyBar"></div>
 <div id="content"><div class="loading"><div class="loading-spinner"></div>Загружаем данные…</div></div>
 <div class="toast" id="toast"></div>
+
 <script>
-var BIRTHDAY=new Date(2025,6,23);
-var API_URL="https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
-var MONTHS=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
-var NORM_MIN=180;
+var BIRTHDAY = new Date(2025, 6, 23);
+var API_URL = "https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
+var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+var NORM_MIN = 180;
+var NOTIFY_START_H = 6;   // с 6:00
+var NOTIFY_END_H = 26;    // до 2:00 (26 = 24+2)
+
+// Таймеры уведомлений
+var notifyTimers = [];
+
 function z2(n){return('0'+n).slice(-2);}
 function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1==1)return one;return many;}
 function formatMin(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
 function formatMinLong(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+" "+pluralRus(h,"час","часа","часов"));if(mn>0)p.push(mn+" "+pluralRus(mn,"минута","минуты","минут"));return p.length?p.join(" "):"меньше минуты";}
 function minsAgo(d){return Math.floor((Date.now()-d.getTime())/60000);}
-function minsUntil(t){if(!t)return null;var now=new Date(),p=t.split(":"),tgt=new Date();tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);if(tgt<now)tgt.setDate(tgt.getDate()+1);return Math.floor((tgt-now)/60000);}
-function calcAge(){var now=new Date(),y=now.getFullYear()-BIRTHDAY.getFullYear(),m=now.getMonth()-BIRTHDAY.getMonth(),d=now.getDate()-BIRTHDAY.getDate();if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}if(m<0){y--;m+=12;}return{years:y,months:m,days:d};}
-function updateHeader(){var now=new Date();document.getElementById("headerDate").textContent=now.getDate()+" "+MONTHS[now.getMonth()]+" "+now.getFullYear()+" г.";document.getElementById("headerTime").textContent=z2(now.getHours())+":"+z2(now.getMinutes());}
-function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2500);}
-function sendAction(action,btnEl,label){
-  btnEl.classList.add("btn-loading");btnEl.textContent="⏳ "+label+"...";
+
+function minsUntil(t){
+  if(!t)return null;
+  var now=new Date(),p=t.split(":"),tgt=new Date();
+  tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);
+  if(tgt<now)tgt.setDate(tgt.getDate()+1);
+  return Math.floor((tgt-now)/60000);
+}
+
+// Дата с учётом 6:00 — до 6 утра считается вчерашним днём
+function getLogicalDateStr(date) {
+  var d = new Date(date.getTime());
+  if (d.getHours() < 6) d.setDate(d.getDate() - 1);
+  return d.toDateString();
+}
+
+function calcAge(){
+  var now=new Date(),y=now.getFullYear()-BIRTHDAY.getFullYear(),m=now.getMonth()-BIRTHDAY.getMonth(),d=now.getDate()-BIRTHDAY.getDate();
+  if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  return{years:y,months:m,days:d};
+}
+
+function updateHeader(){
+  var now=new Date();
+  document.getElementById("headerDate").textContent=now.getDate()+" "+MONTHS[now.getMonth()]+" "+now.getFullYear()+" г.";
+  document.getElementById("headerTime").textContent=z2(now.getHours())+":"+z2(now.getMinutes());
+}
+
+function showToast(msg){
+  var t=document.getElementById("toast");
+  t.textContent=msg;t.classList.add("show");
+  setTimeout(function(){t.classList.remove("show");},2500);
+}
+
+// ───── УВЕДОМЛЕНИЯ ─────
+function isNotifyHour() {
+  var h = new Date().getHours();
+  // 6:00 - 2:00 (ночи)
+  return h >= NOTIFY_START_H || h < 2;
+}
+
+function registerSW() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+}
+
+function requestNotifyPermission(callback) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') { if(callback)callback(); return; }
+  if (Notification.permission === 'denied') return;
+  Notification.requestPermission().then(function(p){
+    if(p==='granted' && callback) callback();
+    updateNotifyBar();
+  });
+}
+
+function sendNotification(title, body) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (!isNotifyHour()) return;
+  try {
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then(function(reg){
+        reg.showNotification(title, { body: body, icon: 'https://img.icons8.com/?size=192&id=Sawg2D8Sr9wA&format=png&color=000000', badge: 'https://img.icons8.com/?size=96&id=Sawg2D8Sr9wA&format=png&color=000000', vibrate: [200,100,200] });
+      });
+    } else {
+      new Notification(title, { body: body });
+    }
+  } catch(e){}
+}
+
+function clearNotifyTimers() {
+  for(var i=0;i<notifyTimers.length;i++) clearTimeout(notifyTimers[i]);
+  notifyTimers = [];
+}
+
+function scheduleNotification(timeStr, title, body) {
+  if (!timeStr) return;
+  var mins = minsUntil(timeStr);
+  if (mins === null) return;
+  // За 10 минут
+  var alertMins = mins - 10;
+  if (alertMins > 0 && alertMins < 480) { // не больше 8 часов вперёд
+    var ms = alertMins * 60000;
+    var timer = setTimeout(function(){ sendNotification(title, body); }, ms);
+    notifyTimers.push(timer);
+  }
+  // Точно в момент
+  if (mins > 0 && mins < 480) {
+    var ms2 = mins * 60000;
+    var timer2 = setTimeout(function(){ sendNotification(title + " — сейчас!", body); }, ms2);
+    notifyTimers.push(timer2);
+  }
+}
+
+function updateNotifyBar() {
+  var bar = document.getElementById("notifyBar");
+  if (!('Notification' in window)) { bar.innerHTML=''; return; }
+  if (Notification.permission === 'granted') {
+    bar.innerHTML = '<div class="notify-bar fade-up"><div class="notify-bar-text">🔔 Уведомления включены</div></div>';
+  } else if (Notification.permission === 'denied') {
+    bar.innerHTML = '<div class="notify-bar fade-up"><div class="notify-bar-text">🔕 Уведомления отключены</div></div>';
+  } else {
+    bar.innerHTML = '<div class="notify-bar fade-up"><div class="notify-bar-text">Включить напоминания?</div><button class="action-btn btn-notify" onclick="requestNotifyPermission()">🔔 Включить</button></div>';
+  }
+}
+
+// ───── ДЕЙСТВИЯ ─────
+function sendAction(action, btnEl, label) {
+  btnEl.classList.add("btn-loading");
+  var origText = btnEl.textContent;
+  btnEl.textContent="⏳ "+label+"...";
   fetch(API_URL+"?mode=device&action="+action)
     .then(function(r){return r.json();})
-    .then(function(data){if(data.ok){showToast("✅ Команда отправлена!");setTimeout(function(){loadData();},3000);}else{showToast("❌ Ошибка");btnEl.classList.remove("btn-loading");}})
-    .catch(function(){showToast("❌ Нет связи");btnEl.classList.remove("btn-loading");});
+    .then(function(data){
+      if(data.ok){
+        showToast("✅ Команда отправлена!");
+        setTimeout(function(){loadData();},3000);
+      } else {
+        showToast("❌ "+( data.error||"Ошибка"));
+        btnEl.classList.remove("btn-loading");
+        btnEl.textContent=origText;
+      }
+    })
+    .catch(function(){
+      showToast("❌ Нет связи");
+      btnEl.classList.remove("btn-loading");
+      btnEl.textContent=origText;
+    });
 }
+
 var currentStatusDate=null,currentStatusType=null;
+
 function updateLiveCounter(){
   if(!currentStatusDate)return;
   var mins=minsAgo(currentStatusDate);
   var el=document.getElementById("liveSince");
-  if(el)el.textContent=formatMin(mins)+" "+(currentStatusType==="sleep"?"спит":"бодрствует");
+  if(el) el.textContent=formatMin(mins)+" "+(currentStatusType==="sleep"?"спит":"бодрствует");
   var sc=document.getElementById("sleepActiveTime");
-  if(sc&&currentStatusType==="sleep")sc.textContent=formatMin(mins);
+  if(sc&&currentStatusType==="sleep") sc.textContent=formatMin(mins);
   var nf=document.getElementById("nextFeedVal"),fl=document.getElementById("feedCountdown");
   if(fl&&nf&&nf.dataset.time){var mf=minsUntil(nf.dataset.time);fl.textContent=mf!==null?"через "+formatMin(mf):"нет данных";}
   var ns=document.getElementById("nextSleepVal"),sl=document.getElementById("sleepCountdown");
   if(sl&&ns&&ns.dataset.time&&currentStatusType!=="sleep"){var mt=minsUntil(ns.dataset.time);sl.textContent=mt!==null?"через "+formatMin(mt):"нет данных";}
 }
+
 function extractNextSleep(msg){var m=msg.match(/спать в (\d{2}:\d{2})/);return m?m[1]:null;}
 function extractNextFeed(msg){var m=msg.match(/кормление в (\d{2}:\d{2})/);return m?m[1]:null;}
-function calcDaySleep(parsed,todayStr){
-  var total=0,sorted=parsed.slice().reverse();
+
+function calcDaySleep(parsed, todayLogical) {
+  var total = 0;
+  var sorted = parsed.slice().reverse();
   for(var i=0;i<sorted.length;i++){
     var item=sorted[i];
-    if(item.type==="wake"&&item.dateStr===todayStr){
+    if(item.type==="wake"&&item.logicalDateStr===todayLogical){
       for(var j=i-1;j>=0;j--){
         if(sorted[j].type==="sleep"){
-          var ss=sorted[j].date,sm=ss.getHours()*60+ss.getMinutes();
-          if(sm>=420&&sm<1170){var dur=Math.floor((item.date.getTime()-ss.getTime())/60000);if(dur>0&&dur<300)total+=dur;}
+          var sleepStart=sorted[j].date;
+          var startMin=sleepStart.getHours()*60+sleepStart.getMinutes();
+          if(startMin>=420&&startMin<1170){
+            var dur=Math.floor((item.date.getTime()-sleepStart.getTime())/60000);
+            if(dur>0&&dur<300)total+=dur;
+          }
           break;
         }
       }
@@ -153,62 +295,108 @@ function calcDaySleep(parsed,todayStr){
   }
   return total;
 }
+
 function renderSleepItems(items,max){
   var si=items.filter(function(x){return x.type==="sleep"||x.type==="wake";});
   if(!si.length)return'<div style="color:var(--muted);font-size:12px;padding:4px 0">Нет данных</div>';
   var html="";
   for(var k=0;k<si.length&&k<max;k++){
-    var it=si[k],t=z2(it.date.getHours())+":"+z2(it.date.getMinutes()),dc=it.type==="wake"?"dot-wake":"dot-sleep",desc=it.type==="wake"?"Проснулась":"Уснула",dur="";
-    if(it.type==="wake"&&k+1<si.length&&si[k+1].type==="sleep"){var dd=Math.floor((it.date.getTime()-si[k+1].date.getTime())/60000);if(dd>0&&dd<300)dur=formatMinLong(dd);}
+    var it=si[k],t=z2(it.date.getHours())+":"+z2(it.date.getMinutes());
+    var dc=it.type==="wake"?"dot-wake":"dot-sleep",desc=it.type==="wake"?"Проснулась":"Уснула",dur="";
+    if(it.type==="wake"&&k+1<si.length&&si[k+1].type==="sleep"){
+      var d=Math.floor((it.date.getTime()-si[k+1].date.getTime())/60000);
+      if(d>0&&d<300)dur=formatMinLong(d);
+    }
     html+='<div class="history-item"><div class="history-dot '+dc+'"></div><div class="history-time">'+t+'</div><div class="history-info"><div class="history-desc">'+desc+'</div>'+(dur?'<div class="history-dur">'+dur+'</div>':'')+'</div></div>';
   }
   return html;
 }
+
 function renderFeedItems(items,max){
   var fi=items.filter(function(x){return x.type==="feed";});
   if(!fi.length)return'<div style="color:var(--muted);font-size:12px;padding:4px 0">Нет данных</div>';
   var html="";
-  for(var f=0;f<fi.length&&f<max;f++){var fitem=fi[f],ft=z2(fitem.date.getHours())+":"+z2(fitem.date.getMinutes());html+='<div class="history-item"><div class="history-dot dot-feed"></div><div class="history-time">'+ft+'</div><div class="history-info"><div class="history-desc">Поела</div></div></div>';}
+  for(var f=0;f<fi.length&&f<max;f++){
+    var fitem=fi[f],ft=z2(fitem.date.getHours())+":"+z2(fitem.date.getMinutes());
+    html+='<div class="history-item"><div class="history-dot dot-feed"></div><div class="history-time">'+ft+'</div><div class="history-info"><div class="history-desc">Поела</div></div></div>';
+  }
   return html;
 }
+
 function render(history){
   if(!history||!history.length){document.getElementById("content").innerHTML='<div class="error-card">Данных пока нет.</div>';return;}
-  var todayStr=new Date().toDateString(),yesterdayStr=new Date(Date.now()-86400000).toDateString();
-  var lastWake=null,lastSleep=null,lastFeed=null,nextSleep=null,nextFeed=null,feedCountToday=0,sleepCountToday=0,parsed=[];
+
+  // Логическая дата: до 6:00 = вчера
+  var now = new Date();
+  var todayLogical = getLogicalDateStr(now);
+  var yesterday = new Date(now.getTime());
+  if(now.getHours() < 6) yesterday.setDate(yesterday.getDate()-2);
+  else yesterday.setDate(yesterday.getDate()-1);
+  var yesterdayLogical = getLogicalDateStr(yesterday);
+
+  var lastWake=null,lastSleep=null,lastFeed=null,nextSleep=null,nextFeed=null;
+  var feedCountToday=0,sleepCountToday=0,parsed=[];
+
   for(var i=0;i<history.length;i++){
     var item=history[i],d=new Date(item.time),msg=item.message||"";
-    parsed.push({date:d,type:item.type||"",msg:msg,dateStr:d.toDateString()});
+    var logDate = getLogicalDateStr(d);
+    parsed.push({date:d,type:item.type||"",msg:msg,dateStr:d.toDateString(),logicalDateStr:logDate});
     if(!lastWake&&item.type==="wake")lastWake={date:d,msg:msg};
     if(!lastSleep&&item.type==="sleep")lastSleep={date:d,msg:msg};
     if(!lastFeed&&item.type==="feed")lastFeed={date:d,msg:msg};
     if(!nextSleep&&item.type==="wake")nextSleep=extractNextSleep(msg);
     if(!nextFeed&&item.type==="feed")nextFeed=extractNextFeed(msg);
-    if(d.toDateString()===todayStr){if(item.type==="feed")feedCountToday++;if(item.type==="sleep")sleepCountToday++;}
+    if(logDate===todayLogical){
+      if(item.type==="feed")feedCountToday++;
+      if(item.type==="sleep")sleepCountToday++;
+    }
   }
+
   var isSleeping=false;
   if(lastSleep&&lastWake)isSleeping=lastSleep.date>lastWake.date;
   else if(lastSleep&&!lastWake)isSleeping=true;
+
   var lastEventDate=isSleeping?(lastSleep?lastSleep.date:null):(lastWake?lastWake.date:null);
   currentStatusDate=lastEventDate;currentStatusType=isSleeping?"sleep":"awake";
+
   var mins=lastEventDate?minsAgo(lastEventDate):0;
   var sinceStr=lastEventDate?formatMin(mins)+" "+(isSleeping?"спит":"бодрствует"):"";
   var statusIcon=isSleeping?"🌙":"☀️",statusClass=isSleeping?"sleep":"awake",statusText=isSleeping?"Спит":"Бодрствует";
   var statusSubTime=isSleeping?(lastSleep?"с "+z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):""):(lastWake?"с "+z2(lastWake.date.getHours())+":"+z2(lastWake.date.getMinutes()):"");
-  var minsToFeed=nextFeed?minsUntil(nextFeed):null,minsToSleep=(!isSleeping&&nextSleep)?minsUntil(nextSleep):null;
-  var totalSleepMin=calcDaySleep(parsed,todayStr);
-  if(isSleeping&&lastSleep){var cs=lastSleep.date,csm=cs.getHours()*60+cs.getMinutes();if(csm>=420&&csm<1170)totalSleepMin+=minsAgo(cs);}
+
+  var minsToFeed=nextFeed?minsUntil(nextFeed):null;
+  var minsToSleep=(!isSleeping&&nextSleep)?minsUntil(nextSleep):null;
+
+  var totalSleepMin=calcDaySleep(parsed,todayLogical);
+  if(isSleeping&&lastSleep){
+    var cStart=lastSleep.date,cSMin=cStart.getHours()*60+cStart.getMinutes();
+    if(cSMin>=420&&cSMin<1170)totalSleepMin+=minsAgo(cStart);
+  }
   var progressPct=totalSleepMin?Math.min(100,Math.round(totalSleepMin/NORM_MIN*100)):0;
-  var todayItems=[],yesterdayItems=[];
-  for(var j=0;j<parsed.length;j++){if(parsed[j].dateStr===todayStr)todayItems.push(parsed[j]);else if(parsed[j].dateStr===yesterdayStr)yesterdayItems.push(parsed[j]);}
+
+  var todayItems=[], yesterdayItems=[];
+  for(var j=0;j<parsed.length;j++){
+    if(parsed[j].logicalDateStr===todayLogical)todayItems.push(parsed[j]);
+    else if(parsed[j].logicalDateStr===yesterdayLogical)yesterdayItems.push(parsed[j]);
+  }
+
+  // Планируем уведомления
+  clearNotifyTimers();
+  if(nextSleep&&!isSleeping) scheduleNotification("🛏 Укладываем Стешу", "Пора укладывать — спать в "+nextSleep, nextSleep);
+  if(nextFeed) scheduleNotification("🍼 Кормление", "Пора кормить Стешу — в "+nextFeed, nextFeed);
+
   var age=calcAge(),ageStr="";
   if(age.years>0)ageStr+=age.years+" "+pluralRus(age.years,"год","года","лет")+" ";
   ageStr+=age.months+" "+pluralRus(age.months,"месяц","месяца","месяцев")+" "+age.days+" "+pluralRus(age.days,"день","дня","дней");
+
   var actionBtn=isSleeping
     ?'<button class="action-btn btn-wake" onclick="sendAction(\'wake\',this,\'Проснулась\')">☀️ Проснулась</button>'
     :'<button class="action-btn btn-sleep" onclick="sendAction(\'sleep\',this,\'Уснула\')">🌙 Уснула</button>';
+
   var leftCard=isSleeping
-    ?'<div class="next-card sleep-active"><div class="next-card-icon">🌙</div><div class="next-card-label">Спит уже</div><div class="next-card-time" id="sleepActiveTime">'+formatMin(mins)+'</div><div class="next-card-sub">с '+statusSubTime.replace('с ','')+'</div></div>'
+    ?'<div class="next-card sleep-active"><div class="next-card-icon">🌙</div><div class="next-card-label">Спит уже</div><div class="next-card-time" id="sleepActiveTime">'+formatMin(mins)+'</div><div class="next-card-sub">с '+(statusSubTime.replace('с ',''))+'</div></div>'
     :'<div class="next-card sleep-next"><div class="next-card-icon">🛏</div><div class="next-card-label">Спать в</div><div class="next-card-time" id="nextSleepVal" data-time="'+(nextSleep||'')+'">'+( nextSleep||"—")+'</div><div class="next-card-sub" id="sleepCountdown">'+(minsToSleep!==null?"через "+formatMin(minsToSleep):"нет данных")+'</div></div>';
+
   var html=''
     +'<div class="age-card fade-up"><div class="age-emoji">👶</div><div class="age-info"><div class="age-main">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025</div></div></div>'
     +'<div class="status-card fade-up d1"><div class="status-label"><span class="pulse"></span>Текущий статус</div>'
@@ -228,14 +416,46 @@ function render(history){
     +'<button class="action-btn btn-feed" style="margin-top:12px;width:100%;justify-content:center;" onclick="sendAction(\'feed\',this,\'Поела\')">🍼 Поела</button>'
     +'</div>'
     +'<div class="day-label fade-up d4">🕐 Сегодня</div>'
-    +'<div class="two-col fade-up d4"><div class="history-card"><div class="history-card-title">🛏 Сон</div>'+renderSleepItems(todayItems,10)+'</div>'
-    +'<div class="history-card"><div class="history-card-title">🍼 Кормление</div>'+renderFeedItems(todayItems,10)+'</div></div>'
+    +'<div class="two-col fade-up d4"><div class="history-card"><div class="history-card-title">🛏 Сон</div>'+renderSleepItems(todayItems,10)+'</div><div class="history-card"><div class="history-card-title">🍼 Кормление</div>'+renderFeedItems(todayItems,10)+'</div></div>'
     +(yesterdayItems.length?'<div class="day-label">📅 Вчера</div><div class="two-col"><div class="history-card"><div class="history-card-title">🛏 Сон</div>'+renderSleepItems(yesterdayItems,8)+'</div><div class="history-card"><div class="history-card-title">🍼 Кормление</div>'+renderFeedItems(yesterdayItems,8)+'</div></div>':'');
+
   document.getElementById("content").innerHTML=html;
 }
-function loadData(){fetch(API_URL).then(function(r){return r.json();}).then(function(data){render(data.history||[]);}).catch(function(){render([]);});}
-document.getElementById("refreshBtn").onclick=function(){var btn=document.getElementById("refreshBtn");btn.classList.add("spinning");fetch(API_URL).then(function(r){return r.json();}).then(function(data){render(data.history||[]);btn.classList.remove("spinning");}).catch(function(){btn.classList.remove("spinning");});};
-setInterval(updateLiveCounter,60000);setInterval(updateHeader,60000);updateHeader();loadData();
+
+function loadData(){
+  fetch(API_URL)
+    .then(function(r){return r.json();})
+    .then(function(data){render(data.history||[]);})
+    .catch(function(){render([]);});
+}
+
+document.getElementById("refreshBtn").onclick=function(){
+  var btn=document.getElementById("refreshBtn");
+  btn.classList.add("spinning");
+  fetch(API_URL)
+    .then(function(r){return r.json();})
+    .then(function(data){render(data.history||[]);btn.classList.remove("spinning");})
+    .catch(function(){btn.classList.remove("spinning");});
+};
+
+// Исправление scheduleNotification — передаём timeStr
+function scheduleNotification(title, body, timeStr) {
+  if (!timeStr) return;
+  var mins = minsUntil(timeStr);
+  if (mins === null) return;
+  var alertMins = mins - 10;
+  if (alertMins > 0 && alertMins < 480) {
+    var timer = setTimeout(function(){ sendNotification(title, body); }, alertMins * 60000);
+    notifyTimers.push(timer);
+  }
+}
+
+registerSW();
+updateNotifyBar();
+setInterval(updateLiveCounter, 60000);
+setInterval(updateHeader, 60000);
+updateHeader();
+loadData();
 </script>
 </body>
 </html>
