@@ -198,28 +198,25 @@ function saveEdit() {
   saveBtn.textContent = "⏳ Сохраняю...";
   saveBtn.disabled = true;
 
-  fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mode: "edit", rowIndex: editRowIndex, newTime: newTime })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    saveBtn.textContent = "Сохранить";
-    saveBtn.disabled = false;
-    if (data.ok) {
-      showToast("✅ Время обновлено!");
-      closeModal();
-      setTimeout(loadData, 500);
-    } else {
-      showToast("❌ " + (data.error || "Ошибка"));
-    }
-  })
-  .catch(function(){
-    saveBtn.textContent = "Сохранить";
-    saveBtn.disabled = false;
-    showToast("❌ Нет связи");
-  });
+  var url = API_URL + "?mode=edit&rowIndex=" + editRowIndex + "&newTime=" + encodeURIComponent(newTime);
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      saveBtn.textContent = "Сохранить";
+      saveBtn.disabled = false;
+      if (data.ok) {
+        showToast("✅ Время обновлено!");
+        closeModal();
+        setTimeout(loadData, 500);
+      } else {
+        showToast("❌ " + (data.error || "Ошибка"));
+      }
+    })
+    .catch(function(){
+      saveBtn.textContent = "Сохранить";
+      saveBtn.disabled = false;
+      showToast("❌ Нет связи");
+    });
 }
 
 // Закрытие по тапу на оверлей
