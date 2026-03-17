@@ -117,7 +117,7 @@ function updateHeader(){var now=new Date();document.getElementById("headerDate")
 function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2500);}
 function sendAction(action,btnEl,label){
   btnEl.classList.add("btn-loading");btnEl.textContent="⏳ "+label+"...";
-  fetch(API_URL+"?action="+action)
+  fetch(API_URL+"?mode=device&action="+action)
     .then(function(r){return r.json();})
     .then(function(data){if(data.ok){showToast("✅ Команда отправлена!");setTimeout(function(){loadData();},3000);}else{showToast("❌ Ошибка");btnEl.classList.remove("btn-loading");}})
     .catch(function(){showToast("❌ Нет связи");btnEl.classList.remove("btn-loading");});
