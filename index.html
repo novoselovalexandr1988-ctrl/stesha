@@ -450,14 +450,59 @@ function sendAction(action,btnEl,label){
   var orig=btnEl.textContent;
   btnEl.classList.add("btn-loading");
   btnEl.textContent="⏳ "+label+"...";
+
+  // Оптимистично обновляем UI сразу
+  var now=new Date();
+  applyOptimisticUpdate(action, now);
+
+  // Переключаем УДЯ → SprutHub сам запишет данные
   fetch(API_URL+"?mode=device&action="+action)
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(data.ok){showToast("✅ Отправлено!");setTimeout(loadData,3000);}
-      else{showToast("❌ "+(data.error||"Ошибка"));}
-      btnEl.classList.remove("btn-loading");btnEl.textContent=orig;
-    })
-    .catch(function(){showToast("❌ Нет связи");btnEl.classList.remove("btn-loading");btnEl.textContent=orig;});
+    .catch(function(){});
+
+  // Через 2.5 сек подтверждаем реальными данными от Apps Script
+  setTimeout(function(){
+    btnEl.classList.remove("btn-loading");
+    btnEl.textContent=orig;
+    loadData();
+  }, 2500);
+}
+
+function applyOptimisticUpdate(action, now){
+  // Обновляем статус и таймер без перерисовки всей страницы
+  var isSleeping=(action==="sleep");
+  var isWake=(action==="wake");
+  var timeStr=z2(now.getHours())+":"+z2(now.getMinutes());
+
+  if(action==="sleep"||action==="wake"){
+    currentStatusDate=now;
+    currentStatusType=isSleeping?"sleep":"awake";
+    currentSleepBase=isSleeping?0:currentSleepBase;
+
+    var statusEl=document.getElementById("liveSince");
+    if(statusEl){
+      statusEl.style.color=isSleeping?"var(--accent2)":"var(--accent4)";
+      statusEl.textContent=(isSleeping?"Спит":"Бодрствует")+" 0м";
+    }
+
+    // Обновляем левую карточку
+    var miniLabel=document.querySelector(".mini-card.sleep-c .mini-label");
+    var miniTime=document.querySelector(".mini-card.sleep-c .mini-time");
+    var miniSub=document.querySelector(".mini-card.sleep-c .mini-sub");
+    if(miniLabel&&miniTime&&miniSub){
+      if(isSleeping){
+        miniLabel.textContent="УСНУЛА В";
+        miniTime.textContent=timeStr;
+        miniSub.textContent="только что";
+      } else {
+        miniLabel.textContent="СПАТЬ В";
+      }
+    }
+  }
+
+  if(action==="feed"){
+    var feedSub=document.getElementById("feedCountdown");
+    if(feedSub)feedSub.textContent="только что";
+  }
 }
 
 // ── ADD MODAL ──
@@ -486,8 +531,10 @@ function saveAdd(){
   d.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
   var typeMap={sleep:"sleep",wake:"wake",feed:"feed"};
   var msgMap={sleep:"Уснула",wake:"Проснулась",feed:"Поела"};
-  var body=JSON.stringify({type:typeMap[addType],message:msgMap[addType]+" в "+timeVal,manualTime:d.getTime()});
-  fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:body})
+  var type=typeMap[addType];
+  var msg=encodeURIComponent(msgMap[addType]+" в "+timeVal);
+  var url=API_URL+"?mode=add&type="+type+"&message="+msg+"&manualTime="+d.getTime();
+  fetch(url)
     .then(function(r){return r.json();})
     .then(function(data){
       btn.textContent="Добавить";btn.disabled=false;
