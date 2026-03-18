@@ -537,8 +537,9 @@ function saveWh(){
   if(!val){showToast("⚠️ Введите значение");return;}
   var btn=document.getElementById("whSaveBtn");
   btn.textContent="⏳...";btn.disabled=true;
-  var body=JSON.stringify({type:"measurement",subtype:whType,value:parseFloat(val),message:(whType==="weight"?"Вес: "+val+" кг":"Рост: "+val+" см")});
-  fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:body})
+  var msg=encodeURIComponent(whType==="weight"?"Вес: "+val+" кг":"Рост: "+val+" см");
+  var url=API_URL+"?mode=measurement&subtype="+whType+"&value="+parseFloat(val)+"&message="+msg;
+  fetch(url)
     .then(function(r){return r.json();})
     .then(function(data){
       btn.textContent="Сохранить";btn.disabled=false;
