@@ -187,6 +187,8 @@
   /* EDIT MODAL */
   .edit-modal-input{width:100%;padding:14px 16px;border-radius:14px;border:2px solid var(--border);background:var(--bg);color:var(--text);font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:16px;outline:none;}
   .edit-modal-input:focus{border-color:var(--accent2);}
+  .modal-btns-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .modal-delete{background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.25);color:#ff4d4d;border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;}
 
   /* TOAST */
   .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1830;color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:300;pointer-events:none;white-space:nowrap;}
@@ -273,7 +275,8 @@
     <div class="modal-title">Изменить время</div>
     <div class="modal-title" id="editSub" style="font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted);font-weight:600;margin-top:-10px;margin-bottom:16px;"></div>
     <input class="edit-modal-input" type="time" id="editInput">
-    <div class="modal-btns">
+    <div class="modal-btns-3">
+      <button class="modal-delete" onclick="deleteRecord()">🗑 Удалить</button>
       <button class="modal-cancel" onclick="closeEditModal()">Отмена</button>
       <button class="modal-save" id="editSaveBtn" onclick="saveEdit()">Сохранить</button>
     </div>
@@ -563,10 +566,21 @@ function saveEdit(){
     .then(function(r){return r.json();})
     .then(function(data){
       btn.textContent="Сохранить";btn.disabled=false;
-      if(data.ok){showToast("✅ Время обновлено!");closeEditModal();setTimeout(loadData,500);}
+      if(data.ok){showToast("✅ Время обновлено!");closeEditModal();setTimeout(refreshData,500);}
       else{showToast("❌ "+(data.error||"Ошибка"));}
     })
     .catch(function(){btn.textContent="Сохранить";btn.disabled=false;showToast("❌ Нет связи");});
+}
+function deleteRecord(){
+  if(editRowIndex===null)return;
+  if(!confirm("Удалить эту запись?"))return;
+  fetch(API_URL+"?mode=delete&rowIndex="+editRowIndex)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.ok){showToast("✅ Запись удалена!");closeEditModal();setTimeout(refreshData,500);}
+      else{showToast("❌ "+(data.error||"Ошибка"));}
+    })
+    .catch(function(){showToast("❌ Нет связи");});
 }
 
 // ── WH MODAL ──
