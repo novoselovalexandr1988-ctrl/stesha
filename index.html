@@ -47,9 +47,13 @@
 
   /* AGE */
   .age-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
-  .age-emoji{font-size:20px;}
+  .age-emoji{font-size:20px;flex-shrink:0;}
+  .age-main{flex:1;}
   .age-text{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;color:var(--accent1);}
-  .age-sub{font-size:10px;color:var(--muted);font-weight:600;}
+  .age-sub{font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;}
+  .age-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+  .age-wh{font-size:11px;font-weight:700;color:var(--text);}
+  .age-birthday{font-size:10px;color:var(--accent3);font-weight:700;}
 
   /* STATUS */
   .status-big{background:var(--card2);border:1px solid var(--border);border-radius:24px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
@@ -152,9 +156,10 @@
   .backup-btn.restore{color:var(--muted);}
 
   /* NOTIFY BAR */
-  .notify-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
-  .notify-bar-text{font-size:12px;color:var(--muted);font-weight:600;}
-  .notify-enable-btn{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--accent4);cursor:pointer;}
+  .bell-btn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:var(--shadow);}
+  .bell-btn.on{background:rgba(46,219,168,0.15);border-color:rgba(46,219,168,0.3);}
+  .bell-btn.off{background:rgba(255,77,77,0.12);border-color:rgba(255,77,77,0.25);}
+  .bell-btn.unknown{background:var(--card);color:var(--muted);}
 
   /* MODAL */
   .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
@@ -207,7 +212,10 @@
     </div>
     <div class="header-time" id="headerTime"></div>
   </div>
-  <div class="refresh-btn" id="refreshBtn">↻</div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <div class="bell-btn unknown" id="bellBtn" onclick="onBellClick()">🔔</div>
+    <div class="refresh-btn" id="refreshBtn">↻</div>
+  </div>
 </div>
 
 <div class="date-picker" id="datePicker">
@@ -215,7 +223,6 @@
   <div class="date-options" id="dateOptions"></div>
 </div>
 
-<div id="notifyBar"></div>
 <div id="content"><div class="loading"><div class="loading-spinner"></div>Загружаем данные…</div></div>
 
 <!-- ADD MODAL -->
@@ -309,7 +316,12 @@ function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)r
 function formatMin(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
 function formatMinLong(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+" "+pluralRus(h,"час","часа","часов"));if(mn>0)p.push(mn+" "+pluralRus(mn,"минута","минуты","минут"));return p.length?p.join(" "):"меньше минуты";}
 function minsAgo(d){return Math.floor((Date.now()-d.getTime())/60000);}
-function minsUntil(t){if(!t)return null;var now=new Date(),p=t.split(":"),tgt=new Date();tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);if(tgt<now)tgt.setDate(tgt.getDate()+1);return Math.floor((tgt-now)/60000);}
+function minsUntil(t){if(!t)return null;var now=new Date(),p=t.split(":"),tgt=new Date();tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);return Math.floor((tgt-now)/60000);}
+function formatCountdown(mins){
+  if(mins===null)return"нет данных";
+  if(mins>=0)return"через "+formatMin(mins);
+  return"<span style='color:#ff4d4d;font-weight:800'>"+formatMin(Math.abs(mins))+" назад</span>";
+}
 function getLogicalDate(date){var d=new Date(date.getTime());if(d.getHours()<6)d.setDate(d.getDate()-1);return d;}
 function getLogicalDateStr(date){return getLogicalDate(date).toDateString();}
 
@@ -329,8 +341,16 @@ function showToast(msg){
 // ── HEADER ──
 function updateHeader(){
   var now=new Date();
-  document.getElementById("headerDate").textContent=now.getDate()+" "+MONTHS[now.getMonth()]+" "+now.getFullYear()+" г.";
   document.getElementById("headerTime").textContent=z2(now.getHours())+":"+z2(now.getMinutes());
+  updateHeaderDate();
+}
+
+function updateHeaderDate(){
+  var now=new Date();
+  var d=new Date(now.getTime()-selectedDayOffset*86400000);
+  var dateStr=d.getDate()+" "+MONTHS[d.getMonth()]+" "+d.getFullYear()+" г.";
+  var label=selectedDayOffset===0?" · Сегодня":selectedDayOffset===1?" · Вчера":"";
+  document.getElementById("headerDate").innerHTML=dateStr+'<span style="font-size:11px;color:var(--muted);font-weight:600;margin-left:4px;">'+label+'</span>';
 }
 
 function buildDateOptions(){
@@ -350,6 +370,7 @@ function buildDateOptions(){
       elem.classList.add("active");
       selectedDayOffset=offset;
       document.getElementById("datePicker").classList.remove("show");
+      updateHeaderDate();
       renderForDay();
     };})(i,el);
     wrap.appendChild(el);
@@ -371,7 +392,7 @@ function requestNotifyPermission(){
   if(!("Notification" in window)){showToast("⚠️ Уведомления не поддерживаются");return;}
   if(Notification.permission==="granted"){showToast("✅ Уведомления уже включены");return;}
   Notification.requestPermission().then(function(p){
-    updateNotifyBar();
+    updateBell();
     if(p==="granted"){showToast("✅ Уведомления включены!");}
     else{showToast("❌ Уведомления не разрешены");}
   });
@@ -408,16 +429,18 @@ function scheduleNotify(title,body,timeStr){
   var alertMins=mins-10;
   if(alertMins>0&&alertMins<480)notifyTimers.push(setTimeout(function(){sendNotification(title,body);},alertMins*60000));
 }
-function updateNotifyBar(){
-  var bar=document.getElementById("notifyBar");
-  if(!("Notification" in window)){bar.innerHTML="";return;}
-  if(Notification.permission==="granted"){
-    bar.innerHTML='<div class="notify-bar fu"><div class="notify-bar-text"><span class="pulse"></span> Уведомления включены</div></div>';
-  }else if(Notification.permission==="denied"){
-    bar.innerHTML='<div class="notify-bar fu"><div class="notify-bar-text">🔕 Уведомления отключены</div></div>';
-  }else{
-    bar.innerHTML='<div class="notify-bar fu"><div class="notify-bar-text">Включить напоминания?</div><button class="notify-enable-btn" onclick="requestNotifyPermission()">🔔 Включить</button></div>';
-  }
+function onBellClick(){
+  if(!("Notification" in window)){showToast("⚠️ Уведомления не поддерживаются");return;}
+  if(Notification.permission==="granted"){showToast("✅ Уведомления уже включены");return;}
+  requestNotifyPermission();
+}
+function updateBell(){
+  var btn=document.getElementById("bellBtn");
+  if(!btn)return;
+  if(!("Notification" in window)){btn.className="bell-btn unknown";btn.textContent="🔔";return;}
+  if(Notification.permission==="granted"){btn.className="bell-btn on";btn.textContent="🔔";}
+  else if(Notification.permission==="denied"){btn.className="bell-btn off";btn.textContent="🔕";}
+  else{btn.className="bell-btn unknown";btn.textContent="🔔";}
 }
 
 // ── ACTIONS ──
@@ -546,18 +569,30 @@ function doRestore(){
 }
 
 // ── LIVE COUNTER ──
-var currentStatusDate=null,currentStatusType=null;
+var currentStatusDate=null,currentStatusType=null,currentSleepBase=0,currentSleepStartMin=-1;
 function updateLiveCounter(){
   if(!currentStatusDate)return;
   var mins=minsAgo(currentStatusDate);
   var el=document.getElementById("liveSince");
   if(el)el.textContent=formatMin(mins)+" "+(currentStatusType==="sleep"?"спит":"бодрствует");
   var sc=document.getElementById("sleepActiveTime");
-  if(sc&&currentStatusType==="sleep")sc.textContent=formatMin(mins);
+  if(sc&&currentStatusType==="sleep")sc.textContent=formatMin(mins)+" назад";
+
+  // Обновляем круговой индикатор в реальном времени
+  if(currentStatusType==="sleep"){
+    var totalNow=currentSleepBase+mins;
+    var dashArr=251;
+    var offset=Math.max(0,dashArr-Math.round(dashArr*(Math.min(totalNow,NORM_MIN)/NORM_MIN)));
+    var circ=document.querySelector(".circle-fill");
+    if(circ)circ.style.strokeDashoffset=offset;
+    var cv=document.getElementById("circleVal");
+    if(cv)cv.textContent=z2(Math.floor(totalNow/60))+":"+z2(totalNow%60);
+  }
+
   var nf=document.getElementById("nextFeedVal"),fl=document.getElementById("feedCountdown");
-  if(fl&&nf&&nf.dataset.time){var mf=minsUntil(nf.dataset.time);fl.textContent=mf!==null?"через "+formatMin(mf):"нет данных";}
+  if(fl&&nf&&nf.dataset.time){var mf=minsUntil(nf.dataset.time);fl.innerHTML=formatCountdown(mf);}
   var ns=document.getElementById("nextSleepVal"),sl=document.getElementById("sleepCountdown");
-  if(sl&&ns&&ns.dataset.time&&currentStatusType!=="sleep"){var mt=minsUntil(ns.dataset.time);sl.textContent=mt!==null?"через "+formatMin(mt):"нет данных";}
+  if(sl&&ns&&ns.dataset.time&&currentStatusType!=="sleep"){var mt=minsUntil(ns.dataset.time);sl.innerHTML=formatCountdown(mt);}
 }
 
 // ── EXTRACT ──
@@ -660,12 +695,14 @@ function render(history){
   var lastEventDate=isSleeping?(lastSleep?lastSleep.date:null):(lastWake?lastWake.date:null);
   currentStatusDate=lastEventDate;
   currentStatusType=isSleeping?"sleep":"awake";
+  currentSleepBase=totalSleepMin;
+  currentSleepStartMin=isSleeping&&lastSleep?(lastSleep.date.getHours()*60+lastSleep.date.getMinutes()):-1;
   var mins=lastEventDate?minsAgo(lastEventDate):0;
   var sinceStr=lastEventDate?formatMin(mins)+" "+(isSleeping?"спит":"бодрствует"):"";
   var statusIcon=isSleeping?"🌙":"☀️";
   var statusClass=isSleeping?"sleep":"awake";
   var statusText=isSleeping?"Спит":"Бодрствует";
-  var statusSubTime=isSleeping?(lastSleep?"с "+z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes())+"  проснулась в 14:19":""):(lastWake?"проснулась в "+z2(lastWake.date.getHours())+":"+z2(lastWake.date.getMinutes()):"");
+  var statusSubTime=isSleeping?(lastSleep?"с "+z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):""):(lastWake?"проснулась в "+z2(lastWake.date.getHours())+":"+z2(lastWake.date.getMinutes()):"");
 
   var minsToFeed=nextFeed?minsUntil(nextFeed):null;
   var minsToSleep=(!isSleeping&&nextSleep)?minsUntil(nextSleep):null;
@@ -703,17 +740,38 @@ function render(history){
     }
   }
 
-  // Chart 7 days (mock for now — will be real when ScriptProperties implemented)
+  // Chart 7 days — реальные данные
   var chartBars="";
   var chartDays=["пн","вт","ср","чт","пт","сб","вс"];
-  var todayDow=new Date().getDay();
-  var chartData=[48,72,55,88,62,78,Math.round(totalSleepMin/NORM_MIN*100)];
+  var now7=new Date();
+  var todayDow=now7.getDay(); // 0=вс
+  // Считаем сон за каждый из 7 дней
+  var chartMins=[];
+  for(var cd=6;cd>=0;cd--){
+    var dayD=new Date(now7.getTime()-cd*86400000);
+    var dayLogical=getLogicalDateStr(dayD);
+    var dayMin=calcDaySleep(parsed,dayLogical);
+    // Если это сегодня и сейчас спит — добавляем текущий сон
+    if(cd===0&&selectedDayOffset===0&&isSleeping&&lastSleep){
+      var cSMin2=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
+      if(cSMin2>=420&&cSMin2<1170)dayMin+=minsAgo(lastSleep.date);
+    }
+    chartMins.push(dayMin);
+  }
+  var maxMin=Math.max.apply(null,chartMins.concat([NORM_MIN]));
   for(var ci=0;ci<7;ci++){
-    var dow=(todayDow-6+ci+7)%7;
-    var isToday=(ci===6&&selectedDayOffset===0);
-    var barH=Math.max(3,Math.min(100,chartData[ci]));
-    var barStyle=isToday?"background:linear-gradient(to top,var(--accent2),var(--accent4))":"background:var(--accent2);opacity:0."+Math.max(3,4+ci);
-    chartBars+='<div class="chart-day'+(isToday?" today":"")+'"><div class="chart-bar-wrap"><div class="chart-norm-line"></div><div class="chart-bar" style="height:'+barH+'%;'+barStyle+'"></div></div><div class="chart-day-lbl">'+chartDays[ci]+'</div></div>';
+    var dayOffset2=6-ci;
+    var dayForLabel=new Date(now7.getTime()-dayOffset2*86400000);
+    var dowIdx=dayForLabel.getDay(); // 0=вс
+    var dayLabel=chartDays[(dowIdx+6)%7]; // пн=0
+    var isToday=(dayOffset2===0&&selectedDayOffset===0);
+    var barH=chartMins[ci]?Math.max(4,Math.round(chartMins[ci]/maxMin*100)):4;
+    var barStyle=isToday
+      ?"background:linear-gradient(to top,var(--accent2),var(--accent4))"
+      :"background:var(--accent2);opacity:0."+(3+ci);
+    // Подсвечиваем если выше нормы
+    if(!isToday&&chartMins[ci]>=NORM_MIN)barStyle="background:var(--accent4);opacity:0.7";
+    chartBars+='<div class="chart-day'+(isToday?" today":"")+'"><div class="chart-bar-wrap"><div class="chart-norm-line"></div><div class="chart-bar" style="height:'+barH+'%;'+barStyle+'"></div></div><div class="chart-day-lbl">'+dayLabel+'</div></div>';
   }
 
   // Items for selected day and prev
@@ -736,7 +794,8 @@ function render(history){
   // Left card (sleep)
   var sleepCardLabel=isSleeping?"Уснула в":"Спать в";
   var sleepCardTime=isSleeping?(lastSleep?z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):"—"):(nextSleep||"—");
-  var sleepCardSub=isSleeping?(lastSleep?formatMin(minsAgo(lastSleep.date))+" назад":""):(minsToSleep!==null?"через "+formatMin(minsToSleep):"нет данных");
+  var sleepCardSub=isSleeping?(lastSleep?formatMin(minsAgo(lastSleep.date))+" назад":""):formatCountdown(minsToSleep);
+  var feedCardSub=formatCountdown(minsToFeed);
   var sleepCardClass=isSleeping?"sleep-c":"sleep-c";
 
   // Action buttons
@@ -748,21 +807,28 @@ function render(history){
   var dayLabelText=selectedDayOffset===0?"🕐 Сегодня":selectedDayOffset===1?"🕐 Вчера":("🕐 "+targetDate.getDate()+" "+MONTHS_SHORT[targetDate.getMonth()]);
   var prevLabelText=selectedDayOffset===0?"📅 Вчера":selectedDayOffset===1?"📅 Позавчера":("📅 "+prevDate.getDate()+" "+MONTHS_SHORT[prevDate.getMonth()]);
 
+  // Дни до дня рождения
+  var today=new Date();
+  var nextBirthday=new Date(today.getFullYear(),BIRTHDAY.getMonth(),BIRTHDAY.getDate());
+  if(nextBirthday<=today)nextBirthday.setFullYear(today.getFullYear()+1);
+  var daysUntilBirthday=Math.ceil((nextBirthday.getTime()-today.getTime())/86400000);
+  var whStr=(lastWeight?lastWeight.val+"кг":"-")+" · "+(lastHeight?lastHeight.val+"см":"-");
+
   var html=''
     // AGE
-    +'<div class="age-bar fu fu1"><div class="age-emoji">👶</div><div><div class="age-text">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025</div></div></div>'
+    +'<div class="age-bar fu fu1"><div class="age-emoji">👶</div><div class="age-main"><div class="age-text">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025 · до ДР '+daysUntilBirthday+' '+pluralRus(daysUntilBirthday,"день","дня","дней")+'</div></div><div class="age-right"><div class="age-wh">'+whStr+'</div></div></div>'
     // STATUS
-    +'<div class="status-big fu fu2"><div class="status-row"><div class="status-icon '+statusClass+'">'+statusIcon+'</div><div><div class="status-title">'+statusText+'</div><div class="status-timer" id="liveSince">'+sinceStr+'</div><div class="status-since">'+statusSubTime+'</div></div></div></div>'
+    +'<div class="status-big fu fu2"><div class="status-row"><div class="status-icon '+statusClass+'">'+statusIcon+'</div><div><div class="status-title">'+statusText+'</div><div class="status-since" id="liveSince">'+sinceStr+'</div><div class="status-since">'+statusSubTime+'</div></div></div></div>'
     // ACTION BUTTONS
     +'<div class="two-col fu fu2">'+actionBtns+'</div>'
     // MINI CARDS
     +'<div class="two-col fu fu3">'
     +'<div class="mini-card '+sleepCardClass+'"><div class="mini-icon">'+(isSleeping?"🌙":"🛏")+'</div><div class="mini-label">'+sleepCardLabel+'</div><div class="mini-time" id="'+(isSleeping?"":"nextSleepVal")+'" '+(isSleeping?"":"data-time='"+(nextSleep||"")+"'")+'>'+sleepCardTime+'</div><div class="mini-sub" id="'+(isSleeping?"sleepActiveTime":"sleepCountdown")+'">'+sleepCardSub+'</div></div>'
-    +'<div class="mini-card feed-c"><div class="mini-icon">🍼</div><div class="mini-label">Кормить в</div><div class="mini-time" id="nextFeedVal" data-time="'+(nextFeed||"")+'">'+( nextFeed||"—")+'</div><div class="mini-sub" id="feedCountdown">'+(minsToFeed!==null?"через "+formatMin(minsToFeed):"нет данных")+'</div></div>'
+    +'<div class="mini-card feed-c"><div class="mini-icon">🍼</div><div class="mini-label">Кормить в</div><div class="mini-time" id="nextFeedVal" data-time="'+(nextFeed||"")+'">'+( nextFeed||"—")+'</div><div class="mini-sub" id="feedCountdown">'+feedCardSub+'</div></div>'
     +'</div>'
     // CIRCLE + PILLS
     +'<div class="circle-pills-row fu fu4">'
-    +'<div class="circle-card"><div class="circle-wrap"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sleepGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#5ab4ff"/><stop offset="100%" stop-color="#2edba8"/></linearGradient></defs><circle class="circle-bg" cx="50" cy="50" r="40"/><circle class="circle-fill" cx="50" cy="50" r="40" style="stroke-dashoffset:'+sleepOffset+'"/></svg><div class="circle-inner"><div class="circle-val">'+sleepTimeStr+'</div><div class="circle-lbl">дн. сон</div></div></div></div>'
+    +'<div class="circle-card"><div class="circle-wrap"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sleepGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#5ab4ff"/><stop offset="100%" stop-color="#2edba8"/></linearGradient></defs><circle class="circle-bg" cx="50" cy="50" r="40"/><circle class="circle-fill" cx="50" cy="50" r="40" style="stroke-dashoffset:'+sleepOffset+'"/></svg><div class="circle-inner"><div class="circle-val" id="circleVal">'+sleepTimeStr+'</div><div class="circle-lbl">дн. сон</div></div></div></div>'
     +'<div class="pills-col">'
     +'<div class="pill"><div class="pill-val" style="color:var(--accent1)">'+feedCountDay+'</div><div class="pill-label">Кормлений</div></div>'
     +'<div class="pill"><div class="pill-val" style="color:var(--accent4)">'+sleepCountDay+'</div><div class="pill-label">Снов</div></div>'
@@ -800,7 +866,7 @@ function loadData(){
 document.getElementById("refreshBtn").onclick=loadData;
 
 registerSW();
-updateNotifyBar();
+updateBell();
 buildDateOptions();
 setInterval(updateLiveCounter,60000);
 setInterval(updateHeader,60000);
