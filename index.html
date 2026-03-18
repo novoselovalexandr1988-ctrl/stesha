@@ -316,7 +316,9 @@ var selectedDayOffset = 0; // 0=сегодня, 1=вчера...
 var currentHistory = [];
 
 // ── UTILS ──
-function z2(n){return('0'+n).slice(-2);}
+function z2(n){n=parseInt(n)||0;return('0'+Math.abs(n)).slice(-2);}
+function safeNum(n,def){var v=parseFloat(n);return isNaN(v)?( def||0):v;}
+function safeMin(n){return Math.max(0,Math.round(safeNum(n,0)));}
 function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1==1)return one;return many;}
 function formatMin(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
 function formatMinLong(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+" "+pluralRus(h,"час","часа","часов"));if(mn>0)p.push(mn+" "+pluralRus(mn,"минута","минуты","минут"));return p.length?p.join(" "):"меньше минуты";}
@@ -644,7 +646,7 @@ function updateLiveCounter(){
 
   // Обновляем круговой индикатор в реальном времени
   if(currentStatusType==="sleep"){
-    var totalNow=Math.max(0,Math.round(currentSleepBase+mins));
+    var totalNow=safeMin(currentSleepBase+mins);
     var dashArr2=251;
     var offset=totalNow>0?Math.max(0,dashArr2-Math.round(dashArr2*(Math.min(totalNow,NORM_MIN)/NORM_MIN))):dashArr2;
     var circ=document.querySelector(".circle-fill");
@@ -670,13 +672,16 @@ function calcDaySleep(parsed,logDateStr){
       for(var j=i-1;j>=0;j--){
         if(sorted[j].type==="sleep"){
           var ss=sorted[j].date,sm=ss.getHours()*60+ss.getMinutes();
-          if(sm>=420&&sm<1170){var dur=Math.floor((sorted[i].date.getTime()-ss.getTime())/60000);if(dur>0&&dur<300)total+=dur;}
+          if(sm>=420&&sm<1170){
+            var dur=Math.floor((sorted[i].date.getTime()-ss.getTime())/60000);
+            if(dur>0&&dur<300)total+=dur;
+          }
           break;
         }
       }
     }
   }
-  return total;
+  return safeMin(total);
 }
 
 // ── RENDER HISTORY ITEMS ──
@@ -759,7 +764,7 @@ function render(history){
   var lastEventDate=isSleeping?(lastSleep?lastSleep.date:null):(lastWake?lastWake.date:null);
   currentStatusDate=lastEventDate;
   currentStatusType=isSleeping?"sleep":"awake";
-  currentSleepBase=totalSleepMin;
+  currentSleepBase=safeMin(totalSleepMin);
   currentSleepStartMin=isSleeping&&lastSleep?(lastSleep.date.getHours()*60+lastSleep.date.getMinutes()):-1;
   var mins=lastEventDate?minsAgo(lastEventDate):0;
   var sinceStr=lastEventDate?formatMin(mins):"";
@@ -772,12 +777,12 @@ function render(history){
   var minsToSleep=(!isSleeping&&nextSleep)?minsUntil(nextSleep):null;
 
   // Day sleep
-  var totalSleepMin=calcDaySleep(parsed,targetLogical)||0;
+  var totalSleepMin=calcDaySleep(parsed,targetLogical);
   if(selectedDayOffset===0&&isSleeping&&lastSleep){
     var cSMin=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
-    if(cSMin>=420&&cSMin<1170)totalSleepMin+=minsAgo(lastSleep.date);
+    if(cSMin>=420&&cSMin<1170)totalSleepMin+=safeMin(minsAgo(lastSleep.date));
   }
-  totalSleepMin=Math.max(0,Math.round(totalSleepMin));
+  totalSleepMin=safeMin(totalSleepMin);
   var dashArr=251;
   var sleepOffset=totalSleepMin>0?Math.max(0,dashArr-Math.round(dashArr*(Math.min(totalSleepMin,NORM_MIN)/NORM_MIN))):dashArr;
   var sleepH=Math.floor(totalSleepMin/60),sleepM=totalSleepMin%60;
