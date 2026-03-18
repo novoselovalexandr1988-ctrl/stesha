@@ -6,134 +6,284 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Стеша">
-<meta name="theme-color" content="#ff7eb3">
+<meta name="theme-color" content="#ff6eb4">
 <title>Стеша</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="https://img.icons8.com/?size=180&id=Sawg2D8Sr9wA&format=png&color=000000">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Unbounded:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#f4f3ff;--card:#ffffff;--card2:#ede9ff;--accent1:#ff7eb3;--accent2:#5aabff;--accent3:#ffcc00;--accent4:#2ed8a8;--text:#1a1830;--muted:#9490b8;--border:rgba(0,0,0,0.07);--shadow:0 2px 16px rgba(80,60,180,0.07);}
-  @media(prefers-color-scheme:dark){:root{--bg:#0f0f1a;--card:#181828;--card2:#1e1e32;--text:#f0eeff;--muted:#7b7a9a;--border:rgba(255,255,255,0.07);--shadow:0 2px 16px rgba(0,0,0,0.3);}}
+  :root {
+    --bg:#f4f3ff;--card:#fff;--card2:#ede9ff;
+    --accent1:#ff6eb4;--accent2:#5ab4ff;--accent3:#ffd166;--accent4:#2edba8;
+    --text:#1a1830;--muted:#9490b8;--border:rgba(0,0,0,0.07);
+    --shadow:0 2px 16px rgba(80,60,180,0.07);--gap:10px;
+  }
+  @media(prefers-color-scheme:dark){:root{
+    --bg:#0d0d1a;--card:#161626;--card2:#1e1e32;
+    --text:#f0eeff;--muted:#6b6a8a;--border:rgba(255,255,255,0.06);
+    --shadow:0 2px 16px rgba(0,0,0,0.3);
+  }}
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html{background:var(--bg);}
   body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;padding:52px 15px 40px;max-width:430px;margin:0 auto;}
-  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-  .header-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;line-height:1.1;}
-  .header-title span{color:var(--accent1);}
-  .header-date{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;}
-  .refresh-btn{width:36px;height:36px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;box-shadow:var(--shadow);color:var(--muted);}
+
+  /* HEADER */
+  .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+  .header-date-btn{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;}
+  .header-date-btn .dot{color:var(--accent1);}
+  .header-date-btn .arr{font-size:10px;color:var(--muted);}
+  .header-time{font-size:11px;color:var(--muted);font-weight:600;margin-top:3px;}
+  .refresh-btn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--muted);box-shadow:var(--shadow);}
   .refresh-btn.spinning{animation:spin 0.7s linear;}
   @keyframes spin{to{transform:rotate(360deg);}}
-  .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;font-weight:600;}
-  .loading-spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px;}
-  .error-card{background:var(--card);border:1px solid rgba(255,100,100,0.2);border-radius:20px;padding:20px;text-align:center;color:var(--muted);font-size:14px;font-weight:600;}
-  .age-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
-  .age-emoji{font-size:24px;}
-  .age-main{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:var(--accent1);}
-  .age-sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
-  .status-card{background:var(--card2);border:1px solid var(--border);border-radius:22px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
-  .status-card::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,126,179,0.12) 0%,transparent 70%);pointer-events:none;}
-  .status-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
-  .status-main{display:flex;align-items:center;gap:14px;}
-  .status-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
-  .status-icon.sleep{background:rgba(90,171,255,0.15);}
-  .status-icon.awake{background:rgba(255,204,0,0.15);}
-  .status-value{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;line-height:1.1;margin-bottom:4px;}
-  .status-since{font-size:22px;font-weight:900;color:var(--accent4);line-height:1;margin-bottom:6px;}
-  .status-sub{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;}
-  .action-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;border:none;transition:opacity 0.15s,transform 0.15s;}
-  .action-btn:active{opacity:0.7;transform:scale(0.96);}
-  .btn-sleep{background:var(--accent2);color:#fff;}
-  .btn-wake{background:var(--accent3);color:#1a1830;}
-  .btn-feed{background:var(--accent1);color:#fff;}
-  .btn-notify{background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 12px;}
-  .btn-loading{opacity:0.6;pointer-events:none;}
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-  .next-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
-  .next-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 20px 20px;}
-  .next-card.sleep-next::after{background:var(--accent2);}
-  .next-card.feed-next::after{background:var(--accent1);}
-  .next-card.sleep-active::after{background:var(--accent3);}
-  .next-card-icon{font-size:20px;margin-bottom:8px;}
-  .next-card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:4px;}
-  .next-card-time{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:700;line-height:1;margin-bottom:4px;}
-  .next-card.sleep-next .next-card-time{color:var(--accent2);}
-  .next-card.feed-next .next-card-time{color:var(--accent1);}
-  .next-card.sleep-active .next-card-time{color:var(--accent3);}
-  .next-card-sub{font-size:11px;color:var(--muted);font-weight:600;}
-  .stats-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:var(--shadow);}
-  .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:14px;}
-  .stats-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
-  .stats-row:last-of-type{border-bottom:none;padding-bottom:0;}
-  .stats-name{font-size:13px;color:var(--muted);font-weight:600;}
-  .stats-val{font-size:14px;font-weight:800;}
-  .progress-wrap{margin-top:14px;}
-  .progress-label{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:7px;}
-  .progress-label span:last-child{color:var(--accent4);}
-  .progress-bar{height:7px;background:rgba(128,128,128,0.12);border-radius:4px;overflow:hidden;}
-  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent4));border-radius:4px;transition:width 1s ease;}
-  .history-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;box-shadow:var(--shadow);}
-  .history-card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px;}
-  .history-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer;}
-  .history-item:last-child{border-bottom:none;padding-bottom:0;}
-  .history-item:first-child{padding-top:0;}
-  .history-item:active{opacity:0.6;}
-  .history-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+
+  /* DATE PICKER */
+  .date-picker{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:12px;display:none;}
+  .date-picker.show{display:block;}
+  .date-picker-title{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+  .date-options{display:flex;gap:8px;}
+  .date-opt{flex:1;text-align:center;padding:10px 4px;border-radius:12px;border:1px solid var(--border);cursor:pointer;font-size:11px;font-weight:700;color:var(--muted);background:var(--bg);line-height:1.4;}
+  .date-opt.active{background:var(--accent1);color:#fff;border-color:transparent;}
+
+  /* AGE */
+  .age-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+  .age-emoji{font-size:20px;}
+  .age-text{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;color:var(--accent1);}
+  .age-sub{font-size:10px;color:var(--muted);font-weight:600;}
+
+  /* STATUS */
+  .status-big{background:var(--card2);border:1px solid var(--border);border-radius:24px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
+  .status-big::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,210,102,0.10) 0%,transparent 65%);pointer-events:none;}
+  .status-row{display:flex;align-items:center;gap:14px;}
+  .status-icon{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+  .status-icon.awake{background:rgba(255,210,102,0.12);}
+  .status-icon.sleep{background:rgba(90,180,255,0.12);}
+  .status-title{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;line-height:1;margin-bottom:5px;}
+  .status-timer{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;color:var(--accent4);line-height:1;margin-bottom:3px;}
+  .status-since{font-size:12px;color:var(--muted);font-weight:600;}
+
+  /* ACTION BUTTONS */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:12px;}
+  .act-card{border-radius:20px;padding:16px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;transition:opacity 0.15s,transform 0.15s;}
+  .act-card:active{opacity:0.7;transform:scale(0.97);}
+  .act-card.btn-sleep{background:var(--accent2);color:#0d0d1a;}
+  .act-card.btn-wake{background:var(--accent3);color:#0d0d1a;}
+  .act-card.btn-feed{background:var(--accent1);color:#fff;}
+  .act-card.btn-loading{opacity:0.6;pointer-events:none;}
+
+  /* MINI CARDS */
+  .mini-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
+  .mini-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 20px 20px;}
+  .mini-card.sleep-c::after{background:var(--accent2);}
+  .mini-card.feed-c::after{background:var(--accent1);}
+  .mini-icon{font-size:18px;margin-bottom:8px;}
+  .mini-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:4px;}
+  .mini-time{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;line-height:1;margin-bottom:3px;}
+  .mini-card.sleep-c .mini-time{color:var(--accent2);}
+  .mini-card.feed-c .mini-time{color:var(--accent1);}
+  .mini-sub{font-size:10px;color:var(--muted);font-weight:600;}
+
+  /* CIRCLE + PILLS */
+  .circle-pills-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:12px;align-items:stretch;}
+  .circle-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:var(--gap);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);}
+  .circle-wrap{position:relative;width:100%;aspect-ratio:1;}
+  .circle-wrap svg{transform:rotate(-90deg);width:100%;height:100%;display:block;}
+  .circle-bg{fill:none;stroke:rgba(128,128,128,0.12);stroke-width:9;}
+  .circle-fill{fill:none;stroke:url(#sleepGrad);stroke-width:9;stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:251;transition:stroke-dashoffset 1s ease;}
+  .circle-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+  .circle-val{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:var(--accent4);line-height:1;}
+  .circle-lbl{font-size:8px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-top:3px;}
+  .pills-col{display:flex;flex-direction:column;gap:var(--gap);}
+  .pill{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:10px 12px;flex:1;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow);}
+  .pill-val{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;line-height:1;margin-bottom:3px;}
+  .pill-label{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.7px;}
+
+  /* WEIGHT HEIGHT */
+  .wh-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:12px;}
+  .wh-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;cursor:pointer;position:relative;overflow:hidden;box-shadow:var(--shadow);}
+  .wh-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 20px 20px;}
+  .wh-card.weight::after{background:var(--accent3);}
+  .wh-card.height::after{background:var(--accent4);}
+  .wh-icon{font-size:18px;margin-bottom:8px;}
+  .wh-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:4px;}
+  .wh-val{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;line-height:1;margin-bottom:3px;}
+  .wh-card.weight .wh-val{color:var(--accent3);}
+  .wh-card.height .wh-val{color:var(--accent4);}
+  .wh-date{font-size:10px;color:var(--muted);font-weight:600;}
+  .wh-edit-icon{position:absolute;top:14px;right:14px;font-size:13px;color:var(--muted);}
+
+  /* CHART */
+  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .chart-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:14px;}
+  .chart-bars{display:flex;gap:6px;align-items:flex-end;height:64px;}
+  .chart-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .chart-bar-wrap{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;position:relative;}
+  .chart-bar{width:100%;border-radius:5px 5px 0 0;min-height:3px;}
+  .chart-norm-line{position:absolute;left:-3px;right:-3px;height:1px;background:rgba(128,128,128,0.2);bottom:60%;}
+  .chart-day-lbl{font-size:9px;color:var(--muted);font-weight:700;}
+  .chart-day.today .chart-day-lbl{color:var(--accent4);font-weight:900;}
+
+  /* HISTORY */
+  .hist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;margin-top:4px;}
+  .day-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);}
+  .add-btn{width:26px;height:26px;border-radius:8px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;color:var(--accent4);font-weight:700;line-height:1;box-shadow:var(--shadow);}
+  .two-col-hist{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:12px;}
+  .hist-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:var(--shadow);}
+  .hist-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;}
+  .hist-item{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+  .hist-item:last-child{border-bottom:none;padding-bottom:0;}
+  .hist-item:first-child{padding-top:0;}
+  .hist-item:active{opacity:0.6;}
+  .hist-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
   .dot-wake{background:var(--accent3);}
   .dot-sleep{background:var(--accent2);}
   .dot-feed{background:var(--accent1);}
-  .history-time{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;min-width:40px;}
-  .history-info{flex:1;}
-  .history-desc{font-size:12px;color:var(--text);font-weight:700;line-height:1.2;}
-  .history-dur{font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;}
-  .history-edit{font-size:14px;color:var(--muted);flex-shrink:0;}
-  .day-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;margin-top:4px;}
-  .notify-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+  .hist-time{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;min-width:36px;}
+  .hist-info{flex:1;}
+  .hist-desc{font-size:11px;font-weight:700;}
+  .hist-dur{font-size:9px;color:var(--muted);font-weight:600;}
+  .hist-edit{font-size:12px;color:var(--muted);}
+
+  /* BACKUP */
+  .backup-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-top:4px;}
+  .backup-btn{border-radius:16px;padding:13px 10px;border:1px solid var(--border);cursor:pointer;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;text-align:center;background:var(--card);transition:opacity 0.15s;}
+  .backup-btn:active{opacity:0.7;}
+  .backup-btn.export{color:var(--accent3);border-color:rgba(255,209,102,0.25);}
+  .backup-btn.restore{color:var(--muted);}
+
+  /* NOTIFY BAR */
+  .notify-bar{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
   .notify-bar-text{font-size:12px;color:var(--muted);font-weight:600;}
+  .notify-enable-btn{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--accent4);cursor:pointer;}
 
   /* MODAL */
-  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
   .modal-overlay.show{opacity:1;pointer-events:all;}
-  .modal{background:var(--card);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;transform:translateY(100%);transition:transform 0.3s ease;}
+  .modal{background:var(--card);border-radius:24px 24px 0 0;padding:24px 20px 44px;width:100%;max-width:430px;transform:translateY(100%);transition:transform 0.3s ease;}
   .modal-overlay.show .modal{transform:translateY(0);}
-  .modal-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;}
-  .modal-sub{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:20px;}
-  .modal-input{width:100%;padding:14px 16px;border-radius:14px;border:2px solid var(--border);background:var(--bg);color:var(--text);font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:16px;outline:none;}
-  .modal-input:focus{border-color:var(--accent2);}
+  .modal-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:18px;}
+  .modal-types{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px;}
+  .modal-type{border-radius:14px;padding:12px 6px;border:1px solid var(--border);cursor:pointer;text-align:center;background:var(--bg);}
+  .modal-type.active{border-color:var(--accent4);background:rgba(46,219,168,0.08);}
+  .modal-type-icon{font-size:20px;margin-bottom:4px;}
+  .modal-type-lbl{font-size:11px;font-weight:700;color:var(--muted);}
+  .modal-type.active .modal-type-lbl{color:var(--accent4);}
+  .modal-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+  .modal-field label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:7px;}
+  .modal-field select,.modal-field input[type=time],.modal-field input[type=text],.modal-field input[type=number]{width:100%;padding:12px 14px;border-radius:12px;border:2px solid var(--border);background:var(--bg);color:var(--text);font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;outline:none;}
+  .modal-field select:focus,.modal-field input:focus{border-color:var(--accent2);}
   .modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .modal-cancel{background:var(--bg);border:1px solid var(--border);color:var(--muted);border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;}
-  .modal-save{background:var(--accent2);border:none;color:#fff;border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;}
-  .modal-save:active,.modal-cancel:active{opacity:0.7;}
+  .modal-save{background:var(--accent4);border:none;color:#0d0d1a;border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;}
+  .modal-save:disabled{opacity:0.6;pointer-events:none;}
 
-  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1830;color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:1100;pointer-events:none;white-space:nowrap;}
+  /* EDIT MODAL */
+  .edit-modal-input{width:100%;padding:14px 16px;border-radius:14px;border:2px solid var(--border);background:var(--bg);color:var(--text);font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:16px;outline:none;}
+  .edit-modal-input:focus{border-color:var(--accent2);}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1830;color:#fff;padding:10px 20px;border-radius:14px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:300;pointer-events:none;white-space:nowrap;}
   .toast.show{opacity:1;}
+
+  /* LOADING */
+  .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;font-weight:600;}
+  .loading-spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px;}
+  .error-card{background:var(--card);border:1px solid rgba(255,100,100,0.2);border-radius:20px;padding:20px;text-align:center;color:var(--muted);font-size:14px;font-weight:600;}
+
   .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent4);vertical-align:middle;animation:pulseAnim 2s infinite;}
   @keyframes pulseAnim{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.7);}}
   @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-  .fade-up{animation:fadeUp 0.35s ease both;}
-  .d1{animation-delay:0.05s;}.d2{animation-delay:0.10s;}.d3{animation-delay:0.15s;}.d4{animation-delay:0.20s;}
+  .fu{animation:fadeUp 0.3s ease both;}
+  .fu1{animation-delay:0.04s}.fu2{animation-delay:0.08s}.fu3{animation-delay:0.12s}
+  .fu4{animation-delay:0.16s}.fu5{animation-delay:0.20s}.fu6{animation-delay:0.24s}
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="header-left">
-    <div class="header-title">Стеша <span>·</span> <span id="headerDate"></span></div>
-    <div class="header-date" id="headerTime"></div>
+
+<div class="header fu">
+  <div>
+    <div class="header-date-btn" id="headerDateBtn" onclick="toggleDatePicker()">
+      Стеша <span class="dot">·</span> <span id="headerDate"></span> <span class="arr">▾</span>
+    </div>
+    <div class="header-time" id="headerTime"></div>
   </div>
   <div class="refresh-btn" id="refreshBtn">↻</div>
 </div>
+
+<div class="date-picker" id="datePicker">
+  <div class="date-picker-title">Выберите день</div>
+  <div class="date-options" id="dateOptions"></div>
+</div>
+
 <div id="notifyBar"></div>
 <div id="content"><div class="loading"><div class="loading-spinner"></div>Загружаем данные…</div></div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay">
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <div class="modal-title">Добавить запись</div>
+    <div class="modal-types">
+      <div class="modal-type active" data-type="sleep" onclick="selectAddType(this)">
+        <div class="modal-type-icon">🌙</div>
+        <div class="modal-type-lbl">Уснула</div>
+      </div>
+      <div class="modal-type" data-type="wake" onclick="selectAddType(this)">
+        <div class="modal-type-icon">☀️</div>
+        <div class="modal-type-lbl">Проснулась</div>
+      </div>
+      <div class="modal-type" data-type="feed" onclick="selectAddType(this)">
+        <div class="modal-type-icon">🍼</div>
+        <div class="modal-type-lbl">Поела</div>
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field">
+        <label>День</label>
+        <select id="addDay">
+          <option value="0">Сегодня</option>
+          <option value="1">Вчера</option>
+          <option value="2">2 дня назад</option>
+          <option value="3">3 дня назад</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Время</label>
+        <input type="time" id="addTime">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeAddModal()">Отмена</button>
+      <button class="modal-save" id="addSaveBtn" onclick="saveAdd()">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
   <div class="modal">
     <div class="modal-title">Изменить время</div>
-    <div class="modal-sub" id="modalSub"></div>
-    <input class="modal-input" type="time" id="modalInput">
+    <div class="modal-title" id="editSub" style="font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted);font-weight:600;margin-top:-10px;margin-bottom:16px;"></div>
+    <input class="edit-modal-input" type="time" id="editInput">
     <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeModal()">Отмена</button>
-      <button class="modal-save" onclick="saveEdit()">Сохранить</button>
+      <button class="modal-cancel" onclick="closeEditModal()">Отмена</button>
+      <button class="modal-save" id="editSaveBtn" onclick="saveEdit()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- WH MODAL -->
+<div class="modal-overlay" id="whModal" onclick="if(event.target===this)closeWhModal()">
+  <div class="modal">
+    <div class="modal-title" id="whModalTitle">Вес</div>
+    <div class="modal-row" style="grid-template-columns:1fr;margin-bottom:18px;">
+      <div class="modal-field">
+        <label id="whModalLabel">Значение</label>
+        <input type="number" id="whInput" step="0.1" placeholder="0.0">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeWhModal()">Отмена</button>
+      <button class="modal-save" id="whSaveBtn" onclick="saveWh()">Сохранить</button>
     </div>
   </div>
 </div>
@@ -141,20 +291,27 @@
 <div class="toast" id="toast"></div>
 
 <script>
-var BIRTHDAY = new Date(2025, 6, 23);
 var API_URL = "https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
+var BIRTHDAY = new Date(2025, 6, 23);
 var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+var MONTHS_SHORT = ["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"];
+var DAYS_SHORT = ["вс","пн","вт","ср","чт","пт","сб"];
 var NORM_MIN = 180;
 var notifyTimers = [];
 var editRowIndex = null;
+var whType = null;
+var selectedDayOffset = 0; // 0=сегодня, 1=вчера...
+var currentHistory = [];
 
+// ── UTILS ──
 function z2(n){return('0'+n).slice(-2);}
 function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1==1)return one;return many;}
 function formatMin(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
 function formatMinLong(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+" "+pluralRus(h,"час","часа","часов"));if(mn>0)p.push(mn+" "+pluralRus(mn,"минута","минуты","минут"));return p.length?p.join(" "):"меньше минуты";}
 function minsAgo(d){return Math.floor((Date.now()-d.getTime())/60000);}
 function minsUntil(t){if(!t)return null;var now=new Date(),p=t.split(":"),tgt=new Date();tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);if(tgt<now)tgt.setDate(tgt.getDate()+1);return Math.floor((tgt-now)/60000);}
-function getLogicalDateStr(date){var d=new Date(date.getTime());if(d.getHours()<6)d.setDate(d.getDate()-1);return d.toDateString();}
+function getLogicalDate(date){var d=new Date(date.getTime());if(d.getHours()<6)d.setDate(d.getDate()-1);return d;}
+function getLogicalDateStr(date){return getLogicalDate(date).toDateString();}
 
 function calcAge(){
   var now=new Date(),y=now.getFullYear()-BIRTHDAY.getFullYear(),m=now.getMonth()-BIRTHDAY.getMonth(),d=now.getDate()-BIRTHDAY.getDate();
@@ -163,133 +320,233 @@ function calcAge(){
   return{years:y,months:m,days:d};
 }
 
-function updateHeader(){
-  var now=new Date();
-  document.getElementById("headerDate").textContent=now.getDate()+" "+MONTHS[now.getMonth()]+" "+now.getFullYear()+" г.";
-  document.getElementById("headerTime").textContent=z2(now.getHours())+":"+z2(now.getMinutes());
-}
-
 function showToast(msg){
   var t=document.getElementById("toast");
   t.textContent=msg;t.classList.add("show");
   setTimeout(function(){t.classList.remove("show");},2500);
 }
 
-// ───── МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ─────
-function openEdit(rowIndex, currentTime, desc) {
-  editRowIndex = rowIndex;
-  document.getElementById("modalSub").textContent = desc;
-  document.getElementById("modalInput").value = currentTime;
-  document.getElementById("modalOverlay").classList.add("show");
-  setTimeout(function(){ document.getElementById("modalInput").focus(); }, 300);
+// ── HEADER ──
+function updateHeader(){
+  var now=new Date();
+  document.getElementById("headerDate").textContent=now.getDate()+" "+MONTHS[now.getMonth()]+" "+now.getFullYear()+" г.";
+  document.getElementById("headerTime").textContent=z2(now.getHours())+":"+z2(now.getMinutes());
 }
 
-function closeModal() {
-  document.getElementById("modalOverlay").classList.remove("show");
-  editRowIndex = null;
+function buildDateOptions(){
+  var now=new Date();
+  var wrap=document.getElementById("dateOptions");
+  wrap.innerHTML="";
+  for(var i=0;i<4;i++){
+    var d=new Date(now.getTime()-i*86400000);
+    var label=i===0?"Сегодня":i===1?"Вчера":(i+" дня назад");
+    var sub=d.getDate()+" "+MONTHS_SHORT[d.getMonth()];
+    var el=document.createElement("div");
+    el.className="date-opt"+(i===0?" active":"");
+    el.dataset.offset=i;
+    el.innerHTML=label+"<br><span style='font-size:9px;opacity:0.7'>"+sub+"</span>";
+    el.onclick=(function(offset,elem){return function(){
+      document.querySelectorAll(".date-opt").forEach(function(o){o.classList.remove("active");});
+      elem.classList.add("active");
+      selectedDayOffset=offset;
+      document.getElementById("datePicker").classList.remove("show");
+      renderForDay();
+    };})(i,el);
+    wrap.appendChild(el);
+  }
 }
 
-function saveEdit() {
-  if (editRowIndex === null) return;
-  var newTime = document.getElementById("modalInput").value;
-  if (!newTime) { showToast("⚠️ Введите время"); return; }
+function toggleDatePicker(){document.getElementById("datePicker").classList.toggle("show");}
 
-  var saveBtn = document.querySelector(".modal-save");
-  saveBtn.textContent = "⏳ Сохраняю...";
-  saveBtn.disabled = true;
-
-  var url = API_URL + "?mode=edit&rowIndex=" + editRowIndex + "&newTime=" + encodeURIComponent(newTime);
-  fetch(url)
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      saveBtn.textContent = "Сохранить";
-      saveBtn.disabled = false;
-      if (data.ok) {
-        showToast("✅ Время обновлено!");
-        closeModal();
-        setTimeout(loadData, 500);
-      } else {
-        showToast("❌ " + (data.error || "Ошибка"));
-      }
-    })
-    .catch(function(){
-      saveBtn.textContent = "Сохранить";
-      saveBtn.disabled = false;
-      showToast("❌ Нет связи");
-    });
-}
-
-// Закрытие по тапу на оверлей
-document.getElementById("modalOverlay").addEventListener("click", function(e){
-  if (e.target === this) closeModal();
-});
-
-// ───── УВЕДОМЛЕНИЯ ─────
+// ── NOTIFICATIONS ──
 function isNotifyHour(){var h=new Date().getHours();return h>=6||h<2;}
-
 function registerSW(){
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("sw.js")
+      .then(function(reg){ console.log("SW registered:", reg.scope); })
+      .catch(function(e){ console.log("SW failed:", e); });
+  }
 }
-
-function requestNotifyPermission(callback){
-  if(!('Notification' in window))return;
-  if(Notification.permission==='granted'){if(callback)callback();return;}
-  if(Notification.permission==='denied')return;
-  Notification.requestPermission().then(function(p){if(p==='granted'&&callback)callback();updateNotifyBar();});
+function requestNotifyPermission(){
+  if(!("Notification" in window)){showToast("⚠️ Уведомления не поддерживаются");return;}
+  if(Notification.permission==="granted"){showToast("✅ Уведомления уже включены");return;}
+  Notification.requestPermission().then(function(p){
+    updateNotifyBar();
+    if(p==="granted"){showToast("✅ Уведомления включены!");}
+    else{showToast("❌ Уведомления не разрешены");}
+  });
 }
-
 function sendNotification(title,body){
-  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  if(!("Notification" in window)||Notification.permission!=="granted")return;
   if(!isNotifyHour())return;
   try{
-    if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+    // Пробуем через SW (нужен для фоновых уведомлений)
+    if("serviceWorker" in navigator){
       navigator.serviceWorker.ready.then(function(reg){
-        reg.showNotification(title,{body:body,icon:'https://img.icons8.com/?size=192&id=Sawg2D8Sr9wA&format=png&color=000000',vibrate:[200,100,200]});
+        reg.showNotification(title,{
+          body:body,
+          icon:"https://img.icons8.com/?size=192&id=Sawg2D8Sr9wA&format=png&color=000000",
+          badge:"https://img.icons8.com/?size=96&id=Sawg2D8Sr9wA&format=png&color=000000",
+          vibrate:[200,100,200],
+          tag:"stesha-notify",
+          renotify:true
+        });
+      }).catch(function(){
+        // Fallback — прямое уведомление
+        try{ new Notification(title,{body:body}); }catch(e2){}
       });
-    } else { new Notification(title,{body:body}); }
-  }catch(e){}
+    } else {
+      new Notification(title,{body:body});
+    }
+  }catch(e){ console.log("Notification error:",e); }
 }
-
 function clearNotifyTimers(){for(var i=0;i<notifyTimers.length;i++)clearTimeout(notifyTimers[i]);notifyTimers=[];}
-
-function scheduleNotification(title,body,timeStr){
+function scheduleNotify(title,body,timeStr){
   if(!timeStr)return;
   var mins=minsUntil(timeStr);
   if(mins===null)return;
   var alertMins=mins-10;
-  if(alertMins>0&&alertMins<480){
-    notifyTimers.push(setTimeout(function(){sendNotification(title,body);},alertMins*60000));
-  }
+  if(alertMins>0&&alertMins<480)notifyTimers.push(setTimeout(function(){sendNotification(title,body);},alertMins*60000));
 }
-
 function updateNotifyBar(){
   var bar=document.getElementById("notifyBar");
-  if(!('Notification' in window)){bar.innerHTML='';return;}
-  if(Notification.permission==='granted'){
-    bar.innerHTML='<div class="notify-bar fade-up"><div class="notify-bar-text">🔔 Уведомления включены</div></div>';
-  } else if(Notification.permission==='denied'){
-    bar.innerHTML='<div class="notify-bar fade-up"><div class="notify-bar-text">🔕 Уведомления отключены</div></div>';
-  } else {
-    bar.innerHTML='<div class="notify-bar fade-up"><div class="notify-bar-text">Включить напоминания?</div><button class="action-btn btn-notify" onclick="requestNotifyPermission()">🔔 Включить</button></div>';
+  if(!("Notification" in window)){bar.innerHTML="";return;}
+  if(Notification.permission==="granted"){
+    bar.innerHTML='<div class="notify-bar fu"><div class="notify-bar-text"><span class="pulse"></span> Уведомления включены</div></div>';
+  }else if(Notification.permission==="denied"){
+    bar.innerHTML='<div class="notify-bar fu"><div class="notify-bar-text">🔕 Уведомления отключены</div></div>';
+  }else{
+    bar.innerHTML='<div class="notify-bar fu"><div class="notify-bar-text">Включить напоминания?</div><button class="notify-enable-btn" onclick="requestNotifyPermission()">🔔 Включить</button></div>';
   }
 }
 
-// ───── ДЕЙСТВИЯ ─────
+// ── ACTIONS ──
 function sendAction(action,btnEl,label){
-  btnEl.classList.add("btn-loading");
   var orig=btnEl.textContent;
+  btnEl.classList.add("btn-loading");
   btnEl.textContent="⏳ "+label+"...";
   fetch(API_URL+"?mode=device&action="+action)
     .then(function(r){return r.json();})
     .then(function(data){
-      if(data.ok){showToast("✅ Команда отправлена!");setTimeout(function(){loadData();},3000);}
-      else{showToast("❌ "+(data.error||"Ошибка"));btnEl.classList.remove("btn-loading");btnEl.textContent=orig;}
+      if(data.ok){showToast("✅ Отправлено!");setTimeout(loadData,3000);}
+      else{showToast("❌ "+(data.error||"Ошибка"));}
+      btnEl.classList.remove("btn-loading");btnEl.textContent=orig;
     })
     .catch(function(){showToast("❌ Нет связи");btnEl.classList.remove("btn-loading");btnEl.textContent=orig;});
 }
 
-var currentStatusDate=null,currentStatusType=null;
+// ── ADD MODAL ──
+var addType="sleep";
+function openAddModal(){
+  var now=new Date();
+  document.getElementById("addTime").value=z2(now.getHours())+":"+z2(now.getMinutes());
+  document.getElementById("addDay").value="0";
+  document.getElementById("addModal").classList.add("show");
+}
+function closeAddModal(){document.getElementById("addModal").classList.remove("show");}
+function selectAddType(el){
+  document.querySelectorAll(".modal-type").forEach(function(t){t.classList.remove("active");});
+  el.classList.add("active");
+  addType=el.dataset.type;
+}
+function saveAdd(){
+  var timeVal=document.getElementById("addTime").value;
+  var dayOffset=parseInt(document.getElementById("addDay").value);
+  if(!timeVal){showToast("⚠️ Введите время");return;}
+  var btn=document.getElementById("addSaveBtn");
+  btn.textContent="⏳...";btn.disabled=true;
+  var d=new Date();
+  d.setDate(d.getDate()-dayOffset);
+  var parts=timeVal.split(":");
+  d.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
+  var typeMap={sleep:"sleep",wake:"wake",feed:"feed"};
+  var msgMap={sleep:"Уснула",wake:"Проснулась",feed:"Поела"};
+  var body=JSON.stringify({type:typeMap[addType],message:msgMap[addType]+" в "+timeVal,manualTime:d.getTime()});
+  fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:body})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      btn.textContent="Добавить";btn.disabled=false;
+      if(data.ok){showToast("✅ Запись добавлена!");closeAddModal();setTimeout(loadData,500);}
+      else{showToast("❌ "+(data.error||"Ошибка"));}
+    })
+    .catch(function(){btn.textContent="Добавить";btn.disabled=false;showToast("❌ Нет связи");});
+}
 
+// ── EDIT MODAL ──
+function openEdit(rowIndex,currentTime,desc){
+  editRowIndex=rowIndex;
+  document.getElementById("editSub").textContent=desc;
+  document.getElementById("editInput").value=currentTime;
+  document.getElementById("editModal").classList.add("show");
+  setTimeout(function(){document.getElementById("editInput").focus();},300);
+}
+function closeEditModal(){document.getElementById("editModal").classList.remove("show");editRowIndex=null;}
+function saveEdit(){
+  if(editRowIndex===null)return;
+  var newTime=document.getElementById("editInput").value;
+  if(!newTime){showToast("⚠️ Введите время");return;}
+  var btn=document.getElementById("editSaveBtn");
+  btn.textContent="⏳...";btn.disabled=true;
+  fetch(API_URL+"?mode=edit&rowIndex="+editRowIndex+"&newTime="+encodeURIComponent(newTime))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      btn.textContent="Сохранить";btn.disabled=false;
+      if(data.ok){showToast("✅ Время обновлено!");closeEditModal();setTimeout(loadData,500);}
+      else{showToast("❌ "+(data.error||"Ошибка"));}
+    })
+    .catch(function(){btn.textContent="Сохранить";btn.disabled=false;showToast("❌ Нет связи");});
+}
+
+// ── WH MODAL ──
+function openWhModal(type){
+  whType=type;
+  document.getElementById("whModalTitle").textContent=type==="weight"?"Вес":"Рост";
+  document.getElementById("whModalLabel").textContent=type==="weight"?"Вес (кг)":"Рост (см)";
+  document.getElementById("whInput").value="";
+  document.getElementById("whInput").placeholder=type==="weight"?"8.2":"68";
+  document.getElementById("whInput").step=type==="weight"?"0.1":"1";
+  document.getElementById("whModal").classList.add("show");
+  setTimeout(function(){document.getElementById("whInput").focus();},300);
+}
+function closeWhModal(){document.getElementById("whModal").classList.remove("show");whType=null;}
+function saveWh(){
+  var val=document.getElementById("whInput").value;
+  if(!val){showToast("⚠️ Введите значение");return;}
+  var btn=document.getElementById("whSaveBtn");
+  btn.textContent="⏳...";btn.disabled=true;
+  var body=JSON.stringify({type:"measurement",subtype:whType,value:parseFloat(val),message:(whType==="weight"?"Вес: "+val+" кг":"Рост: "+val+" см")});
+  fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:body})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      btn.textContent="Сохранить";btn.disabled=false;
+      if(data.ok){showToast("✅ Сохранено!");closeWhModal();setTimeout(loadData,500);}
+      else{showToast("❌ "+(data.error||"Ошибка"));}
+    })
+    .catch(function(){btn.textContent="Сохранить";btn.disabled=false;showToast("❌ Нет связи");});
+}
+
+// ── BACKUP ──
+function doBackup(){
+  showToast("⏳ Выгружаем...");
+  fetch(API_URL+"?mode=backup")
+    .then(function(r){return r.json();})
+    .then(function(data){showToast(data.ok?"✅ Выгружено в таблицу!":"❌ "+(data.error||"Ошибка"));})
+    .catch(function(){showToast("❌ Нет связи");});
+}
+function doRestore(){
+  if(!confirm("Восстановить данные из таблицы? Текущие данные будут перезаписаны."))return;
+  showToast("⏳ Восстанавливаем...");
+  fetch(API_URL+"?mode=restore")
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.ok){showToast("✅ Восстановлено!");setTimeout(loadData,500);}
+      else{showToast("❌ "+(data.error||"Ошибка"));}
+    })
+    .catch(function(){showToast("❌ Нет связи");});
+}
+
+// ── LIVE COUNTER ──
+var currentStatusDate=null,currentStatusType=null;
 function updateLiveCounter(){
   if(!currentStatusDate)return;
   var mins=minsAgo(currentStatusDate);
@@ -303,18 +560,18 @@ function updateLiveCounter(){
   if(sl&&ns&&ns.dataset.time&&currentStatusType!=="sleep"){var mt=minsUntil(ns.dataset.time);sl.textContent=mt!==null?"через "+formatMin(mt):"нет данных";}
 }
 
+// ── EXTRACT ──
 function extractNextSleep(msg){var m=msg.match(/спать в (\d{2}:\d{2})/);return m?m[1]:null;}
 function extractNextFeed(msg){var m=msg.match(/кормление в (\d{2}:\d{2})/);return m?m[1]:null;}
 
-function calcDaySleep(parsed,todayLogical){
+function calcDaySleep(parsed,logDateStr){
   var total=0,sorted=parsed.slice().reverse();
   for(var i=0;i<sorted.length;i++){
-    var item=sorted[i];
-    if(item.type==="wake"&&item.logicalDateStr===todayLogical){
+    if(sorted[i].type==="wake"&&sorted[i].logicalDateStr===logDateStr){
       for(var j=i-1;j>=0;j--){
         if(sorted[j].type==="sleep"){
           var ss=sorted[j].date,sm=ss.getHours()*60+ss.getMinutes();
-          if(sm>=420&&sm<1170){var dur=Math.floor((item.date.getTime()-ss.getTime())/60000);if(dur>0&&dur<300)total+=dur;}
+          if(sm>=420&&sm<1170){var dur=Math.floor((sorted[i].date.getTime()-ss.getTime())/60000);if(dur>0&&dur<300)total+=dur;}
           break;
         }
       }
@@ -323,6 +580,7 @@ function calcDaySleep(parsed,todayLogical){
   return total;
 }
 
+// ── RENDER HISTORY ITEMS ──
 function renderSleepItems(items,max){
   var si=items.filter(function(x){return x.type==="sleep"||x.type==="wake";});
   if(!si.length)return'<div style="color:var(--muted);font-size:12px;padding:4px 0">Нет данных</div>';
@@ -335,8 +593,8 @@ function renderSleepItems(items,max){
       if(d>0&&d<300)dur=formatMinLong(d);
     }
     var ri=it.rowIndex!==undefined?it.rowIndex:"";
-    var onclick=ri!==""?'onclick="openEdit('+ri+',\''+t+'\',\''+desc+' в '+t+'\')"':'';
-    html+='<div class="history-item" '+onclick+'><div class="history-dot '+dc+'"></div><div class="history-time">'+t+'</div><div class="history-info"><div class="history-desc">'+desc+'</div>'+(dur?'<div class="history-dur">'+dur+'</div>':'')+'</div><div class="history-edit">✏️</div></div>';
+    var oc=ri!==""?'onclick="openEdit('+ri+',\''+t+'\',\''+desc+' в '+t+'\')"':'';
+    html+='<div class="hist-item" '+oc+'><div class="hist-dot '+dc+'"></div><div class="hist-time">'+t+'</div><div class="hist-info"><div class="hist-desc">'+desc+'</div>'+(dur?'<div class="hist-dur">'+dur+'</div>':'')+'</div><div class="hist-edit">✏️</div></div>';
   }
   return html;
 }
@@ -348,23 +606,34 @@ function renderFeedItems(items,max){
   for(var f=0;f<fi.length&&f<max;f++){
     var fitem=fi[f],ft=z2(fitem.date.getHours())+":"+z2(fitem.date.getMinutes());
     var ri=fitem.rowIndex!==undefined?fitem.rowIndex:"";
-    var onclick=ri!==""?'onclick="openEdit('+ri+',\''+ft+'\',\'Поела в '+ft+'\')"':'';
-    html+='<div class="history-item" '+onclick+'><div class="history-dot dot-feed"></div><div class="history-time">'+ft+'</div><div class="history-info"><div class="history-desc">Поела</div></div><div class="history-edit">✏️</div></div>';
+    var oc=ri!==""?'onclick="openEdit('+ri+',\''+ft+'\',\'Поела в '+ft+'\')"':'';
+    html+='<div class="hist-item" '+oc+'><div class="hist-dot dot-feed"></div><div class="hist-time">'+ft+'</div><div class="hist-info"><div class="hist-desc">Поела</div></div><div class="hist-edit">✏️</div></div>';
   }
   return html;
 }
 
+// ── RENDER FOR DAY ──
+function renderForDay(){
+  if(!currentHistory.length)return;
+  render(currentHistory);
+}
+
+// ── MAIN RENDER ──
 function render(history){
+  currentHistory=history;
   if(!history||!history.length){document.getElementById("content").innerHTML='<div class="error-card">Данных пока нет.</div>';return;}
+
   var now=new Date();
+  var targetDate=new Date(now.getTime()-selectedDayOffset*86400000);
+  var targetLogical=getLogicalDateStr(targetDate);
+  var prevDate=new Date(targetDate.getTime()-86400000);
+  var prevLogical=getLogicalDateStr(prevDate);
   var todayLogical=getLogicalDateStr(now);
-  var yesterday=new Date(now.getTime());
-  if(now.getHours()<6)yesterday.setDate(yesterday.getDate()-2);
-  else yesterday.setDate(yesterday.getDate()-1);
-  var yesterdayLogical=getLogicalDateStr(yesterday);
 
   var lastWake=null,lastSleep=null,lastFeed=null,nextSleep=null,nextFeed=null;
-  var feedCountToday=0,sleepCountToday=0,parsed=[];
+  var lastWeight=null,lastHeight=null;
+  var feedCountDay=0,sleepCountDay=0;
+  var parsed=[];
 
   for(var i=0;i<history.length;i++){
     var item=history[i],d=new Date(item.time),msg=item.message||"";
@@ -375,91 +644,164 @@ function render(history){
     if(!lastFeed&&item.type==="feed")lastFeed={date:d,msg:msg};
     if(!nextSleep&&item.type==="wake")nextSleep=extractNextSleep(msg);
     if(!nextFeed&&item.type==="feed")nextFeed=extractNextFeed(msg);
-    if(logDate===todayLogical){if(item.type==="feed")feedCountToday++;if(item.type==="sleep")sleepCountToday++;}
+    if(!lastWeight&&item.type==="measurement"&&item.subtype==="weight")lastWeight={val:item.value,date:d};
+    if(!lastHeight&&item.type==="measurement"&&item.subtype==="height")lastHeight={val:item.value,date:d};
+    if(logDate===targetLogical){
+      if(item.type==="feed")feedCountDay++;
+      if(item.type==="sleep")sleepCountDay++;
+    }
   }
 
+  // Status (always based on latest events)
   var isSleeping=false;
   if(lastSleep&&lastWake)isSleeping=lastSleep.date>lastWake.date;
   else if(lastSleep&&!lastWake)isSleeping=true;
 
   var lastEventDate=isSleeping?(lastSleep?lastSleep.date:null):(lastWake?lastWake.date:null);
-  currentStatusDate=lastEventDate;currentStatusType=isSleeping?"sleep":"awake";
+  currentStatusDate=lastEventDate;
+  currentStatusType=isSleeping?"sleep":"awake";
   var mins=lastEventDate?minsAgo(lastEventDate):0;
   var sinceStr=lastEventDate?formatMin(mins)+" "+(isSleeping?"спит":"бодрствует"):"";
-  var statusIcon=isSleeping?"🌙":"☀️",statusClass=isSleeping?"sleep":"awake",statusText=isSleeping?"Спит":"Бодрствует";
-  var statusSubTime=isSleeping?(lastSleep?"с "+z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):""):(lastWake?"с "+z2(lastWake.date.getHours())+":"+z2(lastWake.date.getMinutes()):"");
+  var statusIcon=isSleeping?"🌙":"☀️";
+  var statusClass=isSleeping?"sleep":"awake";
+  var statusText=isSleeping?"Спит":"Бодрствует";
+  var statusSubTime=isSleeping?(lastSleep?"с "+z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes())+"  проснулась в 14:19":""):(lastWake?"проснулась в "+z2(lastWake.date.getHours())+":"+z2(lastWake.date.getMinutes()):"");
+
   var minsToFeed=nextFeed?minsUntil(nextFeed):null;
   var minsToSleep=(!isSleeping&&nextSleep)?minsUntil(nextSleep):null;
 
-  var totalSleepMin=calcDaySleep(parsed,todayLogical);
-  if(isSleeping&&lastSleep){var cSMin=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();if(cSMin>=420&&cSMin<1170)totalSleepMin+=minsAgo(lastSleep.date);}
-  var progressPct=totalSleepMin?Math.min(100,Math.round(totalSleepMin/NORM_MIN*100)):0;
+  // Day sleep
+  var totalSleepMin=calcDaySleep(parsed,targetLogical);
+  if(selectedDayOffset===0&&isSleeping&&lastSleep){
+    var cSMin=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
+    if(cSMin>=420&&cSMin<1170)totalSleepMin+=minsAgo(lastSleep.date);
+  }
+  var dashArr=251;
+  var sleepOffset=totalSleepMin?Math.max(0,dashArr-Math.round(dashArr*(Math.min(totalSleepMin,NORM_MIN)/NORM_MIN))):dashArr;
+  var sleepTimeStr=totalSleepMin?z2(Math.floor(totalSleepMin/60))+":"+z2(totalSleepMin%60):"00:00";
 
-  var todayItems=[],yesterdayItems=[];
-  for(var j=0;j<parsed.length;j++){
-    if(parsed[j].logicalDateStr===todayLogical)todayItems.push(parsed[j]);
-    else if(parsed[j].logicalDateStr===yesterdayLogical)yesterdayItems.push(parsed[j]);
+  // Night sleep
+  var nightSleepStr="—";
+  var sorted=parsed.slice().reverse();
+  for(var ni=0;ni<sorted.length;ni++){
+    if(sorted[ni].type==="wake"){
+      var wakeDate=sorted[ni].date;
+      var wakeLogical=getLogicalDateStr(wakeDate);
+      if(wakeLogical===targetLogical){
+        for(var nj=ni-1;nj>=0;nj--){
+          if(sorted[nj].type==="sleep"){
+            var ss=sorted[nj].date,sm=ss.getHours()*60+ss.getMinutes();
+            if(sm<420||sm>=1170){
+              var nd=Math.floor((wakeDate.getTime()-ss.getTime())/60000);
+              if(nd>120)nightSleepStr=z2(Math.floor(nd/60))+":"+z2(nd%60);
+            }
+            break;
+          }
+        }
+        break;
+      }
+    }
   }
 
-  clearNotifyTimers();
-  if(nextSleep&&!isSleeping)scheduleNotification("🛏 Укладываем Стешу","Пора укладывать — спать в "+nextSleep,nextSleep);
-  if(nextFeed)scheduleNotification("🍼 Кормление","Пора кормить Стешу — в "+nextFeed,nextFeed);
+  // Chart 7 days (mock for now — will be real when ScriptProperties implemented)
+  var chartBars="";
+  var chartDays=["пн","вт","ср","чт","пт","сб","вс"];
+  var todayDow=new Date().getDay();
+  var chartData=[48,72,55,88,62,78,Math.round(totalSleepMin/NORM_MIN*100)];
+  for(var ci=0;ci<7;ci++){
+    var dow=(todayDow-6+ci+7)%7;
+    var isToday=(ci===6&&selectedDayOffset===0);
+    var barH=Math.max(3,Math.min(100,chartData[ci]));
+    var barStyle=isToday?"background:linear-gradient(to top,var(--accent2),var(--accent4))":"background:var(--accent2);opacity:0."+Math.max(3,4+ci);
+    chartBars+='<div class="chart-day'+(isToday?" today":"")+'"><div class="chart-bar-wrap"><div class="chart-norm-line"></div><div class="chart-bar" style="height:'+barH+'%;'+barStyle+'"></div></div><div class="chart-day-lbl">'+chartDays[ci]+'</div></div>';
+  }
 
+  // Items for selected day and prev
+  var dayItems=[],prevItems=[];
+  for(var ji=0;ji<parsed.length;ji++){
+    if(parsed[ji].logicalDateStr===targetLogical)dayItems.push(parsed[ji]);
+    else if(parsed[ji].logicalDateStr===prevLogical)prevItems.push(parsed[ji]);
+  }
+
+  // Scheduled notifications
+  clearNotifyTimers();
+  if(nextSleep&&!isSleeping)scheduleNotify("🛏 Укладываем Стешу","Пора укладывать — в "+nextSleep,nextSleep);
+  if(nextFeed)scheduleNotify("🍼 Кормление","Пора кормить — в "+nextFeed,nextFeed);
+
+  // Age
   var age=calcAge(),ageStr="";
   if(age.years>0)ageStr+=age.years+" "+pluralRus(age.years,"год","года","лет")+" ";
   ageStr+=age.months+" "+pluralRus(age.months,"месяц","месяца","месяцев")+" "+age.days+" "+pluralRus(age.days,"день","дня","дней");
 
-  var actionBtn=isSleeping
-    ?'<button class="action-btn btn-wake" onclick="sendAction(\'wake\',this,\'Проснулась\')">☀️ Проснулась</button>'
-    :'<button class="action-btn btn-sleep" onclick="sendAction(\'sleep\',this,\'Уснула\')">🌙 Уснула</button>';
+  // Left card (sleep)
+  var sleepCardLabel=isSleeping?"Уснула в":"Спать в";
+  var sleepCardTime=isSleeping?(lastSleep?z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):"—"):(nextSleep||"—");
+  var sleepCardSub=isSleeping?(lastSleep?formatMin(minsAgo(lastSleep.date))+" назад":""):(minsToSleep!==null?"через "+formatMin(minsToSleep):"нет данных");
+  var sleepCardClass=isSleeping?"sleep-c":"sleep-c";
 
-  var leftCard=isSleeping
-    ?'<div class="next-card sleep-active"><div class="next-card-icon">🌙</div><div class="next-card-label">Спит уже</div><div class="next-card-time" id="sleepActiveTime">'+formatMin(mins)+'</div><div class="next-card-sub">с '+(statusSubTime.replace('с ',''))+'</div></div>'
-    :'<div class="next-card sleep-next"><div class="next-card-icon">🛏</div><div class="next-card-label">Спать в</div><div class="next-card-time" id="nextSleepVal" data-time="'+(nextSleep||'')+'">'+( nextSleep||"—")+'</div><div class="next-card-sub" id="sleepCountdown">'+(minsToSleep!==null?"через "+formatMin(minsToSleep):"нет данных")+'</div></div>';
+  // Action buttons
+  var actionBtns=isSleeping
+    ?'<button class="act-card btn-wake" onclick="sendAction(\'wake\',this,\'Проснулась\')">☀️ Проснулась</button><button class="act-card btn-feed" onclick="sendAction(\'feed\',this,\'Поела\')">🍼 Поела</button>'
+    :'<button class="act-card btn-sleep" onclick="sendAction(\'sleep\',this,\'Уснула\')">🌙 Уснула</button><button class="act-card btn-feed" onclick="sendAction(\'feed\',this,\'Поела\')">🍼 Поела</button>';
+
+  // Day label for history
+  var dayLabelText=selectedDayOffset===0?"🕐 Сегодня":selectedDayOffset===1?"🕐 Вчера":("🕐 "+targetDate.getDate()+" "+MONTHS_SHORT[targetDate.getMonth()]);
+  var prevLabelText=selectedDayOffset===0?"📅 Вчера":selectedDayOffset===1?"📅 Позавчера":("📅 "+prevDate.getDate()+" "+MONTHS_SHORT[prevDate.getMonth()]);
 
   var html=''
-    +'<div class="age-card fade-up"><div class="age-emoji">👶</div><div class="age-info"><div class="age-main">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025</div></div></div>'
-    +'<div class="status-card fade-up d1"><div class="status-label"><span class="pulse"></span>Текущий статус</div>'
-    +'<div class="status-main"><div class="status-icon '+statusClass+'">'+statusIcon+'</div>'
-    +'<div class="status-text"><div class="status-value">'+statusText+'</div><div class="status-since" id="liveSince">'+sinceStr+'</div><div class="status-sub">'+statusSubTime+'</div>'+actionBtn+'</div></div></div>'
-    +'<div class="two-col fade-up d2">'+leftCard
-    +'<div class="next-card feed-next"><div class="next-card-icon">🍼</div><div class="next-card-label">Кормить в</div><div class="next-card-time" id="nextFeedVal" data-time="'+(nextFeed||'')+'">'+( nextFeed||"—")+'</div><div class="next-card-sub" id="feedCountdown">'+(minsToFeed!==null?"через "+formatMin(minsToFeed):"нет данных")+'</div></div></div>'
-    +'<div class="stats-card fade-up d3"><div class="section-title">📊 Итоги дня</div>'
-    +'<div class="stats-row"><div class="stats-name">Дневной сон</div><div class="stats-val" style="color:var(--accent2)">'+(totalSleepMin?formatMinLong(totalSleepMin):"нет данных")+'</div></div>'
-    +'<div class="stats-row"><div class="stats-name">Кормлений</div><div class="stats-val" style="color:var(--accent1)">'+feedCountToday+'</div></div>'
-    +'<div class="stats-row"><div class="stats-name">Снов</div><div class="stats-val" style="color:var(--accent4)">'+sleepCountToday+'</div></div>'
-    +(totalSleepMin?'<div class="progress-wrap"><div class="progress-label"><span>Норма 3 часа</span><span>'+formatMinLong(totalSleepMin)+'</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+progressPct+'%"></div></div></div>':'')
+    // AGE
+    +'<div class="age-bar fu fu1"><div class="age-emoji">👶</div><div><div class="age-text">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025</div></div></div>'
+    // STATUS
+    +'<div class="status-big fu fu2"><div class="status-row"><div class="status-icon '+statusClass+'">'+statusIcon+'</div><div><div class="status-title">'+statusText+'</div><div class="status-timer" id="liveSince">'+sinceStr+'</div><div class="status-since">'+statusSubTime+'</div></div></div></div>'
+    // ACTION BUTTONS
+    +'<div class="two-col fu fu2">'+actionBtns+'</div>'
+    // MINI CARDS
+    +'<div class="two-col fu fu3">'
+    +'<div class="mini-card '+sleepCardClass+'"><div class="mini-icon">'+(isSleeping?"🌙":"🛏")+'</div><div class="mini-label">'+sleepCardLabel+'</div><div class="mini-time" id="'+(isSleeping?"":"nextSleepVal")+'" '+(isSleeping?"":"data-time='"+(nextSleep||"")+"'")+'>'+sleepCardTime+'</div><div class="mini-sub" id="'+(isSleeping?"sleepActiveTime":"sleepCountdown")+'">'+sleepCardSub+'</div></div>'
+    +'<div class="mini-card feed-c"><div class="mini-icon">🍼</div><div class="mini-label">Кормить в</div><div class="mini-time" id="nextFeedVal" data-time="'+(nextFeed||"")+'">'+( nextFeed||"—")+'</div><div class="mini-sub" id="feedCountdown">'+(minsToFeed!==null?"через "+formatMin(minsToFeed):"нет данных")+'</div></div>'
     +'</div>'
-    +'<div class="stats-card fade-up d3"><div class="section-title">🍼 Кормление</div>'
-    +'<div class="stats-row"><div class="stats-name">Последний раз</div><div class="stats-val" style="color:var(--accent1)">'+(lastFeed?formatMin(minsAgo(lastFeed.date))+" назад":"нет данных")+'</div></div>'
-    +'<div class="stats-row"><div class="stats-name">Следующее</div><div class="stats-val" style="color:var(--accent1)">'+(nextFeed||"нет данных")+'</div></div>'
-    +'<button class="action-btn btn-feed" style="margin-top:12px;width:100%;justify-content:center;" onclick="sendAction(\'feed\',this,\'Поела\')">🍼 Поела</button>'
+    // CIRCLE + PILLS
+    +'<div class="circle-pills-row fu fu4">'
+    +'<div class="circle-card"><div class="circle-wrap"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sleepGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#5ab4ff"/><stop offset="100%" stop-color="#2edba8"/></linearGradient></defs><circle class="circle-bg" cx="50" cy="50" r="40"/><circle class="circle-fill" cx="50" cy="50" r="40" style="stroke-dashoffset:'+sleepOffset+'"/></svg><div class="circle-inner"><div class="circle-val">'+sleepTimeStr+'</div><div class="circle-lbl">дн. сон</div></div></div></div>'
+    +'<div class="pills-col">'
+    +'<div class="pill"><div class="pill-val" style="color:var(--accent1)">'+feedCountDay+'</div><div class="pill-label">Кормлений</div></div>'
+    +'<div class="pill"><div class="pill-val" style="color:var(--accent4)">'+sleepCountDay+'</div><div class="pill-label">Снов</div></div>'
+    +'<div class="pill"><div class="pill-val" style="color:var(--accent2)">'+nightSleepStr+'</div><div class="pill-label">Ночной сон</div></div>'
+    +'</div></div>'
+    // WEIGHT HEIGHT
+    +'<div class="wh-row fu fu4">'
+    +'<div class="wh-card weight" onclick="openWhModal(\'weight\')"><div class="wh-edit-icon">✏️</div><div class="wh-icon">⚖️</div><div class="wh-label">Вес</div><div class="wh-val">'+(lastWeight?lastWeight.val+" кг":"—")+'</div><div class="wh-date">'+(lastWeight?lastWeight.date.getDate()+" "+MONTHS_SHORT[lastWeight.date.getMonth()]:"нет данных")+'</div></div>'
+    +'<div class="wh-card height" onclick="openWhModal(\'height\')"><div class="wh-edit-icon">✏️</div><div class="wh-icon">📏</div><div class="wh-label">Рост</div><div class="wh-val">'+(lastHeight?lastHeight.val+" см":"—")+'</div><div class="wh-date">'+(lastHeight?lastHeight.date.getDate()+" "+MONTHS_SHORT[lastHeight.date.getMonth()]:"нет данных")+'</div></div>'
     +'</div>'
-    +'<div class="day-label fade-up d4">🕐 Сегодня</div>'
-    +'<div class="two-col fade-up d4"><div class="history-card"><div class="history-card-title">🛏 Сон</div>'+renderSleepItems(todayItems,10)+'</div><div class="history-card"><div class="history-card-title">🍼 Кормление</div>'+renderFeedItems(todayItems,10)+'</div></div>'
-    +(yesterdayItems.length?'<div class="day-label">📅 Вчера</div><div class="two-col"><div class="history-card"><div class="history-card-title">🛏 Сон</div>'+renderSleepItems(yesterdayItems,8)+'</div><div class="history-card"><div class="history-card-title">🍼 Кормление</div>'+renderFeedItems(yesterdayItems,8)+'</div></div>':'');
+    // CHART
+    +'<div class="chart-card fu fu5"><div class="chart-title">📊 Дневной сон за 7 дней</div><div class="chart-bars">'+chartBars+'</div></div>'
+    // HISTORY
+    +'<div class="hist-header fu fu6"><div class="day-label">'+dayLabelText+'</div><div class="add-btn" onclick="openAddModal()">+</div></div>'
+    +'<div class="two-col-hist fu fu6"><div class="hist-card"><div class="hist-title">🛏 Сон</div>'+renderSleepItems(dayItems,12)+'</div><div class="hist-card"><div class="hist-title">🍼 Кормление</div>'+renderFeedItems(dayItems,12)+'</div></div>'
+    +(prevItems.length
+      ?'<div class="hist-header"><div class="day-label">'+prevLabelText+'</div></div><div class="two-col-hist"><div class="hist-card"><div class="hist-title">🛏 Сон</div>'+renderSleepItems(prevItems,8)+'</div><div class="hist-card"><div class="hist-title">🍼 Кормление</div>'+renderFeedItems(prevItems,8)+'</div></div>'
+      :'')
+    // BACKUP
+    +'<div class="backup-row fu fu6"><button class="backup-btn export" onclick="doBackup()">💾 Выгрузка в таблицу</button><button class="backup-btn restore" onclick="doRestore()">📥 Восстановить</button></div>';
 
   document.getElementById("content").innerHTML=html;
 }
 
+// ── LOAD ──
 function loadData(){
+  var btn=document.getElementById("refreshBtn");
+  if(btn)btn.classList.add("spinning");
   fetch(API_URL)
     .then(function(r){return r.json();})
-    .then(function(data){render(data.history||[]);})
-    .catch(function(){render([]);});
+    .then(function(data){render(data.history||[]);if(btn)btn.classList.remove("spinning");})
+    .catch(function(){if(btn)btn.classList.remove("spinning");});
 }
 
-document.getElementById("refreshBtn").onclick=function(){
-  var btn=document.getElementById("refreshBtn");
-  btn.classList.add("spinning");
-  fetch(API_URL)
-    .then(function(r){return r.json();})
-    .then(function(data){render(data.history||[]);btn.classList.remove("spinning");})
-    .catch(function(){btn.classList.remove("spinning");});
-};
+document.getElementById("refreshBtn").onclick=loadData;
 
 registerSW();
 updateNotifyBar();
+buildDateOptions();
 setInterval(updateLiveCounter,60000);
 setInterval(updateHeader,60000);
 updateHeader();
