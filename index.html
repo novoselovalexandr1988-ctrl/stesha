@@ -907,7 +907,17 @@ function loadData(){
     .catch(function(){if(btn)btn.classList.remove("spinning");});
 }
 
-document.getElementById("refreshBtn").onclick=loadData;
+// Принудительное обновление — сбрасывает кэш и загружает из ScriptProperties
+function refreshData(){
+  var btn=document.getElementById("refreshBtn");
+  if(btn)btn.classList.add("spinning");
+  fetch(API_URL+"?mode=refresh")
+    .then(function(r){return r.json();})
+    .then(function(data){render(data.history||[]);if(btn)btn.classList.remove("spinning");})
+    .catch(function(){if(btn)btn.classList.remove("spinning");});
+}
+
+document.getElementById("refreshBtn").onclick=refreshData;
 
 registerSW();
 updateBell();
@@ -916,6 +926,14 @@ setInterval(updateLiveCounter,60000);
 setInterval(updateHeader,60000);
 updateHeader();
 loadData();
+
+// Когда приложение возвращается из фона — перезагружаем данные
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState === "visible"){
+    updateHeader();
+    loadData();
+  }
+});
 </script>
 </body>
 </html>
