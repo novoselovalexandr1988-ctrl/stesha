@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Стеша">
@@ -124,6 +124,7 @@
   .chart-bar-wrap{flex:1;width:100%;position:relative;border-radius:6px;overflow:hidden;background:rgba(255,126,179,0.12);}
   .chart-bar{display:none;}
   .chart-bar-fill{position:absolute;bottom:0;left:0;right:0;border-radius:6px 6px 0 0;background:var(--accent2);opacity:0.75;transition:height 0.6s ease;}
+  .chart-bar-label{position:absolute;bottom:5px;left:0;right:0;text-align:center;font-family:'Unbounded',sans-serif;font-size:8px;font-weight:700;color:rgba(255,255,255,0.8);z-index:3;line-height:1;pointer-events:none;}
   .chart-day-lbl{font-size:9px;color:var(--muted);font-weight:700;}
   .chart-day.today .chart-bar-fill{background:linear-gradient(to top,var(--accent2),var(--accent4));opacity:1;}
 
@@ -204,11 +205,41 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   .fu{animation:fadeUp 0.3s ease both;}
   .fu1{animation-delay:0.04s}.fu2{animation-delay:0.08s}.fu3{animation-delay:0.12s}
+  html,body{height:100%;overflow:hidden;}
+  body{padding:0;max-width:none;margin:0;}
+  .app{position:relative;width:100%;height:100%;overflow:hidden;}
+  .dashboard-page{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);padding:52px 15px 40px;max-width:430px;margin:0 auto;transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;}
+  .dashboard-page.slide-down{transform:translateY(100%);}
+  .notes-page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;display:flex;flex-direction:column;max-width:430px;margin:0 auto;}
+  .notes-page.slide-up{transform:translateY(0);}
+  .notes-header{display:flex;align-items:center;justify-content:space-between;padding:52px 15px 16px;flex-shrink:0;}
+  .back-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--accent2);cursor:pointer;padding:8px 14px;background:rgba(90,180,255,0.08);border:1px solid rgba(90,180,255,0.15);border-radius:12px;}
+  .back-btn:active{opacity:0.7;}
+  .notes-page-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;}
+  .notes-badge{font-size:11px;color:var(--muted);font-weight:600;background:var(--card2);padding:4px 10px;border-radius:8px;}
+  .notes-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 15px 100px;}
+  .note-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:10px;box-shadow:var(--shadow);}
+  .note-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .note-date-btn{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--accent3);background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);border-radius:8px;padding:4px 10px;cursor:pointer;outline:none;}
+  .note-time-btn{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;outline:none;}
+  .note-modified{font-size:10px;color:var(--muted);margin-left:auto;}
+  .note-offline-badge{font-size:10px;color:var(--accent3);font-weight:700;background:rgba(255,209,102,0.1);border-radius:6px;padding:2px 7px;}
+  .note-textarea{font-size:16px;line-height:1.6;color:var(--text);font-family:'Nunito',sans-serif;font-weight:600;background:transparent;border:none;outline:none;width:100%;resize:none;min-height:50px;caret-color:var(--accent2);}
+  .note-textarea::placeholder{color:var(--muted);}
+  .note-footer{display:flex;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+  .note-del-btn{width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,77,77,0.2);background:rgba(255,77,77,0.06);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;}
+  .notes-fab{position:absolute;bottom:30px;right:20px;width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:0 4px 24px rgba(255,110,180,0.35);border:none;color:#fff;}
+  .notes-fab:active{transform:scale(0.93);}
+  .notebook-btn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--muted);box-shadow:var(--shadow);}
+  .notebook-btn.active{background:rgba(255,209,102,0.15);border-color:rgba(255,209,102,0.3);}
+  .offline-bar{background:rgba(255,209,102,0.10);border:1px solid rgba(255,209,102,0.2);border-radius:12px;padding:8px 14px;margin-bottom:10px;font-size:11px;font-weight:700;color:var(--accent3);display:none;text-align:center;}
+  .offline-bar.show{display:block;}
   .fu4{animation-delay:0.16s}.fu5{animation-delay:0.20s}.fu6{animation-delay:0.24s}
 </style>
 </head>
 <body>
-
+<div class="app">
+<div class="dashboard-page" id="dashboardPage">
 <div class="header fu">
   <div>
     <div class="header-date-btn" id="headerDateBtn" onclick="toggleDatePicker()">
@@ -217,6 +248,7 @@
     <div class="header-time" id="headerTime"></div>
   </div>
   <div style="display:flex;gap:8px;align-items:center;">
+    <div class="notebook-btn" id="notebookBtn" onclick="openNotes()">📓</div>
     <div class="bell-btn unknown" id="bellBtn" onclick="onBellClick()">🔔</div>
     <div class="refresh-btn" id="refreshBtn">↻</div>
   </div>
@@ -227,6 +259,7 @@
   <div class="date-options" id="dateOptions"></div>
 </div>
 
+<div class="offline-bar" id="offlineBar"></div>
 <div id="content"><div class="loading"><div class="loading-spinner"></div>Загружаем данные…</div></div>
 
 <!-- ADD MODAL -->
@@ -435,12 +468,53 @@ function sendNotification(title,body){
   }catch(e){ console.log("Notification error:",e); }
 }
 function clearNotifyTimers(){for(var i=0;i<notifyTimers.length;i++)clearTimeout(notifyTimers[i]);notifyTimers=[];}
-function scheduleNotify(title,body,timeStr){
-  if(!timeStr)return;
-  var mins=minsUntil(timeStr);
-  if(mins===null)return;
-  var alertMins=mins-10;
-  if(alertMins>0&&alertMins<480)notifyTimers.push(setTimeout(function(){sendNotification(title,body);},alertMins*60000));
+
+function scheduleNotify(type, targetDate){
+  if(!targetDate||!(targetDate instanceof Date))return;
+  var now=Date.now();
+  var msUntil=targetDate.getTime()-now;
+  if(msUntil<-60000)return; // уже прошло больше минуты назад — не планируем
+
+  var titles={
+    sleep:  {warn:"🛏 Через 10 минут укладываем Стешу", exact:"🛏 Пора укладывать Стешу"},
+    feed:   {warn:"🍼 Через 10 минут кормим Стешу",     exact:"🍼 Пора кормить Стешу"}
+  };
+  var t=titles[type];
+  if(!t)return;
+
+  var hhmm=dateToHHMM(targetDate);
+  var ms10=msUntil-10*60000; // за 10 минут
+
+  if(ms10>0&&ms10<8*3600000){
+    notifyTimers.push(setTimeout(function(){
+      // Проверяем что событие ещё не произошло
+      if(type==="feed"&&lastFeedAfter(targetDate))return;
+      sendNotification(t.warn, "В "+hhmm);
+    }, ms10));
+  }
+
+  if(msUntil>0&&msUntil<8*3600000){
+    notifyTimers.push(setTimeout(function(){
+      if(type==="feed"&&lastFeedAfter(targetDate))return;
+      sendNotification(t.exact, "Запланировано на "+hhmm);
+    }, msUntil));
+  }
+}
+
+// Проверяем — было ли кормление после указанного времени (значит уже покормили)
+var _lastFeedTime=null;
+function lastFeedAfter(targetDate){
+  return _lastFeedTime && _lastFeedTime.getTime()>=targetDate.getTime();
+}
+
+// Мгновенное уведомление о записи события
+function notifyRecorded(type){
+  var msgs={
+    sleep:"🌙 Сон записан",
+    wake: "☀️ Пробуждение записано",
+    feed: "🍼 Питание записано"
+  };
+  if(msgs[type])sendNotification(msgs[type],"");
 }
 function onBellClick(){
   if(!("Notification" in window)){showToast("⚠️ Уведомления не поддерживаются");return;}
@@ -468,20 +542,36 @@ function sendAction(action,btnEl,label){
   var msg=encodeURIComponent(msgMap[action]+" в "+timeStr);
   var url=API_URL+"?mode=add&type="+action+"&message="+msg+"&manualTime="+now.getTime();
 
+  btnEl.classList.remove("btn-loading");btnEl.textContent=orig;
+
+  if(!isOnline()){
+    showToast("📵 Сохранено офлайн");
+    offlineQueue.push(function(){
+      fetch(url).then(function(r){return r.json();}).then(function(data){
+        if(data.ok)refreshData();
+      }).catch(function(){});
+    });
+    updateOfflineBar();
+    return;
+  }
+
   fetch(url)
     .then(function(r){return r.json();})
     .then(function(data){
-      btnEl.classList.remove("btn-loading");btnEl.textContent=orig;
       if(data.ok){
         showToast("✅ Записано!");
+        notifyRecorded(action);
         refreshData();
       } else {
         showToast("❌ "+(data.error||"Ошибка"));
       }
     })
     .catch(function(){
-      btnEl.classList.remove("btn-loading");btnEl.textContent=orig;
-      showToast("❌ Нет связи");
+      showToast("📵 Нет связи — сохранено офлайн");
+      offlineQueue.push(function(){
+        fetch(url).then(function(r){return r.json();}).then(function(d){if(d.ok)refreshData();}).catch(function(){});
+      });
+      updateOfflineBar();
     });
 }
 
@@ -518,7 +608,7 @@ function saveAdd(){
     .then(function(r){return r.json();})
     .then(function(data){
       btn.textContent="Добавить";btn.disabled=false;
-      if(data.ok){showToast("✅ Запись добавлена!");closeAddModal();setTimeout(loadData,500);}
+      if(data.ok){showToast("✅ Запись добавлена!");notifyRecorded(typeMap[addType]);closeAddModal();setTimeout(loadData,500);}
       else{showToast("❌ "+(data.error||"Ошибка"));}
     })
     .catch(function(){btn.textContent="Добавить";btn.disabled=false;showToast("❌ Нет связи");});
@@ -543,7 +633,7 @@ function saveEdit(){
     .then(function(r){return r.json();})
     .then(function(data){
       btn.textContent="Сохранить";btn.disabled=false;
-      if(data.ok){showToast("✅ Время обновлено!");closeEditModal();setTimeout(refreshData,500);}
+      if(data.ok){showToast("✅ Время обновлено!");sendNotification("✏️ Запись изменена","");closeEditModal();setTimeout(refreshData,500);}
       else{showToast("❌ "+(data.error||"Ошибка"));}
     })
     .catch(function(){btn.textContent="Сохранить";btn.disabled=false;showToast("❌ Нет связи");});
@@ -643,7 +733,7 @@ function calcNextSleep(wakeDate) {
   if (!wakeDate) return null;
   var h = wakeDate.getHours(), m = wakeDate.getMinutes();
   var totalMin = h * 60 + m;
-  var interval = (totalMin >= 480 && totalMin < 600) ? 135 : 150;
+  var interval = (totalMin >= 300 && totalMin < 600) ? 135 : 150;
   return new Date(wakeDate.getTime() + interval * 60000);
 }
 
@@ -823,11 +913,16 @@ function render(history){
     chartMins.push(Math.round(dayMin));
     chartLabels.push(DAY_NAMES[dayD.getDay()]);
   }
-  var MAX_CHART_MIN=210; // 3.5 часа — максимум шкалы
+  var MAX_CHART_MIN=210;
   for(var ci=0;ci<7;ci++){
     var isToday=(ci===6&&selectedDayOffset===0);
     var fillH=chartMins[ci]>0?Math.min(100,Math.round(chartMins[ci]/MAX_CHART_MIN*100)):0;
-    var fill='<div class="chart-bar-fill" style="height:'+fillH+'%"></div>';
+    var h=Math.floor(chartMins[ci]/60),m=chartMins[ci]%60;
+    var timeLabel=chartMins[ci]>0?(h+":"+(m<10?"0"+m:m)):"";
+    var hideLabel=fillH<22;
+    var fill='<div class="chart-bar-fill" style="height:'+fillH+'%">'
+      +(timeLabel&&!hideLabel?'<div class="chart-bar-label">'+timeLabel+'</div>':'')
+      +'</div>';
     chartBars+='<div class="chart-day'+(isToday?" today":"")+'"><div class="chart-bar-wrap"><div class="chart-norm-line"></div>'+fill+'</div><div class="chart-day-lbl">'+chartLabels[ci]+'</div></div>';
   }
 
@@ -839,9 +934,12 @@ function render(history){
   }
 
   // Scheduled notifications
+  // Запоминаем время последнего кормления для проверки в пушах
+  _lastFeedTime = lastFeed ? lastFeed.date : null;
+
   clearNotifyTimers();
-  if(nextSleep&&!isSleeping)scheduleNotify("🛏 Укладываем Стешу","Пора укладывать — в "+dateToHHMM(nextSleep),nextSleep);
-  if(nextFeed)scheduleNotify("🍼 Кормление","Пора кормить — в "+dateToHHMM(nextFeed),nextFeed);
+  if(nextSleep&&!isSleeping)scheduleNotify("sleep", nextSleep);
+  if(nextFeed)scheduleNotify("feed", nextFeed);
 
   // Age
   var age=calcAge(),ageStr="";
@@ -947,6 +1045,220 @@ document.addEventListener("visibilitychange", function(){
     loadData();
   }
 });
+
+// ── OFFLINE QUEUE ──
+var offlineQueue=[];
+
+function isOnline(){return navigator.onLine;}
+
+function queueAction(fn){
+  if(isOnline()){fn();return;}
+  offlineQueue.push(fn);
+  updateOfflineBar();
+}
+
+function flushQueue(){
+  if(!offlineQueue.length)return;
+  var q=offlineQueue.slice();
+  offlineQueue=[];
+  updateOfflineBar();
+  q.forEach(function(fn){fn();});
+}
+
+function updateOfflineBar(){
+  var bar=document.getElementById("offlineBar");
+  if(!bar)return;
+  if(!isOnline()||offlineQueue.length>0){
+    bar.className="offline-bar show";
+    bar.textContent=isOnline()
+      ?"⏳ Синхронизируем "+offlineQueue.length+" записей…"
+      :"📵 Офлайн — записи сохранены локально";
+  } else {
+    bar.className="offline-bar";
+  }
+}
+
+window.addEventListener("online",function(){
+  showToast("✅ Сеть восстановлена");
+  flushQueue();
+  refreshData();
+  updateOfflineBar();
+});
+window.addEventListener("offline",function(){
+  updateOfflineBar();
+});
+
+// ── NOTES ──
+var NOTES_KEY="stesha_notes";
+
+function getNotes(){
+  try{var r=localStorage.getItem(NOTES_KEY);return r?JSON.parse(r):[];}catch(e){return[];}
+}
+
+function saveNotes(notes){
+  try{localStorage.setItem(NOTES_KEY,JSON.stringify(notes));}catch(e){}
+}
+
+function openNotes(){
+  document.getElementById("dashboardPage").classList.add("slide-down");
+  document.getElementById("notesPage").classList.add("slide-up");
+  document.getElementById("notebookBtn").classList.add("active");
+  renderNotes();
+}
+
+function closeNotes(){
+  document.getElementById("dashboardPage").classList.remove("slide-down");
+  document.getElementById("notesPage").classList.remove("slide-up");
+  document.getElementById("notebookBtn").classList.remove("active");
+}
+
+function renderNotes(){
+  var notes=getNotes().sort(function(a,b){return b.ts-a.ts;});
+  var list=document.getElementById("notesList");
+  var badge=document.getElementById("notesBadge");
+  if(badge)badge.textContent=notes.length+(notes.length===1?" заметка":notes.length<5?" заметки":" заметок");
+
+  if(!notes.length){
+    list.innerHTML='<div class="notes-empty">📝<br><br>Заметок пока нет.<br>Нажмите + чтобы добавить.</div>';
+    return;
+  }
+
+  list.innerHTML="";
+  notes.forEach(function(note,idx){
+    var card=document.createElement("div");
+    card.className="note-card";
+    card.style.animationDelay=(idx*0.04)+"s";
+    card.style.animation="fadeUp 0.3s ease both";
+
+    var d=new Date(note.ts);
+    var dm=note.modified?new Date(note.modified):d;
+    var dateStr=d.getDate()+" "+MONTHS_SHORT[d.getMonth()];
+    var timeStr=z2(d.getHours())+":"+z2(d.getMinutes());
+    var modStr=dm.getTime()!==d.getTime()?"изм. "+z2(dm.getHours())+":"+z2(dm.getMinutes()):"";
+
+    card.innerHTML=
+      '<div class="note-meta">'
+        +'<button class="note-date-btn" onclick="pickNoteDate(\''+note.id+'\')">'+dateStr+'</button>'
+        +'<button class="note-time-btn" onclick="pickNoteTime(\''+note.id+'\')">'+timeStr+'</button>'
+        +(note.offline?'<span class="note-offline-badge">офлайн</span>':'')
+        +(modStr?'<span class="note-modified">'+modStr+'</span>':'')
+      +'</div>'
+      +'<textarea class="note-textarea" placeholder="Текст заметки…" onblur="updateNoteText(\''+note.id+'\',this.value)">'+escNote(note.text||'')+'</textarea>'
+      +'<div class="note-footer">'
+        +'<div class="note-del-btn" onclick="deleteNote(\''+note.id+'\')">🗑</div>'
+      +'</div>';
+    list.appendChild(card);
+  });
+}
+
+function escNote(s){return(s||"").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function addNote(){
+  var now=new Date();
+  var note={id:"n"+now.getTime(),ts:now.getTime(),modified:now.getTime(),text:"",offline:!isOnline()};
+  var notes=getNotes();
+  notes.push(note);
+  saveNotes(notes);
+  renderNotes();
+  setTimeout(function(){
+    var tas=document.querySelectorAll(".note-textarea");
+    if(tas.length)tas[0].focus();
+  },100);
+  queueAction(function(){syncNoteAdd(note);});
+}
+
+function updateNoteText(id,val){
+  var notes=getNotes();
+  var note=notes.find(function(n){return n.id===id;});
+  if(!note||note.text===val)return;
+  note.text=val;
+  note.modified=Date.now();
+  saveNotes(notes);
+  renderNotes();
+  queueAction(function(){syncNoteEdit(note);});
+}
+
+function deleteNote(id){
+  if(!confirm("Удалить заметку?"))return;
+  var notes=getNotes().filter(function(n){return n.id!==id;});
+  saveNotes(notes);
+  renderNotes();
+  showToast("🗑 Заметка удалена");
+  queueAction(function(){syncNoteDelete(id);});
+}
+
+function pickNoteDate(id){
+  var notes=getNotes();
+  var note=notes.find(function(n){return n.id===id;});
+  if(!note)return;
+  var d=new Date(note.ts);
+  var dateVal=d.getFullYear()+"-"+z2(d.getMonth()+1)+"-"+z2(d.getDate());
+  var newDate=prompt("Введите дату (ГГГГ-ММ-ДД):",dateVal);
+  if(!newDate||!/^\d{4}-\d{2}-\d{2}$/.test(newDate))return;
+  var parts=newDate.split("-");
+  d.setFullYear(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+  note.ts=d.getTime();
+  note.modified=Date.now();
+  saveNotes(notes);
+  renderNotes();
+  queueAction(function(){syncNoteEdit(note);});
+}
+
+function pickNoteTime(id){
+  var notes=getNotes();
+  var note=notes.find(function(n){return n.id===id;});
+  if(!note)return;
+  var d=new Date(note.ts);
+  var timeVal=z2(d.getHours())+":"+z2(d.getMinutes());
+  var newTime=prompt("Введите время (ЧЧ:ММ):",timeVal);
+  if(!newTime||!/^\d{2}:\d{2}$/.test(newTime))return;
+  var parts=newTime.split(":");
+  d.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
+  note.ts=d.getTime();
+  note.modified=Date.now();
+  saveNotes(notes);
+  renderNotes();
+  queueAction(function(){syncNoteEdit(note);});
+}
+
+// Синхронизация заметок с Apps Script
+function syncNoteAdd(note){
+  fetch(API_URL+"?mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||""))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.ok){
+        var notes=getNotes();
+        var n=notes.find(function(n){return n.id===note.id;});
+        if(n){n.offline=false;saveNotes(notes);renderNotes();}
+      }
+    }).catch(function(){});
+}
+
+function syncNoteEdit(note){
+  fetch(API_URL+"?mode=noteEdit&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||"")+"&modified="+note.modified)
+    .catch(function(){});
+}
+
+function syncNoteDelete(id){
+  fetch(API_URL+"?mode=noteDelete&id="+encodeURIComponent(id))
+    .catch(function(){});
+}
 </script>
+
+<!-- OFFLINE BAR (inside dashboard) -->
+</div><!-- /dashboard-page -->
+
+<!-- NOTES PAGE -->
+<div class="notes-page" id="notesPage">
+  <div class="notes-header">
+    <div class="back-btn" onclick="closeNotes()">← Назад</div>
+    <div class="notes-page-title">📓 Заметки</div>
+    <div class="notes-badge" id="notesBadge">0 заметок</div>
+  </div>
+  <div class="notes-list" id="notesList"></div>
+  <button class="notes-fab" onclick="addNote()">+</button>
+</div>
+
+</div><!-- /app -->
 </body>
 </html>
