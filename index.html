@@ -210,26 +210,26 @@
   .app{position:relative;width:100%;height:100%;overflow:hidden;}
   .dashboard-page{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);padding:52px 15px 40px;max-width:430px;margin:0 auto;transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;}
   .dashboard-page.slide-down{transform:translateY(100%);}
-  .notes-page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;display:flex;flex-direction:column;max-width:430px;margin:0 auto;}
-  .notes-page.slide-up{transform:translateY(0);}
-  .notes-header{display:flex;align-items:center;justify-content:space-between;padding:52px 15px 16px;flex-shrink:0;}
-  .back-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--accent2);cursor:pointer;padding:8px 14px;background:rgba(90,180,255,0.08);border:1px solid rgba(90,180,255,0.15);border-radius:12px;}
-  .back-btn:active{opacity:0.7;}
-  .notes-page-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;}
-  .notes-badge{font-size:11px;color:var(--muted);font-weight:600;background:var(--card2);padding:4px 10px;border-radius:8px;}
-  .notes-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 15px 100px;}
-  .note-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:10px;box-shadow:var(--shadow);}
-  .note-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
-  .note-date-btn{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--accent3);background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);border-radius:8px;padding:4px 10px;cursor:pointer;outline:none;}
-  .note-time-btn{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;outline:none;}
-  .note-modified{font-size:10px;color:var(--muted);margin-left:auto;}
-  .note-offline-badge{font-size:10px;color:var(--accent3);font-weight:700;background:rgba(255,209,102,0.1);border-radius:6px;padding:2px 7px;}
-  .note-textarea{font-size:16px;line-height:1.6;color:var(--text);font-family:'Nunito',sans-serif;font-weight:600;background:transparent;border:none;outline:none;width:100%;resize:none;min-height:50px;caret-color:var(--accent2);}
-  .note-textarea::placeholder{color:var(--muted);}
-  .note-footer{display:flex;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
-  .note-del-btn{width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,77,77,0.2);background:rgba(255,77,77,0.06);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;}
-  .notes-fab{position:absolute;bottom:30px;right:20px;width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:0 4px 24px rgba(255,110,180,0.35);border:none;color:#fff;}
-  .notes-fab:active{transform:scale(0.93);}
+  .nb-page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;display:flex;flex-direction:column;max-width:430px;margin:0 auto;}
+  .nb-page.slide-up{transform:translateY(0);}
+  .nb-header{display:flex;align-items:center;justify-content:space-between;padding:52px 15px 16px;flex-shrink:0;}
+  .nb-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--accent2);cursor:pointer;padding:8px 14px;background:rgba(90,180,255,0.08);border:1px solid rgba(90,180,255,0.15);border-radius:12px;}
+  .nb-back:active{opacity:0.7;}
+  .nb-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;}
+  .nb-badge{font-size:11px;color:var(--muted);font-weight:600;background:var(--card2);padding:4px 10px;border-radius:8px;}
+  .nb-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 15px 100px;}
+  .nb-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:10px;box-shadow:var(--shadow);}
+  .nb-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .nb-date-btn{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--accent3);background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);border-radius:8px;padding:4px 10px;cursor:pointer;outline:none;}
+  .nb-time-btn{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;outline:none;}
+  .nb-modified{font-size:10px;color:var(--muted);margin-left:auto;}
+  .nb-offline{font-size:10px;color:var(--accent3);font-weight:700;background:rgba(255,209,102,0.1);border-radius:6px;padding:2px 7px;}
+  .nb-textarea{font-size:16px;line-height:1.6;color:var(--text);font-family:'Nunito',sans-serif;font-weight:600;background:transparent;border:none;outline:none;width:100%;resize:none;min-height:50px;caret-color:var(--accent2);}
+  .nb-textarea::placeholder{color:var(--muted);}
+  .nb-footer{display:flex;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+  .nb-del-btn{width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,77,77,0.2);background:rgba(255,77,77,0.06);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;}
+  .nb-fab{position:absolute;bottom:30px;right:20px;width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:0 4px 24px rgba(255,110,180,0.35);border:none;color:#fff;}
+  .nb-fab:active{transform:scale(0.93);}
   .notebook-btn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--muted);box-shadow:var(--shadow);}
   .notebook-btn.active{background:rgba(255,209,102,0.15);border-color:rgba(255,209,102,0.3);}
   .offline-bar{background:rgba(255,209,102,0.10);border:1px solid rgba(255,209,102,0.2);border-radius:12px;padding:8px 14px;margin-bottom:10px;font-size:11px;font-weight:700;color:var(--accent3);display:none;text-align:center;}
@@ -340,28 +340,38 @@ var API_URL = "https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46
 var BIRTHDAY = new Date(2025, 6, 23);
 var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
 var MONTHS_SHORT = ["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"];
-var DAYS_SHORT = ["вс","пн","вт","ср","чт","пт","сб"];
 var NORM_MIN = 180;
+var FEED_INTERVAL_MIN = 240;
+var DAY_SLEEP_START = 420;  // 7:00
+var DAY_SLEEP_END = 1170;   // 19:30
+var MORNING_WB_START = 300; // 5:00
+var MORNING_WB_END = 600;   // 10:00
 var notifyTimers = [];
 var editRowIndex = null;
 var whType = null;
-var selectedDayOffset = 0; // 0=сегодня, 1=вчера...
+var selectedDayOffset = 0;
 var currentHistory = [];
+var _lastFeedTime = null;
+
+// ── CONSTANTS ──
+var LS_QUEUE  = "stesha_queue";
+var LS_CACHE  = "stesha_cache";
+var LS_NOTES  = "stesha_notes";
 
 // ── UTILS ──
 function z2(n){n=parseInt(n)||0;return('0'+Math.abs(n)).slice(-2);}
-function safeNum(n,def){var v=parseFloat(n);return isNaN(v)?( def||0):v;}
+function safeNum(n,def){var v=parseFloat(n);return isNaN(v)?(def||0):v;}
 function safeMin(n){return Math.max(0,Math.round(safeNum(n,0)));}
 function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1==1)return one;return many;}
-function formatMin(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
-function formatMinLong(m){var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+" "+pluralRus(h,"час","часа","часов"));if(mn>0)p.push(mn+" "+pluralRus(mn,"минута","минуты","минут"));return p.length?p.join(" "):"меньше минуты";}
-function minsAgo(d){return Math.floor((Date.now()-d.getTime())/60000);}
+function formatMin(m){m=safeMin(m);var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
+function formatMinLong(m){m=safeMin(m);var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+" "+pluralRus(h,"час","часа","часов"));if(mn>0)p.push(mn+" "+pluralRus(mn,"минута","минуты","минут"));return p.length?p.join(" "):"меньше минуты";}
+function minsAgo(d){return Math.max(0,Math.floor((Date.now()-d.getTime())/60000));}
 function minsUntil(t){
   if(!t)return null;
   if(t instanceof Date)return Math.floor((t.getTime()-Date.now())/60000);
-  var now=new Date(),p=t.split(":"),tgt=new Date();
+  var p=t.split(":"),tgt=new Date();
   tgt.setHours(parseInt(p[0]),parseInt(p[1]),0,0);
-  return Math.floor((tgt-now)/60000);
+  return Math.floor((tgt-Date.now())/60000);
 }
 function formatCountdown(mins){
   if(mins===null)return"нет данных";
@@ -370,6 +380,7 @@ function formatCountdown(mins){
 }
 function getLogicalDate(date){var d=new Date(date.getTime());if(d.getHours()<6)d.setDate(d.getDate()-1);return d;}
 function getLogicalDateStr(date){return getLogicalDate(date).toDateString();}
+function dateToHHMM(d){if(!d||!(d instanceof Date))return"—";return z2(d.getHours())+":"+z2(d.getMinutes());}
 
 function calcAge(){
   var now=new Date(),y=now.getFullYear()-BIRTHDAY.getFullYear(),m=now.getMonth()-BIRTHDAY.getMonth(),d=now.getDate()-BIRTHDAY.getDate();
@@ -384,13 +395,125 @@ function showToast(msg){
   setTimeout(function(){t.classList.remove("show");},2500);
 }
 
+// ── SLEEP/FEED CALC ──
+function calcNextSleep(wakeDate){
+  if(!wakeDate)return null;
+  var totalMin=wakeDate.getHours()*60+wakeDate.getMinutes();
+  var interval=(totalMin>=MORNING_WB_START&&totalMin<MORNING_WB_END)?135:150;
+  return new Date(wakeDate.getTime()+interval*60000);
+}
+function calcNextFeed(feedDate){
+  if(!feedDate)return null;
+  return new Date(feedDate.getTime()+FEED_INTERVAL_MIN*60000);
+}
+
+// ── LOCAL CACHE (last 100 records) ──
+function getCachedHistory(){
+  try{var r=localStorage.getItem(LS_CACHE);return r?JSON.parse(r):null;}catch(e){return null;}
+}
+function setCachedHistory(history){
+  try{localStorage.setItem(LS_CACHE,JSON.stringify(history));}catch(e){}
+}
+
+// ── OFFLINE QUEUE — persistent via localStorage ──
+function getQueue(){
+  try{var r=localStorage.getItem(LS_QUEUE);return r?JSON.parse(r):[];}catch(e){return[];}
+}
+function saveQueue(q){
+  try{localStorage.setItem(LS_QUEUE,JSON.stringify(q));}catch(e){}
+}
+function enqueue(item){
+  // item: {id, url, label, ts}
+  var q=getQueue();
+  q.push(item);
+  saveQueue(q);
+  updateOfflineBar();
+}
+function removeFromQueue(id){
+  var q=getQueue().filter(function(x){return x.id!==id;});
+  saveQueue(q);
+  updateOfflineBar();
+}
+
+// Проверка сети — не только navigator.onLine
+var _networkOk=navigator.onLine;
+function isOnline(){return _networkOk&&navigator.onLine;}
+
+function pingNetwork(){
+  fetch(API_URL+"?mode=ping",{method:"GET",cache:"no-store"})
+    .then(function(){_networkOk=true;})
+    .catch(function(){_networkOk=false;});
+}
+setInterval(pingNetwork,30000);
+
+function flushQueue(){
+  var q=getQueue();
+  if(!q.length)return;
+  // Обрабатываем каждую запись независимо
+  q.forEach(function(item){
+    fetch(item.url)
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(data.ok||data.skipped){
+          removeFromQueue(item.id);
+          updateOfflineBar();
+        }
+      })
+      .catch(function(){
+        // retry позже — запись остаётся в очереди
+      });
+  });
+}
+
+function updateOfflineBar(){
+  var bar=document.getElementById("offlineBar");
+  if(!bar)return;
+  var q=getQueue();
+  if(!isOnline()){
+    bar.className="offline-bar show";
+    bar.innerHTML='📵 Офлайн'+(q.length?' · '+q.length+' в очереди':'');
+    bar.onclick=null;
+  } else if(q.length>0){
+    bar.className="offline-bar show";
+    bar.innerHTML='⏳ '+q.length+' '+pluralRus(q.length,"запись","записи","записей")+' ожидают синхронизации <u>подробнее</u>';
+    bar.style.cursor="pointer";
+    bar.onclick=showQueueModal;
+  } else {
+    bar.className="offline-bar";
+    bar.onclick=null;
+  }
+}
+
+function showQueueModal(){
+  var q=getQueue();
+  if(!q.length){showToast("✅ Очередь пуста");return;}
+  var msg="Ожидают отправки:\n\n";
+  q.forEach(function(item,i){
+    var d=new Date(item.ts);
+    msg+=(i+1)+". "+item.label+" ("+z2(d.getHours())+":"+z2(d.getMinutes())+")\n";
+  });
+  msg+="\nОтменить конкретную запись нельзя из этого окна — удалите её через ✏️ в истории после синхронизации.";
+  alert(msg);
+}
+
+window.addEventListener("online",function(){
+  _networkOk=true;
+  showToast("✅ Сеть восстановлена");
+  flushQueue();
+  updateOfflineBar();
+  loadData();
+});
+window.addEventListener("offline",function(){
+  _networkOk=false;
+  updateOfflineBar();
+});
+
 // ── HEADER ──
 function updateHeader(){
   var now=new Date();
   document.getElementById("headerTime").textContent=z2(now.getHours())+":"+z2(now.getMinutes());
   updateHeaderDate();
 }
-
 function updateHeaderDate(){
   var now=new Date();
   var d=new Date(now.getTime()-selectedDayOffset*86400000);
@@ -398,7 +521,6 @@ function updateHeaderDate(){
   var label=selectedDayOffset===0?" · Сегодня":selectedDayOffset===1?" · Вчера":"";
   document.getElementById("headerDate").innerHTML=dateStr+'<span style="font-size:11px;color:var(--muted);font-weight:600;margin-left:4px;">'+label+'</span>';
 }
-
 function buildDateOptions(){
   var now=new Date();
   var wrap=document.getElementById("dateOptions");
@@ -422,7 +544,6 @@ function buildDateOptions(){
     wrap.appendChild(el);
   }
 }
-
 function toggleDatePicker(){document.getElementById("datePicker").classList.toggle("show");}
 
 // ── NOTIFICATIONS ──
@@ -430,100 +551,62 @@ function isNotifyHour(){var h=new Date().getHours();return h>=6||h<2;}
 function registerSW(){
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("sw.js")
-      .then(function(reg){ console.log("SW registered:", reg.scope); })
-      .catch(function(e){ console.log("SW failed:", e); });
+      .then(function(reg){console.log("SW:",reg.scope);})
+      .catch(function(e){console.log("SW fail:",e);});
   }
 }
 function requestNotifyPermission(){
   if(!("Notification" in window)){showToast("⚠️ Уведомления не поддерживаются");return;}
-  if(Notification.permission==="granted"){showToast("✅ Уведомления уже включены");return;}
+  if(Notification.permission==="granted"){showToast("✅ Уже включены");return;}
   Notification.requestPermission().then(function(p){
     updateBell();
-    if(p==="granted"){showToast("✅ Уведомления включены!");}
-    else{showToast("❌ Уведомления не разрешены");}
+    showToast(p==="granted"?"✅ Уведомления включены!":"❌ Не разрешены");
   });
 }
 function sendNotification(title,body){
   if(!("Notification" in window)||Notification.permission!=="granted")return;
   if(!isNotifyHour())return;
   try{
-    // Пробуем через SW (нужен для фоновых уведомлений)
     if("serviceWorker" in navigator){
       navigator.serviceWorker.ready.then(function(reg){
-        reg.showNotification(title,{
-          body:body,
-          icon:"https://img.icons8.com/?size=192&id=Sawg2D8Sr9wA&format=png&color=000000",
-          badge:"https://img.icons8.com/?size=96&id=Sawg2D8Sr9wA&format=png&color=000000",
-          vibrate:[200,100,200],
-          tag:"stesha-notify",
-          renotify:true
-        });
-      }).catch(function(){
-        // Fallback — прямое уведомление
-        try{ new Notification(title,{body:body}); }catch(e2){}
-      });
-    } else {
-      new Notification(title,{body:body});
-    }
-  }catch(e){ console.log("Notification error:",e); }
+        reg.showNotification(title,{body:body,icon:"https://img.icons8.com/?size=192&id=Sawg2D8Sr9wA&format=png&color=000000",badge:"https://img.icons8.com/?size=96&id=Sawg2D8Sr9wA&format=png&color=000000",vibrate:[200,100,200],tag:"stesha-notify",renotify:true});
+      }).catch(function(){try{new Notification(title,{body:body});}catch(e){}});
+    } else {new Notification(title,{body:body});}
+  }catch(e){}
 }
 function clearNotifyTimers(){for(var i=0;i<notifyTimers.length;i++)clearTimeout(notifyTimers[i]);notifyTimers=[];}
-
-function scheduleNotify(type, targetDate){
+function scheduleNotify(type,targetDate){
   if(!targetDate||!(targetDate instanceof Date))return;
-  var now=Date.now();
-  var msUntil=targetDate.getTime()-now;
-  if(msUntil<-60000)return; // уже прошло больше минуты назад — не планируем
-
-  var titles={
-    sleep:  {warn:"🛏 Через 10 минут укладываем Стешу", exact:"🛏 Пора укладывать Стешу"},
-    feed:   {warn:"🍼 Через 10 минут кормим Стешу",     exact:"🍼 Пора кормить Стешу"}
-  };
-  var t=titles[type];
-  if(!t)return;
-
+  var msUntil=targetDate.getTime()-Date.now();
+  if(msUntil<-60000)return;
+  var titles={sleep:{warn:"🛏 Через 10 минут укладываем",exact:"🛏 Пора укладывать Стешу"},feed:{warn:"🍼 Через 10 минут кормим",exact:"🍼 Пора кормить Стешу"}};
+  var t=titles[type];if(!t)return;
   var hhmm=dateToHHMM(targetDate);
-  var ms10=msUntil-10*60000; // за 10 минут
-
+  var ms10=msUntil-10*60000;
   if(ms10>0&&ms10<8*3600000){
     notifyTimers.push(setTimeout(function(){
-      // Проверяем что событие ещё не произошло
-      if(type==="feed"&&lastFeedAfter(targetDate))return;
-      sendNotification(t.warn, "В "+hhmm);
-    }, ms10));
+      if(type==="feed"&&_lastFeedTime&&_lastFeedTime.getTime()>=targetDate.getTime())return;
+      sendNotification(t.warn,"В "+hhmm);
+    },ms10));
   }
-
   if(msUntil>0&&msUntil<8*3600000){
     notifyTimers.push(setTimeout(function(){
-      if(type==="feed"&&lastFeedAfter(targetDate))return;
-      sendNotification(t.exact, "Запланировано на "+hhmm);
-    }, msUntil));
+      if(type==="feed"&&_lastFeedTime&&_lastFeedTime.getTime()>=targetDate.getTime())return;
+      sendNotification(t.exact,"Запланировано на "+hhmm);
+    },msUntil));
   }
 }
-
-// Проверяем — было ли кормление после указанного времени (значит уже покормили)
-var _lastFeedTime=null;
-function lastFeedAfter(targetDate){
-  return _lastFeedTime && _lastFeedTime.getTime()>=targetDate.getTime();
-}
-
-// Мгновенное уведомление о записи события
 function notifyRecorded(type){
-  var msgs={
-    sleep:"🌙 Сон записан",
-    wake: "☀️ Пробуждение записано",
-    feed: "🍼 Питание записано"
-  };
+  var msgs={sleep:"🌙 Сон записан",wake:"☀️ Пробуждение записано",feed:"🍼 Питание записано"};
   if(msgs[type])sendNotification(msgs[type],"");
 }
 function onBellClick(){
-  if(!("Notification" in window)){showToast("⚠️ Уведомления не поддерживаются");return;}
-  if(Notification.permission==="granted"){showToast("✅ Уведомления уже включены");return;}
+  if(!("Notification" in window)){showToast("⚠️ Не поддерживается");return;}
+  if(Notification.permission==="granted"){showToast("✅ Уведомления включены");return;}
   requestNotifyPermission();
 }
 function updateBell(){
-  var btn=document.getElementById("bellBtn");
-  if(!btn)return;
+  var btn=document.getElementById("bellBtn");if(!btn)return;
   if(!("Notification" in window)){btn.className="bell-btn unknown";btn.textContent="🔔";return;}
   if(Notification.permission==="granted"){btn.className="bell-btn on";btn.textContent="🔔";}
   else if(Notification.permission==="denied"){btn.className="bell-btn off";btn.textContent="🔕";}
@@ -542,35 +625,32 @@ function sendAction(action,btnEl,label){
   var msg=encodeURIComponent(msgMap[action]+" в "+timeStr);
   var url=API_URL+"?mode=add&type="+action+"&message="+msg+"&manualTime="+now.getTime();
 
+  // Optimistic local update
+  var cached=getCachedHistory()||[];
+  cached.unshift({time:now,type:action,message:decodeURIComponent(msg),rowIndex:null});
+  if(cached.length>100)cached=cached.slice(0,100);
+  setCachedHistory(cached);
+  currentHistory=cached;
+  render(cached);
   btnEl.classList.remove("btn-loading");btnEl.textContent=orig;
+  notifyRecorded(action);
 
   if(!isOnline()){
     showToast("📵 Сохранено офлайн");
-    offlineQueue.push(function(){
-      fetch(url).then(function(r){return r.json();}).then(function(data){
-        if(data.ok)refreshData();
-      }).catch(function(){});
-    });
-    updateOfflineBar();
+    enqueue({id:"q"+now.getTime(),url:url,label:msgMap[action],ts:now.getTime()});
     return;
   }
 
   fetch(url)
     .then(function(r){return r.json();})
     .then(function(data){
-      if(data.ok){
-        showToast("✅ Записано!");
-        notifyRecorded(action);
-        refreshData();
-      } else {
-        showToast("❌ "+(data.error||"Ошибка"));
-      }
+      if(data.ok){showToast("✅ Записано!");refreshData();}
+      else if(data.skipped){showToast("ℹ️ Уже записано");}
+      else{showToast("❌ "+(data.error||"Ошибка"));}
     })
     .catch(function(){
-      showToast("📵 Нет связи — сохранено офлайн");
-      offlineQueue.push(function(){
-        fetch(url).then(function(r){return r.json();}).then(function(d){if(d.ok)refreshData();}).catch(function(){});
-      });
+      showToast("📵 Сохранено офлайн");
+      enqueue({id:"q"+now.getTime(),url:url,label:msgMap[action],ts:now.getTime()});
       updateOfflineBar();
     });
 }
@@ -608,10 +688,17 @@ function saveAdd(){
     .then(function(r){return r.json();})
     .then(function(data){
       btn.textContent="Добавить";btn.disabled=false;
-      if(data.ok){showToast("✅ Запись добавлена!");notifyRecorded(typeMap[addType]);closeAddModal();setTimeout(loadData,500);}
-      else{showToast("❌ "+(data.error||"Ошибка"));}
+      if(data.ok||data.skipped){
+        showToast(data.ok?"✅ Запись добавлена!":"ℹ️ Уже есть похожая запись");
+        notifyRecorded(type);
+        closeAddModal();
+        setTimeout(refreshData,500);
+      } else {showToast("❌ "+(data.error||"Ошибка"));}
     })
-    .catch(function(){btn.textContent="Добавить";btn.disabled=false;showToast("❌ Нет связи");});
+    .catch(function(){
+      btn.textContent="Добавить";btn.disabled=false;
+      showToast("❌ Нет связи");
+    });
 }
 
 // ── EDIT MODAL ──
@@ -633,8 +720,12 @@ function saveEdit(){
     .then(function(r){return r.json();})
     .then(function(data){
       btn.textContent="Сохранить";btn.disabled=false;
-      if(data.ok){showToast("✅ Время обновлено!");sendNotification("✏️ Запись изменена","");closeEditModal();setTimeout(refreshData,500);}
-      else{showToast("❌ "+(data.error||"Ошибка"));}
+      if(data.ok){
+        sendNotification("✏️ Запись изменена","");
+        showToast("✅ Время обновлено!");
+        closeEditModal();
+        setTimeout(refreshData,500);
+      } else {showToast("❌ "+(data.error||"Ошибка"));}
     })
     .catch(function(){btn.textContent="Сохранить";btn.disabled=false;showToast("❌ Нет связи");});
 }
@@ -644,7 +735,7 @@ function deleteRecord(){
   fetch(API_URL+"?mode=delete&rowIndex="+editRowIndex)
     .then(function(r){return r.json();})
     .then(function(data){
-      if(data.ok){showToast("✅ Запись удалена!");closeEditModal();setTimeout(refreshData,500);}
+      if(data.ok){showToast("✅ Удалено!");closeEditModal();setTimeout(refreshData,500);}
       else{showToast("❌ "+(data.error||"Ошибка"));}
     })
     .catch(function(){showToast("❌ Нет связи");});
@@ -688,7 +779,7 @@ function doBackup(){
     .catch(function(){showToast("❌ Нет связи");});
 }
 function doRestore(){
-  if(!confirm("Восстановить данные из таблицы? Текущие данные будут перезаписаны."))return;
+  if(!confirm("Восстановить данные из таблицы?"))return;
   showToast("⏳ Восстанавливаем...");
   fetch(API_URL+"?mode=restore")
     .then(function(r){return r.json();})
@@ -700,53 +791,30 @@ function doRestore(){
 }
 
 // ── LIVE COUNTER ──
-var currentStatusDate=null,currentStatusType=null,currentSleepBase=0,currentSleepStartMin=-1;
+var currentStatusDate=null,currentStatusType=null,currentSleepBase=0;
 function updateLiveCounter(){
   if(!currentStatusDate)return;
   var mins=minsAgo(currentStatusDate);
   var el=document.getElementById("liveSince");
-  if(el){var label=currentStatusType==="sleep"?"Спит":"Бодрствует";el.textContent=label+" "+formatMin(mins);}
+  if(el){el.textContent=(currentStatusType==="sleep"?"Спит":"Бодрствует")+" "+formatMin(mins);}
   var sc=document.getElementById("sleepActiveTime");
   if(sc&&currentStatusType==="sleep")sc.textContent=formatMin(mins)+" назад";
-
-  // Обновляем круговой индикатор в реальном времени
   if(currentStatusType==="sleep"){
     var totalNow=safeMin(currentSleepBase+mins);
-    var dashArr2=251;
-    var offset=totalNow>0?Math.max(0,dashArr2-Math.round(dashArr2*(Math.min(totalNow,NORM_MIN)/NORM_MIN))):dashArr2;
+    var da=251;
+    var off=totalNow>0?Math.max(0,da-Math.round(da*(Math.min(totalNow,NORM_MIN)/NORM_MIN))):da;
     var circ=document.querySelector(".circle-fill");
-    if(circ)circ.style.strokeDashoffset=offset;
+    if(circ)circ.style.strokeDashoffset=off;
     var cv=document.getElementById("circleVal");
     if(cv)cv.textContent=z2(Math.floor(totalNow/60))+":"+z2(totalNow%60);
   }
-
   var nf=document.getElementById("nextFeedVal"),fl=document.getElementById("feedCountdown");
-  if(fl&&nf&&nf.dataset.ts){var mf=minsUntil(new Date(parseInt(nf.dataset.ts)));fl.innerHTML=formatCountdown(mf);}
+  if(fl&&nf&&nf.dataset.ts){fl.innerHTML=formatCountdown(minsUntil(new Date(parseInt(nf.dataset.ts))));}
   var ns=document.getElementById("nextSleepVal"),sl=document.getElementById("sleepCountdown");
-  if(sl&&ns&&ns.dataset.ts&&currentStatusType!=="sleep"){var mt=minsUntil(new Date(parseInt(ns.dataset.ts)));sl.innerHTML=formatCountdown(mt);}
+  if(sl&&ns&&ns.dataset.ts&&currentStatusType!=="sleep"){sl.innerHTML=formatCountdown(minsUntil(new Date(parseInt(ns.dataset.ts))));}
 }
 
-// ── РАСЧЁТ СЛЕДУЮЩЕГО СНА И КОРМЛЕНИЯ ──
-var FEED_INTERVAL_MIN = 240; // 4 часа
-
-function calcNextSleep(wakeDate) {
-  if (!wakeDate) return null;
-  var h = wakeDate.getHours(), m = wakeDate.getMinutes();
-  var totalMin = h * 60 + m;
-  var interval = (totalMin >= 300 && totalMin < 600) ? 135 : 150;
-  return new Date(wakeDate.getTime() + interval * 60000);
-}
-
-function calcNextFeed(feedDate) {
-  if (!feedDate) return null;
-  return new Date(feedDate.getTime() + FEED_INTERVAL_MIN * 60000);
-}
-
-function dateToHHMM(d) {
-  if (!d || !(d instanceof Date)) return "—";
-  return z2(d.getHours()) + ":" + z2(d.getMinutes());
-}
-
+// ── CALC DAY SLEEP ──
 function calcDaySleep(parsed,logDateStr){
   var total=0,sorted=parsed.slice().reverse();
   for(var i=0;i<sorted.length;i++){
@@ -754,7 +822,7 @@ function calcDaySleep(parsed,logDateStr){
       for(var j=i-1;j>=0;j--){
         if(sorted[j].type==="sleep"){
           var ss=sorted[j].date,sm=ss.getHours()*60+ss.getMinutes();
-          if(sm>=420&&sm<1170){
+          if(sm>=DAY_SLEEP_START&&sm<DAY_SLEEP_END){
             var dur=Math.floor((sorted[i].date.getTime()-ss.getTime())/60000);
             if(dur>0&&dur<300)total+=dur;
           }
@@ -775,30 +843,28 @@ function renderSleepItems(items,max){
     var it=si[k],t=z2(it.date.getHours())+":"+z2(it.date.getMinutes());
     var dc=it.type==="wake"?"dot-wake":"dot-sleep",desc=it.type==="wake"?"Проснулась":"Уснула",dur="";
     if(it.type==="wake"&&k+1<si.length&&si[k+1].type==="sleep"){
-      var d=Math.floor((it.date.getTime()-si[k+1].date.getTime())/60000);
-      if(d>0&&d<300)dur=formatMinLong(d);
+      var dd=Math.floor((it.date.getTime()-si[k+1].date.getTime())/60000);
+      if(dd>0&&dd<300)dur=formatMinLong(dd);
     }
-    var ri=it.rowIndex!==undefined?it.rowIndex:"";
+    var ri=it.rowIndex!=null?it.rowIndex:"";
     var oc=ri!==""?'onclick="openEdit('+ri+',\''+t+'\',\''+desc+' в '+t+'\')"':'';
-    html+='<div class="hist-item" '+oc+'><div class="hist-dot '+dc+'"></div><div class="hist-time">'+t+'</div><div class="hist-info"><div class="hist-desc">'+desc+'</div>'+(dur?'<div class="hist-dur">'+dur+'</div>':'')+'</div><div class="hist-edit">✏️</div></div>';
+    html+='<div class="hist-item" '+oc+'><div class="hist-dot '+dc+'"></div><div class="hist-time">'+t+'</div><div class="hist-info"><div class="hist-desc">'+desc+'</div>'+(dur?'<div class="hist-dur">'+dur+'</div>':'')+'</div>'+(ri!==""?'<div class="hist-edit">✏️</div>':'')+'</div>';
   }
   return html;
 }
-
 function renderFeedItems(items,max){
   var fi=items.filter(function(x){return x.type==="feed";});
   if(!fi.length)return'<div style="color:var(--muted);font-size:12px;padding:4px 0">Нет данных</div>';
   var html="";
   for(var f=0;f<fi.length&&f<max;f++){
     var fitem=fi[f],ft=z2(fitem.date.getHours())+":"+z2(fitem.date.getMinutes());
-    var ri=fitem.rowIndex!==undefined?fitem.rowIndex:"";
+    var ri=fitem.rowIndex!=null?fitem.rowIndex:"";
     var oc=ri!==""?'onclick="openEdit('+ri+',\''+ft+'\',\'Поела в '+ft+'\')"':'';
-    html+='<div class="hist-item" '+oc+'><div class="hist-dot dot-feed"></div><div class="hist-time">'+ft+'</div><div class="hist-info"><div class="hist-desc">Поела</div></div><div class="hist-edit">✏️</div></div>';
+    html+='<div class="hist-item" '+oc+'><div class="hist-dot dot-feed"></div><div class="hist-time">'+ft+'</div><div class="hist-info"><div class="hist-desc">Поела</div></div>'+(ri!==""?'<div class="hist-edit">✏️</div>':'')+'</div>';
   }
   return html;
 }
 
-// ── RENDER FOR DAY ──
 function renderForDay(){
   if(!currentHistory.length)return;
   render(currentHistory);
@@ -807,6 +873,9 @@ function renderForDay(){
 // ── MAIN RENDER ──
 function render(history){
   currentHistory=history;
+  // Кэшируем локально
+  setCachedHistory(history.slice(0,100));
+
   if(!history||!history.length){document.getElementById("content").innerHTML='<div class="error-card">Данных пока нет.</div>';return;}
 
   var now=new Date();
@@ -814,20 +883,18 @@ function render(history){
   var targetLogical=getLogicalDateStr(targetDate);
   var prevDate=new Date(targetDate.getTime()-86400000);
   var prevLogical=getLogicalDateStr(prevDate);
-  var todayLogical=getLogicalDateStr(now);
 
-  var lastWake=null,lastSleep=null,lastFeed=null;
-  var lastWeight=null,lastHeight=null;
+  var lastWake=null,lastSleep=null,lastFeed=null,lastWeight=null,lastHeight=null;
   var feedCountDay=0,sleepCountDay=0;
   var parsed=[];
 
   for(var i=0;i<history.length;i++){
     var item=history[i],d=new Date(item.time),msg=item.message||"";
     var logDate=getLogicalDateStr(d);
-    parsed.push({date:d,type:item.type||"",msg:msg,dateStr:d.toDateString(),logicalDateStr:logDate,rowIndex:item.rowIndex});
-    if(!lastWake&&item.type==="wake")lastWake={date:d,msg:msg};
-    if(!lastSleep&&item.type==="sleep")lastSleep={date:d,msg:msg};
-    if(!lastFeed&&item.type==="feed")lastFeed={date:d,msg:msg};
+    parsed.push({date:d,type:item.type||"",msg:msg,logicalDateStr:logDate,rowIndex:item.rowIndex});
+    if(!lastWake&&item.type==="wake")lastWake={date:d};
+    if(!lastSleep&&item.type==="sleep")lastSleep={date:d};
+    if(!lastFeed&&item.type==="feed")lastFeed={date:d};
     if(!lastWeight&&item.type==="measurement"&&item.subtype==="weight")lastWeight={val:item.value,date:d};
     if(!lastHeight&&item.type==="measurement"&&item.subtype==="height")lastHeight={val:item.value,date:d};
     if(logDate===targetLogical){
@@ -836,8 +903,6 @@ function render(history){
     }
   }
 
-  // Status (always based on latest events)
-  // Считаем следующий сон и кормление сами — не зависим от SprutHub
   var nextSleep=calcNextSleep(lastWake?lastWake.date:null);
   var nextFeed=calcNextFeed(lastFeed?lastFeed.date:null);
 
@@ -846,27 +911,31 @@ function render(history){
   else if(lastSleep&&!lastWake)isSleeping=true;
 
   var lastEventDate=isSleeping?(lastSleep?lastSleep.date:null):(lastWake?lastWake.date:null);
+
+  // FIX: вычисляем totalSleepMin ДО установки currentSleepBase
+  var totalSleepMin=calcDaySleep(parsed,targetLogical);
+  if(selectedDayOffset===0&&isSleeping&&lastSleep){
+    var cSMin=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
+    if(cSMin>=DAY_SLEEP_START&&cSMin<DAY_SLEEP_END)totalSleepMin+=safeMin(minsAgo(lastSleep.date));
+  }
+  totalSleepMin=safeMin(totalSleepMin);
+
   currentStatusDate=lastEventDate;
   currentStatusType=isSleeping?"sleep":"awake";
-  currentSleepBase=safeMin(totalSleepMin);
-  currentSleepStartMin=isSleeping&&lastSleep?(lastSleep.date.getHours()*60+lastSleep.date.getMinutes()):-1;
+  currentSleepBase=totalSleepMin; // FIX: теперь устанавливается после вычисления
+
+  _lastFeedTime=lastFeed?lastFeed.date:null;
+
   var mins=lastEventDate?minsAgo(lastEventDate):0;
   var sinceStr=lastEventDate?formatMin(mins):"";
   var statusIcon=isSleeping?"🌙":"☀️";
-  var statusClass=isSleeping?"sleep":"awake";
+  var statusClass=isSleeping?"sleep":"awake"; // FIX: реально разные значения используются в status-icon
   var statusText=isSleeping?"Спит":"Бодрствует";
   var statusSubTime=isSleeping?(lastSleep?"с "+z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):""):(lastWake?"проснулась в "+z2(lastWake.date.getHours())+":"+z2(lastWake.date.getMinutes()):"");
 
   var minsToFeed=nextFeed?minsUntil(nextFeed):null;
   var minsToSleep=(!isSleeping&&nextSleep)?minsUntil(nextSleep):null;
 
-  // Day sleep
-  var totalSleepMin=calcDaySleep(parsed,targetLogical);
-  if(selectedDayOffset===0&&isSleeping&&lastSleep){
-    var cSMin=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
-    if(cSMin>=420&&cSMin<1170)totalSleepMin+=safeMin(minsAgo(lastSleep.date));
-  }
-  totalSleepMin=safeMin(totalSleepMin);
   var dashArr=251;
   var sleepOffset=totalSleepMin>0?Math.max(0,dashArr-Math.round(dashArr*(Math.min(totalSleepMin,NORM_MIN)/NORM_MIN))):dashArr;
   var sleepH=Math.floor(totalSleepMin/60),sleepM=totalSleepMin%60;
@@ -874,114 +943,91 @@ function render(history){
 
   // Night sleep
   var nightSleepStr="—";
-  var sorted=parsed.slice().reverse();
-  for(var ni=0;ni<sorted.length;ni++){
-    if(sorted[ni].type==="wake"){
-      var wakeDate=sorted[ni].date;
-      var wakeLogical=getLogicalDateStr(wakeDate);
-      if(wakeLogical===targetLogical){
-        for(var nj=ni-1;nj>=0;nj--){
-          if(sorted[nj].type==="sleep"){
-            var ss=sorted[nj].date,sm=ss.getHours()*60+ss.getMinutes();
-            if(sm<420||sm>=1170){
-              var nd=Math.floor((wakeDate.getTime()-ss.getTime())/60000);
-              if(nd>120)nightSleepStr=z2(Math.floor(nd/60))+":"+z2(nd%60);
-            }
-            break;
+  var sortedNight=parsed.slice().reverse();
+  for(var ni=0;ni<sortedNight.length;ni++){
+    if(sortedNight[ni].type==="wake"&&getLogicalDateStr(sortedNight[ni].date)===targetLogical){
+      for(var nj=ni-1;nj>=0;nj--){
+        if(sortedNight[nj].type==="sleep"){
+          var nss=sortedNight[nj].date,nsm=nss.getHours()*60+nss.getMinutes();
+          if(nsm<DAY_SLEEP_START||nsm>=DAY_SLEEP_END){
+            var nd2=Math.floor((sortedNight[ni].date.getTime()-nss.getTime())/60000);
+            if(nd2>120)nightSleepStr=z2(Math.floor(nd2/60))+":"+z2(nd2%60);
           }
+          break;
         }
-        break;
       }
+      break;
     }
   }
 
-  // Chart 7 days — реальные данные
-  var chartBars="";
-  var DAY_NAMES=["вс","пн","вт","ср","чт","пт","сб"]; // 0=вс
-  var now7=new Date();
-  // Собираем данные за 7 дней (от 6 дней назад до сегодня)
-  var chartMins=[];
-  var chartLabels=[];
+  // Chart — 7 дней
+  var chartBars="",DAY_NAMES=["вс","пн","вт","ср","чт","пт","сб"];
+  var now7=new Date(),chartMins=[],chartLabels=[];
   for(var cd=6;cd>=0;cd--){
     var dayD=new Date(now7.getTime()-cd*86400000);
-    var dayLogical=getLogicalDateStr(dayD);
-    var dayMin=calcDaySleep(parsed,dayLogical)||0;
+    var dayMin=calcDaySleep(parsed,getLogicalDateStr(dayD));
     if(cd===0&&selectedDayOffset===0&&isSleeping&&lastSleep){
-      var cSMin2=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
-      if(cSMin2>=420&&cSMin2<1170)dayMin+=minsAgo(lastSleep.date);
+      var cs2=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
+      if(cs2>=DAY_SLEEP_START&&cs2<DAY_SLEEP_END)dayMin+=minsAgo(lastSleep.date);
     }
-    chartMins.push(Math.round(dayMin));
+    chartMins.push(safeMin(dayMin));
     chartLabels.push(DAY_NAMES[dayD.getDay()]);
   }
   var MAX_CHART_MIN=210;
   for(var ci=0;ci<7;ci++){
     var isToday=(ci===6&&selectedDayOffset===0);
     var fillH=chartMins[ci]>0?Math.min(100,Math.round(chartMins[ci]/MAX_CHART_MIN*100)):0;
-    var h=Math.floor(chartMins[ci]/60),m=chartMins[ci]%60;
-    var timeLabel=chartMins[ci]>0?(h+":"+(m<10?"0"+m:m)):"";
-    var hideLabel=fillH<22;
-    var fill='<div class="chart-bar-fill" style="height:'+fillH+'%">'
-      +(timeLabel&&!hideLabel?'<div class="chart-bar-label">'+timeLabel+'</div>':'')
-      +'</div>';
+    var ch=Math.floor(chartMins[ci]/60),cm=chartMins[ci]%60;
+    var timeLabel=chartMins[ci]>0?(ch+":"+(cm<10?"0"+cm:cm)):"";
+    var fill='<div class="chart-bar-fill" style="height:'+fillH+'%">'+(timeLabel&&fillH>=22?'<div class="chart-bar-label">'+timeLabel+'</div>':'')+'</div>';
     chartBars+='<div class="chart-day'+(isToday?" today":"")+'"><div class="chart-bar-wrap"><div class="chart-norm-line"></div>'+fill+'</div><div class="chart-day-lbl">'+chartLabels[ci]+'</div></div>';
   }
 
-  // Items for selected day and prev
+  // Day items
   var dayItems=[],prevItems=[];
   for(var ji=0;ji<parsed.length;ji++){
     if(parsed[ji].logicalDateStr===targetLogical)dayItems.push(parsed[ji]);
     else if(parsed[ji].logicalDateStr===prevLogical)prevItems.push(parsed[ji]);
   }
 
-  // Scheduled notifications
-  // Запоминаем время последнего кормления для проверки в пушах
-  _lastFeedTime = lastFeed ? lastFeed.date : null;
-
+  // Notifications
   clearNotifyTimers();
-  if(nextSleep&&!isSleeping)scheduleNotify("sleep", nextSleep);
-  if(nextFeed)scheduleNotify("feed", nextFeed);
+  if(nextSleep&&!isSleeping)scheduleNotify("sleep",nextSleep);
+  if(nextFeed)scheduleNotify("feed",nextFeed);
 
   // Age
   var age=calcAge(),ageStr="";
   if(age.years>0)ageStr+=age.years+" "+pluralRus(age.years,"год","года","лет")+" ";
   ageStr+=age.months+" "+pluralRus(age.months,"месяц","месяца","месяцев")+" "+age.days+" "+pluralRus(age.days,"день","дня","дней");
 
-  // Left card (sleep)
+  // Birthday
+  var today2=new Date();
+  var nextBD=new Date(today2.getFullYear(),BIRTHDAY.getMonth(),BIRTHDAY.getDate());
+  if(nextBD<=today2)nextBD.setFullYear(today2.getFullYear()+1);
+  var daysUntilBD=Math.ceil((nextBD.getTime()-today2.getTime())/86400000);
+  var whStr=(lastWeight?lastWeight.val+"кг":"-")+" · "+(lastHeight?lastHeight.val+"см":"-");
+
+  // Sleep card
   var sleepCardLabel=isSleeping?"Уснула в":"Спать в";
   var sleepCardTime=isSleeping?(lastSleep?z2(lastSleep.date.getHours())+":"+z2(lastSleep.date.getMinutes()):"—"):dateToHHMM(nextSleep);
   var sleepCardSub=isSleeping?(lastSleep?formatMin(minsAgo(lastSleep.date))+" назад":""):formatCountdown(minsToSleep);
   var feedCardSub=formatCountdown(minsToFeed);
-  var sleepCardClass=isSleeping?"sleep-c":"sleep-c";
 
-  // Action buttons
   var actionBtns=isSleeping
     ?'<button class="act-card btn-wake" onclick="sendAction(\'wake\',this,\'Проснулась\')">☀️ Проснулась</button><button class="act-card btn-feed" onclick="sendAction(\'feed\',this,\'Поела\')">🍼 Поела</button>'
     :'<button class="act-card btn-sleep" onclick="sendAction(\'sleep\',this,\'Уснула\')">🌙 Уснула</button><button class="act-card btn-feed" onclick="sendAction(\'feed\',this,\'Поела\')">🍼 Поела</button>';
 
-  // Day label for history
   var dayLabelText=selectedDayOffset===0?"🕐 Сегодня":selectedDayOffset===1?"🕐 Вчера":("🕐 "+targetDate.getDate()+" "+MONTHS_SHORT[targetDate.getMonth()]);
   var prevLabelText=selectedDayOffset===0?"📅 Вчера":selectedDayOffset===1?"📅 Позавчера":("📅 "+prevDate.getDate()+" "+MONTHS_SHORT[prevDate.getMonth()]);
 
-  // Дни до дня рождения
-  var today=new Date();
-  var nextBirthday=new Date(today.getFullYear(),BIRTHDAY.getMonth(),BIRTHDAY.getDate());
-  if(nextBirthday<=today)nextBirthday.setFullYear(today.getFullYear()+1);
-  var daysUntilBirthday=Math.ceil((nextBirthday.getTime()-today.getTime())/86400000);
-  var whStr=(lastWeight?lastWeight.val+"кг":"-")+" · "+(lastHeight?lastHeight.val+"см":"-");
-
   var html=''
-    // AGE
-    +'<div class="age-bar fu fu1"><div class="age-emoji">👶</div><div class="age-main"><div class="age-text">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025 · до ДР '+daysUntilBirthday+' '+pluralRus(daysUntilBirthday,"день","дня","дней")+'</div></div><div class="age-right"><div class="age-wh">'+whStr+'</div></div></div>'
-    // STATUS
+    +'<div class="age-bar fu fu1"><div class="age-emoji">👶</div><div class="age-main"><div class="age-text">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025 · до ДР '+daysUntilBD+' '+pluralRus(daysUntilBD,"день","дня","дней")+'</div></div><div class="age-right"><div class="age-wh">'+whStr+'</div></div></div>'
     +'<div class="status-big fu fu2"><div class="status-row"><div class="status-icon '+statusClass+'">'+statusIcon+'</div><div><div class="status-timer" id="liveSince" style="color:'+(isSleeping?'var(--accent2)':'var(--accent4)')+'">'+statusText+' '+sinceStr+'</div>'+(isSleeping?'':('<div class="status-since">'+statusSubTime+'</div>'))+'</div></div></div>'
-    // ACTION BUTTONS
     +'<div class="two-col fu fu2">'+actionBtns+'</div>'
-    // MINI CARDS
     +'<div class="two-col fu fu3">'
-    +'<div class="mini-card '+sleepCardClass+'"><div class="mini-icon">'+(isSleeping?"🌙":"🛏")+'</div><div class="mini-label">'+sleepCardLabel+'</div><div class="mini-time" id="'+(isSleeping?"":"nextSleepVal")+'" '+(isSleeping?"":"data-ts='"+(nextSleep?nextSleep.getTime():""  )+"'")+'>'+sleepCardTime+'</div><div class="mini-sub" id="'+(isSleeping?"sleepActiveTime":"sleepCountdown")+'">'+sleepCardSub+'</div></div>'
+    +'<div class="mini-card sleep-c"><div class="mini-icon">'+(isSleeping?"🌙":"🛏")+'</div><div class="mini-label">'+sleepCardLabel+'</div><div class="mini-time" id="'+(isSleeping?"":"nextSleepVal")+'" '+(isSleeping?"":"data-ts='"+(nextSleep?nextSleep.getTime():""  )+"'")+'>'+sleepCardTime+'</div><div class="mini-sub" id="'+(isSleeping?"sleepActiveTime":"sleepCountdown")+'">'+sleepCardSub+'</div></div>'
     +'<div class="mini-card feed-c"><div class="mini-icon">🍼</div><div class="mini-label">Кормить в</div><div class="mini-time" id="nextFeedVal" data-ts="'+(nextFeed?nextFeed.getTime():"")+'">'+dateToHHMM(nextFeed)+'</div><div class="mini-sub" id="feedCountdown">'+feedCardSub+'</div></div>'
     +'</div>'
-    // CIRCLE + PILLS
     +'<div class="circle-pills-row fu fu4">'
     +'<div class="circle-card"><div class="circle-wrap"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sleepGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#5ab4ff"/><stop offset="100%" stop-color="#2edba8"/></linearGradient></defs><circle class="circle-bg" cx="50" cy="50" r="40"/><circle class="circle-fill" cx="50" cy="50" r="40" style="stroke-dashoffset:'+sleepOffset+'"/></svg><div class="circle-inner"><div class="circle-val" id="circleVal">'+sleepTimeStr+'</div><div class="circle-lbl">дн. сон</div></div></div></div>'
     +'<div class="pills-col">'
@@ -989,20 +1035,14 @@ function render(history){
     +'<div class="pill"><div class="pill-val" style="color:var(--accent4)">'+sleepCountDay+'</div><div class="pill-label">Снов</div></div>'
     +'<div class="pill"><div class="pill-val" style="color:var(--accent2)">'+nightSleepStr+'</div><div class="pill-label">Ночной сон</div></div>'
     +'</div></div>'
-    // WEIGHT HEIGHT
     +'<div class="wh-row fu fu4">'
     +'<div class="wh-card weight" onclick="openWhModal(\'weight\')"><div class="wh-edit-icon">✏️</div><div class="wh-icon">⚖️</div><div class="wh-label">Вес</div><div class="wh-val">'+(lastWeight?lastWeight.val+" кг":"—")+'</div><div class="wh-date">'+(lastWeight?lastWeight.date.getDate()+" "+MONTHS_SHORT[lastWeight.date.getMonth()]:"нет данных")+'</div></div>'
     +'<div class="wh-card height" onclick="openWhModal(\'height\')"><div class="wh-edit-icon">✏️</div><div class="wh-icon">📏</div><div class="wh-label">Рост</div><div class="wh-val">'+(lastHeight?lastHeight.val+" см":"—")+'</div><div class="wh-date">'+(lastHeight?lastHeight.date.getDate()+" "+MONTHS_SHORT[lastHeight.date.getMonth()]:"нет данных")+'</div></div>'
     +'</div>'
-    // CHART
     +'<div class="chart-card fu fu5"><div class="chart-title">📊 Дневной сон за 7 дней</div><div class="chart-bars">'+chartBars+'</div></div>'
-    // HISTORY
     +'<div class="hist-header fu fu6"><div class="day-label">'+dayLabelText+'</div><div class="add-btn" onclick="openAddModal()">+</div></div>'
     +'<div class="two-col-hist fu fu6"><div class="hist-card"><div class="hist-title">🛏 Сон</div>'+renderSleepItems(dayItems,12)+'</div><div class="hist-card"><div class="hist-title">🍼 Кормление</div>'+renderFeedItems(dayItems,12)+'</div></div>'
-    +(prevItems.length
-      ?'<div class="hist-header"><div class="day-label">'+prevLabelText+'</div></div><div class="two-col-hist"><div class="hist-card"><div class="hist-title">🛏 Сон</div>'+renderSleepItems(prevItems,8)+'</div><div class="hist-card"><div class="hist-title">🍼 Кормление</div>'+renderFeedItems(prevItems,8)+'</div></div>'
-      :'')
-    // BACKUP
+    +(prevItems.length?'<div class="hist-header"><div class="day-label">'+prevLabelText+'</div></div><div class="two-col-hist"><div class="hist-card"><div class="hist-title">🛏 Сон</div>'+renderSleepItems(prevItems,8)+'</div><div class="hist-card"><div class="hist-title">🍼 Кормление</div>'+renderFeedItems(prevItems,8)+'</div></div>':'')
     +'<div class="backup-row fu fu6"><button class="backup-btn export" onclick="doBackup()">💾 Выгрузка в таблицу</button><button class="backup-btn restore" onclick="doRestore()">📥 Восстановить</button></div>';
 
   document.getElementById("content").innerHTML=html;
@@ -1010,6 +1050,10 @@ function render(history){
 
 // ── LOAD ──
 function loadData(){
+  // Сначала показываем локальный кэш — мгновенно
+  var cached=getCachedHistory();
+  if(cached&&cached.length){render(cached);}
+
   var btn=document.getElementById("refreshBtn");
   if(btn)btn.classList.add("spinning");
   fetch(API_URL)
@@ -1018,7 +1062,6 @@ function loadData(){
     .catch(function(){if(btn)btn.classList.remove("spinning");});
 }
 
-// Принудительное обновление — сбрасывает кэш и загружает из ScriptProperties
 function refreshData(){
   var btn=document.getElementById("refreshBtn");
   if(btn)btn.classList.add("spinning");
@@ -1030,233 +1073,136 @@ function refreshData(){
 
 document.getElementById("refreshBtn").onclick=refreshData;
 
-registerSW();
-updateBell();
-buildDateOptions();
-setInterval(updateLiveCounter,60000);
-setInterval(updateHeader,60000);
-updateHeader();
-loadData();
-
-// Когда приложение возвращается из фона — перезагружаем данные
-document.addEventListener("visibilitychange", function(){
-  if(document.visibilityState === "visible"){
-    updateHeader();
-    loadData();
-  }
-});
-
-// ── OFFLINE QUEUE ──
-var offlineQueue=[];
-
-function isOnline(){return navigator.onLine;}
-
-function queueAction(fn){
-  if(isOnline()){fn();return;}
-  offlineQueue.push(fn);
-  updateOfflineBar();
-}
-
-function flushQueue(){
-  if(!offlineQueue.length)return;
-  var q=offlineQueue.slice();
-  offlineQueue=[];
-  updateOfflineBar();
-  q.forEach(function(fn){fn();});
-}
-
-function updateOfflineBar(){
-  var bar=document.getElementById("offlineBar");
-  if(!bar)return;
-  if(!isOnline()||offlineQueue.length>0){
-    bar.className="offline-bar show";
-    bar.textContent=isOnline()
-      ?"⏳ Синхронизируем "+offlineQueue.length+" записей…"
-      :"📵 Офлайн — записи сохранены локально";
-  } else {
-    bar.className="offline-bar";
-  }
-}
-
-window.addEventListener("online",function(){
-  showToast("✅ Сеть восстановлена");
-  flushQueue();
-  refreshData();
-  updateOfflineBar();
-});
-window.addEventListener("offline",function(){
-  updateOfflineBar();
-});
-
 // ── NOTES ──
-var NOTES_KEY="stesha_notes";
-
-function getNotes(){
-  try{var r=localStorage.getItem(NOTES_KEY);return r?JSON.parse(r):[];}catch(e){return[];}
-}
-
-function saveNotes(notes){
-  try{localStorage.setItem(NOTES_KEY,JSON.stringify(notes));}catch(e){}
-}
+function getNotes(){try{var r=localStorage.getItem(LS_NOTES);return r?JSON.parse(r):[];}catch(e){return[];}}
+function saveNotes(notes){try{localStorage.setItem(LS_NOTES,JSON.stringify(notes));}catch(e){}}
+function escNote(s){return(s||"").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
 function openNotes(){
   document.getElementById("dashboardPage").classList.add("slide-down");
-  document.getElementById("notesPage").classList.add("slide-up");
+  document.getElementById("nbPage").classList.add("slide-up");
   document.getElementById("notebookBtn").classList.add("active");
   renderNotes();
 }
-
 function closeNotes(){
   document.getElementById("dashboardPage").classList.remove("slide-down");
-  document.getElementById("notesPage").classList.remove("slide-up");
+  document.getElementById("nbPage").classList.remove("slide-up");
   document.getElementById("notebookBtn").classList.remove("active");
 }
-
 function renderNotes(){
   var notes=getNotes().sort(function(a,b){return b.ts-a.ts;});
-  var list=document.getElementById("notesList");
-  var badge=document.getElementById("notesBadge");
+  var list=document.getElementById("nbList");
+  var badge=document.getElementById("nbBadge");
   if(badge)badge.textContent=notes.length+(notes.length===1?" заметка":notes.length<5?" заметки":" заметок");
-
-  if(!notes.length){
-    list.innerHTML='<div class="notes-empty">📝<br><br>Заметок пока нет.<br>Нажмите + чтобы добавить.</div>';
-    return;
-  }
-
+  if(!notes.length){list.innerHTML='<div class="nb-empty">📝<br><br>Заметок пока нет.<br>Нажмите + чтобы добавить.</div>';return;}
   list.innerHTML="";
   notes.forEach(function(note,idx){
     var card=document.createElement("div");
-    card.className="note-card";
+    card.className="nb-card";
     card.style.animationDelay=(idx*0.04)+"s";
     card.style.animation="fadeUp 0.3s ease both";
-
     var d=new Date(note.ts);
     var dm=note.modified?new Date(note.modified):d;
     var dateStr=d.getDate()+" "+MONTHS_SHORT[d.getMonth()];
     var timeStr=z2(d.getHours())+":"+z2(d.getMinutes());
     var modStr=dm.getTime()!==d.getTime()?"изм. "+z2(dm.getHours())+":"+z2(dm.getMinutes()):"";
-
     card.innerHTML=
-      '<div class="note-meta">'
-        +'<button class="note-date-btn" onclick="pickNoteDate(\''+note.id+'\')">'+dateStr+'</button>'
-        +'<button class="note-time-btn" onclick="pickNoteTime(\''+note.id+'\')">'+timeStr+'</button>'
-        +(note.offline?'<span class="note-offline-badge">офлайн</span>':'')
-        +(modStr?'<span class="note-modified">'+modStr+'</span>':'')
+      '<div class="nb-meta">'
+        +'<button class="nb-date-btn" onclick="pickNoteDate(\''+note.id+'\')">'+dateStr+'</button>'
+        +'<button class="nb-time-btn" onclick="pickNoteTime(\''+note.id+'\')">'+timeStr+'</button>'
+        +(note.offline?'<span class="nb-offline">офлайн</span>':'')
+        +(modStr?'<span class="nb-modified">'+modStr+'</span>':'')
       +'</div>'
-      +'<textarea class="note-textarea" placeholder="Текст заметки…" onblur="updateNoteText(\''+note.id+'\',this.value)">'+escNote(note.text||'')+'</textarea>'
-      +'<div class="note-footer">'
-        +'<div class="note-del-btn" onclick="deleteNote(\''+note.id+'\')">🗑</div>'
-      +'</div>';
+      +'<textarea class="nb-textarea" placeholder="Текст заметки…" onblur="updateNoteText(\''+note.id+'\',this.value)">'+escNote(note.text||'')+'</textarea>'
+      +'<div class="nb-footer"><div class="nb-del-btn" onclick="deleteNote(\''+note.id+'\')">🗑</div></div>';
     list.appendChild(card);
   });
 }
-
-function escNote(s){return(s||"").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-
 function addNote(){
   var now=new Date();
   var note={id:"n"+now.getTime(),ts:now.getTime(),modified:now.getTime(),text:"",offline:!isOnline()};
-  var notes=getNotes();
-  notes.push(note);
-  saveNotes(notes);
-  renderNotes();
-  setTimeout(function(){
-    var tas=document.querySelectorAll(".note-textarea");
-    if(tas.length)tas[0].focus();
-  },100);
-  queueAction(function(){syncNoteAdd(note);});
+  var notes=getNotes();notes.push(note);saveNotes(notes);renderNotes();
+  setTimeout(function(){var tas=document.querySelectorAll(".nb-textarea");if(tas.length)tas[0].focus();},100);
+  if(isOnline())syncNoteAdd(note);
+  else enqueue({id:"nq"+now.getTime(),url:API_URL+"?mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text=",label:"Заметка",ts:now.getTime()});
 }
-
 function updateNoteText(id,val){
   var notes=getNotes();
   var note=notes.find(function(n){return n.id===id;});
   if(!note||note.text===val)return;
-  note.text=val;
-  note.modified=Date.now();
-  saveNotes(notes);
-  renderNotes();
-  queueAction(function(){syncNoteEdit(note);});
+  note.text=val;note.modified=Date.now();saveNotes(notes);renderNotes();
+  if(isOnline())syncNoteEdit(note);
 }
-
 function deleteNote(id){
   if(!confirm("Удалить заметку?"))return;
   var notes=getNotes().filter(function(n){return n.id!==id;});
-  saveNotes(notes);
-  renderNotes();
-  showToast("🗑 Заметка удалена");
-  queueAction(function(){syncNoteDelete(id);});
+  saveNotes(notes);renderNotes();showToast("🗑 Заметка удалена");
+  if(isOnline())syncNoteDelete(id);
 }
-
 function pickNoteDate(id){
-  var notes=getNotes();
-  var note=notes.find(function(n){return n.id===id;});
-  if(!note)return;
+  var notes=getNotes();var note=notes.find(function(n){return n.id===id;});if(!note)return;
   var d=new Date(note.ts);
-  var dateVal=d.getFullYear()+"-"+z2(d.getMonth()+1)+"-"+z2(d.getDate());
-  var newDate=prompt("Введите дату (ГГГГ-ММ-ДД):",dateVal);
+  var newDate=prompt("Введите дату (ГГГГ-ММ-ДД):",d.getFullYear()+"-"+z2(d.getMonth()+1)+"-"+z2(d.getDate()));
   if(!newDate||!/^\d{4}-\d{2}-\d{2}$/.test(newDate))return;
-  var parts=newDate.split("-");
-  d.setFullYear(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
-  note.ts=d.getTime();
-  note.modified=Date.now();
-  saveNotes(notes);
-  renderNotes();
-  queueAction(function(){syncNoteEdit(note);});
+  var p=newDate.split("-");d.setFullYear(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+  note.ts=d.getTime();note.modified=Date.now();saveNotes(notes);renderNotes();
+  if(isOnline())syncNoteEdit(note);
 }
-
 function pickNoteTime(id){
-  var notes=getNotes();
-  var note=notes.find(function(n){return n.id===id;});
-  if(!note)return;
+  var notes=getNotes();var note=notes.find(function(n){return n.id===id;});if(!note)return;
   var d=new Date(note.ts);
-  var timeVal=z2(d.getHours())+":"+z2(d.getMinutes());
-  var newTime=prompt("Введите время (ЧЧ:ММ):",timeVal);
+  var newTime=prompt("Введите время (ЧЧ:ММ):",z2(d.getHours())+":"+z2(d.getMinutes()));
   if(!newTime||!/^\d{2}:\d{2}$/.test(newTime))return;
-  var parts=newTime.split(":");
-  d.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
-  note.ts=d.getTime();
-  note.modified=Date.now();
-  saveNotes(notes);
-  renderNotes();
-  queueAction(function(){syncNoteEdit(note);});
+  var p=newTime.split(":");d.setHours(parseInt(p[0]),parseInt(p[1]),0,0);
+  note.ts=d.getTime();note.modified=Date.now();saveNotes(notes);renderNotes();
+  if(isOnline())syncNoteEdit(note);
 }
-
-// Синхронизация заметок с Apps Script
 function syncNoteAdd(note){
   fetch(API_URL+"?mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||""))
     .then(function(r){return r.json();})
     .then(function(data){
-      if(data.ok){
-        var notes=getNotes();
-        var n=notes.find(function(n){return n.id===note.id;});
-        if(n){n.offline=false;saveNotes(notes);renderNotes();}
-      }
+      if(data.ok){var notes=getNotes();var n=notes.find(function(x){return x.id===note.id;});if(n){n.offline=false;saveNotes(notes);renderNotes();}}
     }).catch(function(){});
 }
-
 function syncNoteEdit(note){
-  fetch(API_URL+"?mode=noteEdit&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||"")+"&modified="+note.modified)
-    .catch(function(){});
+  fetch(API_URL+"?mode=noteEdit&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||"")+"&modified="+note.modified).catch(function(){});
 }
-
 function syncNoteDelete(id){
-  fetch(API_URL+"?mode=noteDelete&id="+encodeURIComponent(id))
-    .catch(function(){});
+  fetch(API_URL+"?mode=noteDelete&id="+encodeURIComponent(id)).catch(function(){});
 }
-</script>
 
-<!-- OFFLINE BAR (inside dashboard) -->
+// ── INIT ──
+registerSW();
+updateBell();
+buildDateOptions();
+updateHeaderDate();
+updateHeader();
+
+// Восстанавливаем очередь при загрузке и сразу пытаемся синхронизировать
+updateOfflineBar();
+if(isOnline()&&getQueue().length)flushQueue();
+
+// Обновляем live counter каждые 30 сек (было 60 — слишком редко)
+setInterval(updateLiveCounter,30000);
+setInterval(updateHeader,60000);
+
+loadData();
+
+document.addEventListener("visibilitychange",function(){
+  if(document.visibilityState==="visible"){updateHeader();loadData();}
+});
+</script>
 </div><!-- /dashboard-page -->
 
 <!-- NOTES PAGE -->
-<div class="notes-page" id="notesPage">
-  <div class="notes-header">
-    <div class="back-btn" onclick="closeNotes()">← Назад</div>
-    <div class="notes-page-title">📓 Заметки</div>
-    <div class="notes-badge" id="notesBadge">0 заметок</div>
+<div class="nb-page" id="nbPage">
+  <div class="nb-header">
+    <div class="nb-back" onclick="closeNotes()">← Назад</div>
+    <div class="nb-title">📓 Заметки</div>
+    <div class="nb-badge" id="nbBadge">0 заметок</div>
   </div>
-  <div class="notes-list" id="notesList"></div>
-  <button class="notes-fab" onclick="addNote()">+</button>
+  <div class="nb-list" id="nbList"></div>
+  <button class="nb-fab" onclick="addNote()">+</button>
 </div>
 
 </div><!-- /app -->
