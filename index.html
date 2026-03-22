@@ -262,78 +262,6 @@
 <div class="offline-bar" id="offlineBar"></div>
 <div id="content"><div class="loading"><div class="loading-spinner"></div>Загружаем данные…</div></div>
 
-<!-- ADD MODAL -->
-<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
-  <div class="modal">
-    <div class="modal-title">Добавить запись</div>
-    <div class="modal-types">
-      <div class="modal-type active" data-type="sleep" onclick="selectAddType(this)">
-        <div class="modal-type-icon">🌙</div>
-        <div class="modal-type-lbl">Уснула</div>
-      </div>
-      <div class="modal-type" data-type="wake" onclick="selectAddType(this)">
-        <div class="modal-type-icon">☀️</div>
-        <div class="modal-type-lbl">Проснулась</div>
-      </div>
-      <div class="modal-type" data-type="feed" onclick="selectAddType(this)">
-        <div class="modal-type-icon">🍼</div>
-        <div class="modal-type-lbl">Поела</div>
-      </div>
-    </div>
-    <div class="modal-row">
-      <div class="modal-field">
-        <label>День</label>
-        <select id="addDay">
-          <option value="0">Сегодня</option>
-          <option value="1">Вчера</option>
-          <option value="2">2 дня назад</option>
-          <option value="3">3 дня назад</option>
-        </select>
-      </div>
-      <div class="modal-field">
-        <label>Время</label>
-        <input type="time" id="addTime">
-      </div>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeAddModal()">Отмена</button>
-      <button class="modal-save" id="addSaveBtn" onclick="saveAdd()">Добавить</button>
-    </div>
-  </div>
-</div>
-
-<!-- EDIT MODAL -->
-<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
-  <div class="modal">
-    <div class="modal-title">Изменить время</div>
-    <div class="modal-title" id="editSub" style="font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted);font-weight:600;margin-top:-10px;margin-bottom:16px;"></div>
-    <input class="edit-modal-input" type="time" id="editInput">
-    <div class="modal-btns-3">
-      <button class="modal-delete" onclick="deleteRecord()">🗑 Удалить</button>
-      <button class="modal-cancel" onclick="closeEditModal()">Отмена</button>
-      <button class="modal-save" id="editSaveBtn" onclick="saveEdit()">Сохранить</button>
-    </div>
-  </div>
-</div>
-
-<!-- WH MODAL -->
-<div class="modal-overlay" id="whModal" onclick="if(event.target===this)closeWhModal()">
-  <div class="modal">
-    <div class="modal-title" id="whModalTitle">Вес</div>
-    <div class="modal-row" style="grid-template-columns:1fr;margin-bottom:18px;">
-      <div class="modal-field">
-        <label id="whModalLabel">Значение</label>
-        <input type="number" id="whInput" step="0.1" placeholder="0.0">
-      </div>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeWhModal()">Отмена</button>
-      <button class="modal-save" id="whSaveBtn" onclick="saveWh()">Сохранить</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
 
 <script>
 var API_URL = "https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
@@ -1178,6 +1106,30 @@ buildDateOptions();
 updateHeaderDate();
 updateHeader();
 
+// Миграция заметок из старого ключа (демо-версия использовала 'stesha_notes' напрямую)
+// Если заметки хранились под другим ключом — переносим
+(function migrateNotes(){
+  var oldKeys = ['notes', 'NOTES_KEY', 'nb_notes'];
+  oldKeys.forEach(function(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return;
+      var old = JSON.parse(raw);
+      if (!Array.isArray(old) || !old.length) return;
+      var current = getNotes();
+      var ids = current.map(function(n){ return n.id; });
+      var merged = current.slice();
+      old.forEach(function(n) {
+        if (n.id && ids.indexOf(n.id) === -1) merged.push(n);
+      });
+      if (merged.length > current.length) {
+        saveNotes(merged);
+        localStorage.removeItem(key);
+      }
+    } catch(e) {}
+  });
+})();
+
 // Восстанавливаем очередь при загрузке и сразу пытаемся синхронизировать
 updateOfflineBar();
 if(isOnline()&&getQueue().length)flushQueue();
@@ -1206,5 +1158,79 @@ document.addEventListener("visibilitychange",function(){
 </div>
 
 </div><!-- /app -->
+
+<!-- MODALS — вне .app чтобы position:fixed работал корректно -->
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <div class="modal-title">Добавить запись</div>
+    <div class="modal-types">
+      <div class="modal-type active" data-type="sleep" onclick="selectAddType(this)">
+        <div class="modal-type-icon">🌙</div>
+        <div class="modal-type-lbl">Уснула</div>
+      </div>
+      <div class="modal-type" data-type="wake" onclick="selectAddType(this)">
+        <div class="modal-type-icon">☀️</div>
+        <div class="modal-type-lbl">Проснулась</div>
+      </div>
+      <div class="modal-type" data-type="feed" onclick="selectAddType(this)">
+        <div class="modal-type-icon">🍼</div>
+        <div class="modal-type-lbl">Поела</div>
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field">
+        <label>День</label>
+        <select id="addDay">
+          <option value="0">Сегодня</option>
+          <option value="1">Вчера</option>
+          <option value="2">2 дня назад</option>
+          <option value="3">3 дня назад</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Время</label>
+        <input type="time" id="addTime">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeAddModal()">Отмена</button>
+      <button class="modal-save" id="addSaveBtn" onclick="saveAdd()">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal">
+    <div class="modal-title">Изменить время</div>
+    <div class="modal-title" id="editSub" style="font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted);font-weight:600;margin-top:-10px;margin-bottom:16px;"></div>
+    <input class="edit-modal-input" type="time" id="editInput">
+    <div class="modal-btns-3">
+      <button class="modal-delete" onclick="deleteRecord()">🗑 Удалить</button>
+      <button class="modal-cancel" onclick="closeEditModal()">Отмена</button>
+      <button class="modal-save" id="editSaveBtn" onclick="saveEdit()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- WH MODAL -->
+<div class="modal-overlay" id="whModal" onclick="if(event.target===this)closeWhModal()">
+  <div class="modal">
+    <div class="modal-title" id="whModalTitle">Вес</div>
+    <div class="modal-row" style="grid-template-columns:1fr;margin-bottom:18px;">
+      <div class="modal-field">
+        <label id="whModalLabel">Значение</label>
+        <input type="number" id="whInput" step="0.1" placeholder="0.0">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeWhModal()">Отмена</button>
+      <button class="modal-save" id="whSaveBtn" onclick="saveWh()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 </body>
 </html>
