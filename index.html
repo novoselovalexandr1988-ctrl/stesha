@@ -207,10 +207,10 @@
   .fu1{animation-delay:0.04s}.fu2{animation-delay:0.08s}.fu3{animation-delay:0.12s}
   html,body{height:100%;overflow:hidden;}
   body{padding:0;max-width:none;margin:0;}
-  .app{position:relative;width:100%;height:100%;overflow:hidden;}
+  .app{position:relative;width:100%;height:100%;}
   .dashboard-page{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);padding:52px 15px 40px;max-width:430px;margin:0 auto;transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;}
   .dashboard-page.slide-down{transform:translateY(100%);}
-  .nb-page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;display:flex;flex-direction:column;max-width:430px;margin:0 auto;}
+  .nb-page{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;background:var(--bg);transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;display:flex;flex-direction:column;max-width:430px;margin:0 auto;}
   .nb-page.slide-up{transform:translateY(0);}
   .nb-header{display:flex;align-items:center;justify-content:space-between;padding:52px 15px 16px;flex-shrink:0;}
   .nb-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--accent2);cursor:pointer;padding:8px 14px;background:rgba(90,180,255,0.08);border:1px solid rgba(90,180,255,0.15);border-radius:12px;}
@@ -1011,6 +1011,22 @@ function openNotes(){
   document.getElementById("nbPage").classList.add("slide-up");
   document.getElementById("notebookBtn").classList.add("active");
   renderNotes();
+  // Подгружаем заметки с сервера — восстанавливает после потери localStorage
+  if(isOnline()){
+    fetch(API_URL+"?mode=notes")
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(data.ok&&data.notes&&data.notes.length){
+          var local=getNotes();
+          var ids=local.map(function(n){return n.id;});
+          var merged=local.slice();
+          data.notes.forEach(function(n){
+            if(n.id&&ids.indexOf(n.id)===-1)merged.push(n);
+          });
+          if(merged.length>local.length){saveNotes(merged);renderNotes();}
+        }
+      }).catch(function(){});
+  }
 }
 function closeNotes(){
   document.getElementById("dashboardPage").classList.remove("slide-down");
