@@ -293,6 +293,12 @@
 
 <script>
 var API_URL = "https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
+var API_TOKEN = "stesha2025xK9m"; // совпадает с SECRET в Код.gs
+
+// Добавляет токен к URL
+function apiUrl(params){
+  return API_URL+"?"+params+"&token="+API_TOKEN;
+}
 // ── SETTINGS ──
 var LS_SETTINGS = "stesha_settings";
 function getSettings(){try{var r=localStorage.getItem(LS_SETTINGS);return r?JSON.parse(r):{};}catch(e){return {};}}
@@ -338,6 +344,8 @@ var LS_NOTES  = "stesha_notes";
 // ── UTILS ──
 function z2(n){n=parseInt(n)||0;return('0'+Math.abs(n)).slice(-2);}
 function safeNum(n,def){var v=parseFloat(n);return isNaN(v)?(def||0):v;}
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function escNote(s){return esc(s);} // алиас для обратной совместимости
 function safeMin(n){return Math.max(0,Math.round(safeNum(n,0)));}
 function pluralRus(n,one,few,many){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1==1)return one;return many;}
 function formatMin(m){m=safeMin(m);var h=Math.floor(m/60),mn=m%60,p=[];if(h>0)p.push(h+pluralRus(h,"ч","ч","ч"));if(mn>0)p.push(mn+pluralRus(mn,"м","м","м"));return p.length?p.join(" "):"<1м";}
@@ -412,34 +420,68 @@ function removeFromQueue(id){
   updateOfflineBar();
 }
 
-// Проверка сети — не только navigator.onLine
-var _networkOk=navigator.onLine;
-function isOnline(){return _networkOk&&navigator.onLine;}
+// Проверка сети
+function isOnline(){return navigator.onLine;}
 
-function pingNetwork(){
-  fetch(API_URL+"?mode=ping",{method:"GET",cache:"no-store"})
-    .then(function(){_networkOk=true;})
-    .catch(function(){_networkOk=false;});
+// fetchWithTimeout — защита от зависания GAS
+function fetchWithTimeout(url, ms){
+  ms = ms || 10000;
+  return Promise.race([
+    fetch(url),
+    new Promise(function(_,rej){setTimeout(function(){rej(new Error("timeout"));},ms);})
+  ]);
 }
-setInterval(pingNetwork,30000);
 
+// Каждые 60 сек — если онлайн и есть очередь, флашим (без лишнего ping)
+setInterval(function(){
+  if(navigator.onLine && getQueue().length) flushQueue();
+}, 60000);
+
+// Последовательная очередь — один запрос за раз, skip on error, TTL 5 попыток
+var _flushing=false;
 function flushQueue(){
+  if(_flushing)return;
   var q=getQueue();
   if(!q.length)return;
-  // Обрабатываем каждую запись независимо
-  q.forEach(function(item){
-    fetch(item.url)
-      .then(function(r){return r.json();})
-      .then(function(data){
-        if(data.ok||data.skipped){
-          removeFromQueue(item.id);
-          updateOfflineBar();
+  _flushing=true;
+  function next(i){
+    var q2=getQueue(); // перечитываем т.к. removeFromQueue меняет массив
+    if(i>=q2.length){_flushing=false;updateOfflineBar();return;}
+    var item=q2[i];
+
+    // TTL — дропаем после 5 попыток
+    item.tries=(item.tries||0)+1;
+    if(item.tries>5){
+      removeFromQueue(item.id);
+      next(i); // следующий
+      return;
+    }
+    // Сохраняем обновлённый tries
+    var q3=getQueue();
+    for(var j=0;j<q3.length;j++){if(q3[j].id===item.id){q3[j].tries=item.tries;break;}}
+    saveQueue(q3);
+
+    fetchWithTimeout(item.url)
+      .then(function(r){
+        if(!r.ok){
+          next(i+1); // пропускаем проблемный, не останавливаем очередь
+          return;
         }
+        return r.json().then(function(data){
+          if(data.ok||data.skipped){
+            removeFromQueue(item.id);
+            next(i); // массив сдвинулся — тот же индекс
+          } else {
+            next(i+1); // пропускаем
+          }
+        });
       })
       .catch(function(){
-        // retry позже — запись остаётся в очереди
+        _flushing=false; // сеть упала — пробуем позже
+        updateOfflineBar();
       });
-  });
+  }
+  next(0);
 }
 
 function updateOfflineBar(){
@@ -474,14 +516,12 @@ function showQueueModal(){
 }
 
 window.addEventListener("online",function(){
-  _networkOk=true;
   showToast("✅ Сеть восстановлена");
   flushQueue();
   updateOfflineBar();
   loadData();
 });
 window.addEventListener("offline",function(){
-  _networkOk=false;
   updateOfflineBar();
 });
 
@@ -618,7 +658,7 @@ function sendAction(action,btnEl,label){
 
   var timeStr=z2(now.getHours())+":"+z2(now.getMinutes());
   var msg=encodeURIComponent(msgMap[action]+" в "+timeStr);
-  var url=API_URL+"?mode=add&type="+action+"&message="+msg+"&manualTime="+now.getTime();
+  var url=apiUrl("mode=add&type="+action+"&message="+msg+"&manualTime="+now.getTime());
 
   // Оптимистичное обновление — сразу показываем в UI
   cached.unshift({time:now,type:action,message:decodeURIComponent(msg),rowIndex:null});
@@ -707,7 +747,7 @@ function saveAdd(){
   var msgMap={sleep:"Уснула",wake:"Проснулась",feed:"Поела"};
   var type=typeMap[addType];
   var msg=encodeURIComponent(msgMap[addType]+" в "+timeVal);
-  var url=API_URL+"?mode=add&type="+type+"&message="+msg+"&manualTime="+d.getTime();
+  var url=apiUrl("mode=add&type="+type+"&message="+msg+"&manualTime="+d.getTime());
   fetch(url)
     .then(function(r){return r.json();})
     .then(function(data){
@@ -740,7 +780,7 @@ function saveEdit(){
   if(!newTime){showToast("⚠️ Введите время");return;}
   var btn=document.getElementById("editSaveBtn");
   btn.textContent="⏳...";btn.disabled=true;
-  fetch(API_URL+"?mode=edit&rowIndex="+editRowIndex+"&newTime="+encodeURIComponent(newTime))
+  fetch(apiUrl("mode=edit&rowIndex="+editRowIndex+"&newTime="+encodeURIComponent(newTime)))
     .then(function(r){return r.json();})
     .then(function(data){
       btn.textContent="Сохранить";btn.disabled=false;
@@ -756,7 +796,7 @@ function saveEdit(){
 function deleteRecord(){
   if(editRowIndex===null)return;
   if(!confirm("Удалить эту запись?"))return;
-  fetch(API_URL+"?mode=delete&rowIndex="+editRowIndex)
+  fetch(apiUrl("mode=delete&rowIndex="+editRowIndex))
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.ok){showToast("✅ Удалено!");closeEditModal();setTimeout(refreshData,500);}
@@ -783,7 +823,7 @@ function saveWh(){
   var btn=document.getElementById("whSaveBtn");
   btn.textContent="⏳...";btn.disabled=true;
   var msg=encodeURIComponent(whType==="weight"?"Вес: "+val+" кг":"Рост: "+val+" см");
-  var url=API_URL+"?mode=measurement&subtype="+whType+"&value="+parseFloat(val)+"&message="+msg;
+  var url=apiUrl("mode=measurement&subtype="+whType+"&value="+parseFloat(val)+"&message="+msg);
   fetch(url)
     .then(function(r){return r.json();})
     .then(function(data){
@@ -797,7 +837,7 @@ function saveWh(){
 // ── BACKUP ──
 function doBackup(){
   showToast("⏳ Выгружаем...");
-  fetch(API_URL+"?mode=backup")
+  fetch(apiUrl("mode=backup"))
     .then(function(r){return r.json();})
     .then(function(data){showToast(data.ok?"✅ Выгружено в таблицу!":"❌ "+(data.error||"Ошибка"));})
     .catch(function(){showToast("❌ Нет связи");});
@@ -805,7 +845,7 @@ function doBackup(){
 function doRestore(){
   if(!confirm("Восстановить данные из таблицы?"))return;
   showToast("⏳ Восстанавливаем...");
-  fetch(API_URL+"?mode=restore")
+  fetch(apiUrl("mode=restore"))
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.ok){showToast("✅ Восстановлено!");setTimeout(loadData,500);}
@@ -914,7 +954,7 @@ function render(history){
   var parsed=[];
 
   for(var i=0;i<history.length;i++){
-    var item=history[i],d=new Date(item.time),msg=item.message||"";
+    var item=history[i],d=new Date(item.time),msg=esc(item.message||"");
     var logDate=getLogicalDateStr(d);
     parsed.push({date:d,type:item.type||"",msg:msg,logicalDateStr:logDate,rowIndex:item.rowIndex});
     if(!lastWake&&item.type==="wake")lastWake={date:d};
@@ -1094,18 +1134,26 @@ function loadData(){
 
   var btn=document.getElementById("refreshBtn");
   if(btn)btn.classList.add("spinning");
-  fetch(API_URL)
+  fetch(apiUrl("mode=history"))
     .then(function(r){return r.json();})
-    .then(function(data){render(data.history||[]);if(btn)btn.classList.remove("spinning");})
+    .then(function(data){
+      if(data.offline){if(btn)btn.classList.remove("spinning");return;}
+      render(data.history||[]);
+      if(btn)btn.classList.remove("spinning");
+    })
     .catch(function(){if(btn)btn.classList.remove("spinning");});
 }
 
 function refreshData(){
   var btn=document.getElementById("refreshBtn");
   if(btn)btn.classList.add("spinning");
-  fetch(API_URL+"?mode=refresh")
+  fetch(apiUrl("mode=refresh"))
     .then(function(r){return r.json();})
-    .then(function(data){render(data.history||[]);if(btn)btn.classList.remove("spinning");})
+    .then(function(data){
+      if(data.offline){if(btn)btn.classList.remove("spinning");return;}
+      render(data.history||[]);
+      if(btn)btn.classList.remove("spinning");
+    })
     .catch(function(){if(btn)btn.classList.remove("spinning");});
 }
 
@@ -1123,7 +1171,7 @@ function openNotes(){
   renderNotes();
   // Подгружаем заметки с сервера — восстанавливает после потери localStorage
   if(isOnline()){
-    fetch(API_URL+"?mode=notes")
+    fetch(apiUrl("mode=notes"))
       .then(function(r){return r.json();})
       .then(function(data){
         if(data.ok&&data.notes&&data.notes.length){
@@ -1178,7 +1226,7 @@ function addNote(){
   var notes=getNotes();notes.push(note);saveNotes(notes);renderNotes();
   setTimeout(function(){var tas=document.querySelectorAll(".nb-textarea");if(tas.length)tas[0].focus();},100);
   if(isOnline())syncNoteAdd(note);
-  else enqueue({id:"nq"+now.getTime(),url:API_URL+"?mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text=",label:"Заметка",ts:now.getTime()});
+  else enqueue({id:"nq"+now.getTime(),url:apiUrl("mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="),label:"Заметка",ts:now.getTime()});
 }
 function updateNoteText(id,val){
   var notes=getNotes();
@@ -1212,17 +1260,17 @@ function pickNoteTime(id){
   if(isOnline())syncNoteEdit(note);
 }
 function syncNoteAdd(note){
-  fetch(API_URL+"?mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||""))
+  fetch(apiUrl("mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||"")))
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.ok){var notes=getNotes();var n=notes.find(function(x){return x.id===note.id;});if(n){n.offline=false;saveNotes(notes);renderNotes();}}
     }).catch(function(){});
 }
 function syncNoteEdit(note){
-  fetch(API_URL+"?mode=noteEdit&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||"")+"&modified="+note.modified).catch(function(){});
+  fetch(apiUrl("mode=noteEdit&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||"")+"&modified="+note.modified)).catch(function(){});
 }
 function syncNoteDelete(id){
-  fetch(API_URL+"?mode=noteDelete&id="+encodeURIComponent(id)).catch(function(){});
+  fetch(apiUrl("mode=noteDelete&id="+encodeURIComponent(id))).catch(function(){});
 }
 
 // ── SETTINGS FUNCTIONS ──
