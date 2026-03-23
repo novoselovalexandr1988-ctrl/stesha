@@ -235,6 +235,33 @@
   .offline-bar{background:rgba(255,209,102,0.10);border:1px solid rgba(255,209,102,0.2);border-radius:12px;padding:8px 14px;margin-bottom:10px;font-size:11px;font-weight:700;color:var(--accent3);display:none;text-align:center;}
   .offline-bar.show{display:block;}
   .fu4{animation-delay:0.16s}.fu5{animation-delay:0.20s}.fu6{animation-delay:0.24s}
+
+  /* SETTINGS PAGE */
+  .st-page{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;background:var(--bg);transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);will-change:transform;display:flex;flex-direction:column;max-width:430px;margin:0 auto;}
+  .st-page.slide-up{transform:translateY(0);}
+  .st-header{display:flex;align-items:center;justify-content:space-between;padding:52px 15px 16px;flex-shrink:0;}
+  .st-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--accent2);cursor:pointer;padding:8px 14px;background:rgba(90,180,255,0.08);border:1px solid rgba(90,180,255,0.15);border-radius:12px;}
+  .st-back:active{opacity:0.7;}
+  .st-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;}
+  .st-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 15px 40px;}
+  .st-section{margin-bottom:20px;}
+  .st-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px;padding:0 4px;}
+  .st-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);}
+  .st-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+  .st-row:last-child{border-bottom:none;}
+  .st-row-label{font-size:13px;font-weight:700;color:var(--text);}
+  .st-row-sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+  .st-row-val{font-size:13px;font-weight:700;color:var(--accent2);}
+  .st-input{font-size:16px;font-weight:700;color:var(--text);background:transparent;border:none;outline:none;text-align:right;width:140px;font-family:'Nunito',sans-serif;caret-color:var(--accent2);}
+  .st-select{font-size:13px;font-weight:700;color:var(--accent2);background:transparent;border:none;outline:none;text-align:right;font-family:'Nunito',sans-serif;cursor:pointer;max-width:180px;}
+  .st-toggle{position:relative;width:44px;height:26px;flex-shrink:0;}
+  .st-toggle input{opacity:0;width:0;height:0;}
+  .st-toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--card2);border:1px solid var(--border);border-radius:13px;transition:0.3s;}
+  .st-toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:var(--muted);border-radius:50%;transition:0.3s;}
+  .st-toggle input:checked+.st-toggle-slider{background:rgba(46,219,168,0.2);border-color:var(--accent4);}
+  .st-toggle input:checked+.st-toggle-slider:before{transform:translateX(18px);background:var(--accent4);}
+  .gear-btn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--muted);box-shadow:var(--shadow);}
+  .gear-btn.active{background:rgba(90,180,255,0.15);border-color:rgba(90,180,255,0.3);}
 </style>
 </head>
 <body>
@@ -243,13 +270,14 @@
 <div class="header fu">
   <div>
     <div class="header-date-btn" id="headerDateBtn" onclick="toggleDatePicker()">
-      Стеша <span class="dot">·</span> <span id="headerDate"></span> <span class="arr">▾</span>
+      <span class="child-name">Стеша</span> <span class="dot">·</span> <span id="headerDate"></span> <span class="arr">▾</span>
     </div>
     <div class="header-time" id="headerTime"></div>
   </div>
   <div style="display:flex;gap:8px;align-items:center;">
     <div class="notebook-btn" id="notebookBtn" onclick="openNotes()">📓</div>
     <div class="bell-btn unknown" id="bellBtn" onclick="onBellClick()">🔔</div>
+    <div class="gear-btn" id="gearBtn" onclick="openSettings()">⚙️</div>
     <div class="refresh-btn" id="refreshBtn">↻</div>
   </div>
 </div>
@@ -265,15 +293,36 @@
 
 <script>
 var API_URL = "https://script.google.com/macros/s/AKfycbyXrM5u2rDvo7hG8Xqi9cXO46dJhZYUOAwxlX8x9isUeT1nA1EEwmMRLyJsww5A4qzMlg/exec";
+// ── SETTINGS ──
+var LS_SETTINGS = "stesha_settings";
+function getSettings(){try{var r=localStorage.getItem(LS_SETTINGS);return r?JSON.parse(r):{};}catch(e){return {};}}
+function saveSetting(key,val){var s=getSettings();s[key]=val;try{localStorage.setItem(LS_SETTINGS,JSON.stringify(s));}catch(e){}}
+function applySettings(){
+  var s=getSettings();
+  var name=s.childName||"Стеша";
+  var hdr=document.getElementById("headerDateBtn");
+  if(hdr){var cn=hdr.querySelector(".child-name");if(cn)cn.textContent=name;}
+  if(s.birthday){var p=s.birthday.split("-");BIRTHDAY=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));}
+  DAY_BOUNDARY_HOUR=parseInt(s.dayBoundary)||6;
+  MORNING_WB_END=(parseInt(s.morningWBEnd)||10)*60;
+  FEED_INTERVAL_MIN=parseInt(s.feedIntervalMin)||240;
+  WB_FIRST_MIN=parseInt(s.wbFirstMin)||135;
+  WB_OTHER_MIN=parseInt(s.wbOtherMin)||150;
+}
+
+// Динамические константы
 var BIRTHDAY = new Date(2025, 6, 23);
 var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
 var MONTHS_SHORT = ["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"];
 var NORM_MIN = 180;
 var FEED_INTERVAL_MIN = 240;
-var DAY_SLEEP_START = 420;  // 7:00
-var DAY_SLEEP_END = 1170;   // 19:30
-var MORNING_WB_START = 300; // 5:00
-var MORNING_WB_END = 600;   // 10:00
+var DAY_SLEEP_START = 420;
+var DAY_SLEEP_END = 1170;
+var MORNING_WB_START = 300;
+var MORNING_WB_END = 600;
+var WB_FIRST_MIN = 135;  // ВБ первое (утреннее) в минутах
+var WB_OTHER_MIN = 150;  // ВБ остальные в минутах
+var DAY_BOUNDARY_HOUR = 6;
 var notifyTimers = [];
 var editRowIndex = null;
 var whType = null;
@@ -306,7 +355,7 @@ function formatCountdown(mins){
   if(mins>=0)return"через "+formatMin(mins);
   return"<span style='color:#ff4d4d;font-weight:800'>"+formatMin(Math.abs(mins))+" назад</span>";
 }
-function getLogicalDate(date){var d=new Date(date.getTime());if(d.getHours()<6)d.setDate(d.getDate()-1);return d;}
+function getLogicalDate(date){var d=new Date(date.getTime());if(d.getHours()<DAY_BOUNDARY_HOUR)d.setDate(d.getDate()-1);return d;}
 function getLogicalDateStr(date){return getLogicalDate(date).toDateString();}
 function dateToHHMM(d){if(!d||!(d instanceof Date))return"—";return z2(d.getHours())+":"+z2(d.getMinutes());}
 
@@ -327,7 +376,7 @@ function showToast(msg){
 function calcNextSleep(wakeDate){
   if(!wakeDate)return null;
   var totalMin=wakeDate.getHours()*60+wakeDate.getMinutes();
-  var interval=(totalMin>=MORNING_WB_START&&totalMin<MORNING_WB_END)?135:150;
+  var interval=(totalMin>=MORNING_WB_START&&totalMin<MORNING_WB_END)?WB_FIRST_MIN:WB_OTHER_MIN;
   return new Date(wakeDate.getTime()+interval*60000);
 }
 function calcNextFeed(feedDate){
@@ -475,7 +524,12 @@ function buildDateOptions(){
 function toggleDatePicker(){document.getElementById("datePicker").classList.toggle("show");}
 
 // ── NOTIFICATIONS ──
-function isNotifyHour(){var h=new Date().getHours();return h>=6||h<2;}
+function isNotifyHour(){
+  var h=new Date().getHours();
+  var s=getSettings();
+  if(s.quietHours){return h>=6||h<2;}
+  return true; // если тихие часы выключены — всегда разрешаем
+}
 function registerSW(){
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("sw.js")
@@ -507,7 +561,7 @@ function scheduleNotify(type,targetDate){
   if(!targetDate||!(targetDate instanceof Date))return;
   var msUntil=targetDate.getTime()-Date.now();
   if(msUntil<-60000)return;
-  var titles={sleep:{warn:"🛏 Через 10 минут укладываем",exact:"🛏 Пора укладывать Стешу"},feed:{warn:"🍼 Через 10 минут кормим",exact:"🍼 Пора кормить Стешу"}};
+  var cn=getSettings().childName||"Стеша";var titles={sleep:{warn:"🛏 Через 10 минут укладываем "+cn,exact:"🛏 Пора укладывать "+cn},feed:{warn:"🍼 Через 10 минут кормим "+cn,exact:"🍼 Пора кормить "+cn}};
   var t=titles[type];if(!t)return;
   var hhmm=dateToHHMM(targetDate);
   var ms10=msUntil-10*60000;
@@ -542,27 +596,42 @@ function updateBell(){
 }
 
 // ── ACTIONS ──
-function sendAction(action,btnEl,label){
-  var orig=btnEl.textContent;
-  btnEl.classList.add("btn-loading");
-  btnEl.textContent="⏳ "+label+"...";
+// ── COOLDOWN (15 сек остывание кнопок) ──
+var btnCooldowns = {}; // {action: timeoutId}
+var COOLDOWN_MS = 15000;
+var LOCAL_DEDUP_MS = 10000; // 10 сек локальная дедупликация
 
+function sendAction(action,btnEl,label){
   var msgMap={sleep:"Уснула",wake:"Проснулась",feed:"Поела"};
   var now=new Date();
+
+  // ── Локальная дедупликация 10 секунд ──
+  var cached=getCachedHistory()||[];
+  var DEDUP=LOCAL_DEDUP_MS;
+  for(var i=0;i<cached.length;i++){
+    var ct=new Date(cached[i].time).getTime();
+    if(cached[i].type===action&&Math.abs(now.getTime()-ct)<DEDUP){
+      showToast("ℹ️ Только что записано");
+      return; // не записываем дубль
+    }
+  }
+
   var timeStr=z2(now.getHours())+":"+z2(now.getMinutes());
   var msg=encodeURIComponent(msgMap[action]+" в "+timeStr);
   var url=API_URL+"?mode=add&type="+action+"&message="+msg+"&manualTime="+now.getTime();
 
-  // Optimistic local update
-  var cached=getCachedHistory()||[];
+  // Оптимистичное обновление — сразу показываем в UI
   cached.unshift({time:now,type:action,message:decodeURIComponent(msg),rowIndex:null});
   if(cached.length>100)cached=cached.slice(0,100);
   setCachedHistory(cached);
   currentHistory=cached;
   render(cached);
-  btnEl.classList.remove("btn-loading");btnEl.textContent=orig;
   notifyRecorded(action);
 
+  // Блокируем кнопку на 15 секунд с обратным отсчётом
+  startCooldown(action, btnEl, label);
+
+  // Тихая синхронизация с сервером
   if(!isOnline()){
     showToast("📵 Сохранено офлайн");
     enqueue({id:"q"+now.getTime(),url:url,label:msgMap[action],ts:now.getTime()});
@@ -572,15 +641,42 @@ function sendAction(action,btnEl,label){
   fetch(url)
     .then(function(r){return r.json();})
     .then(function(data){
-      if(data.ok){showToast("✅ Записано!");refreshData();}
-      else if(data.skipped){showToast("ℹ️ Уже записано");}
-      else{showToast("❌ "+(data.error||"Ошибка"));}
+      if(data.ok){ /* тихо — UI уже обновлён */ }
+      else if(data.skipped){ /* сетевой дубль — всё ок */ }
+      else{
+        showToast("❌ "+(data.error||"Ошибка"));
+        refreshData(); // откат
+      }
     })
     .catch(function(){
-      showToast("📵 Сохранено офлайн");
       enqueue({id:"q"+now.getTime(),url:url,label:msgMap[action],ts:now.getTime()});
       updateOfflineBar();
     });
+}
+
+function startCooldown(action, btnEl, label){
+  // Если уже есть таймер — сбрасываем
+  if(btnCooldowns[action])clearInterval(btnCooldowns[action]);
+
+  var remaining = Math.ceil(COOLDOWN_MS / 1000);
+  btnEl.classList.add("btn-loading");
+  btnEl.textContent = "⏳ "+remaining+"с";
+  btnEl.disabled = true;
+
+  var interval = setInterval(function(){
+    remaining--;
+    if(remaining > 0){
+      btnEl.textContent = "⏳ "+remaining+"с";
+    } else {
+      clearInterval(interval);
+      btnCooldowns[action] = null;
+      btnEl.classList.remove("btn-loading");
+      btnEl.disabled = false;
+      btnEl.textContent = label;
+    }
+  }, 1000);
+
+  btnCooldowns[action] = interval;
 }
 
 // ── ADD MODAL ──
@@ -719,7 +815,7 @@ function doRestore(){
 }
 
 // ── LIVE COUNTER ──
-var currentStatusDate=null,currentStatusType=null,currentSleepBase=0;
+var currentStatusDate=null,currentStatusType=null,currentSleepBase=0,currentSleepIsDaytime=false;
 function updateLiveCounter(){
   if(!currentStatusDate)return;
   var mins=minsAgo(currentStatusDate);
@@ -728,7 +824,8 @@ function updateLiveCounter(){
   var sc=document.getElementById("sleepActiveTime");
   if(sc&&currentStatusType==="sleep")sc.textContent=formatMin(mins)+" назад";
   if(currentStatusType==="sleep"){
-    var totalNow=safeMin(currentSleepBase+mins);
+    // Прибавляем текущий сон к дневному только если он дневной
+    var totalNow=currentSleepIsDaytime?safeMin(currentSleepBase+mins):currentSleepBase;
     var da=251;
     var off=totalNow>0?Math.max(0,da-Math.round(da*(Math.min(totalNow,NORM_MIN)/NORM_MIN))):da;
     var circ=document.querySelector(".circle-fill");
@@ -850,7 +947,12 @@ function render(history){
 
   currentStatusDate=lastEventDate;
   currentStatusType=isSleeping?"sleep":"awake";
-  currentSleepBase=totalSleepMin; // FIX: теперь устанавливается после вычисления
+  currentSleepBase=totalSleepMin;
+  // Флаг: текущий сон дневной только если начался между 7:00 и 19:30
+  currentSleepIsDaytime=isSleeping&&lastSleep?(function(){
+    var sm=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
+    return sm>=DAY_SLEEP_START&&sm<DAY_SLEEP_END;
+  }()):false;
 
   _lastFeedTime=lastFeed?lastFeed.date:null;
 
@@ -949,7 +1051,7 @@ function render(history){
   var prevLabelText=selectedDayOffset===0?"📅 Вчера":selectedDayOffset===1?"📅 Позавчера":("📅 "+prevDate.getDate()+" "+MONTHS_SHORT[prevDate.getMonth()]);
 
   var html=''
-    +'<div class="age-bar fu fu1"><div class="age-emoji">👶</div><div class="age-main"><div class="age-text">'+ageStr+'</div><div class="age-sub">родилась 23 июля 2025 · до ДР '+daysUntilBD+' '+pluralRus(daysUntilBD,"день","дня","дней")+'</div></div><div class="age-right"><div class="age-wh">'+whStr+'</div></div></div>'
+    +'<div class="age-bar fu fu1"><div class="age-emoji">👶</div><div class="age-main"><div class="age-text">'+ageStr+'</div><div class="age-sub">'+getBirthdayStr()+' · до ДР '+daysUntilBD+' '+pluralRus(daysUntilBD,"день","дня","дней")+'</div></div><div class="age-right"><div class="age-wh">'+whStr+'</div></div></div>'
     +'<div class="status-big fu fu2"><div class="status-row"><div class="status-icon '+statusClass+'">'+statusIcon+'</div><div><div class="status-timer" id="liveSince" style="color:'+(isSleeping?'var(--accent2)':'var(--accent4)')+'">'+statusText+' '+sinceStr+'</div>'+(isSleeping?'':('<div class="status-since">'+statusSubTime+'</div>'))+'</div></div></div>'
     +'<div class="two-col fu fu2">'+actionBtns+'</div>'
     +'<div class="two-col fu fu3">'
@@ -974,6 +1076,14 @@ function render(history){
     +'<div class="backup-row fu fu6"><button class="backup-btn export" onclick="doBackup()">💾 Выгрузка в таблицу</button><button class="backup-btn restore" onclick="doRestore()">📥 Восстановить</button></div>';
 
   document.getElementById("content").innerHTML=html;
+
+  // Восстанавливаем состояние кнопок если кулдаун ещё активен
+  var cooldownMap={sleep:"btn-sleep",wake:"btn-wake",feed:"btn-feed"};
+  Object.keys(btnCooldowns).forEach(function(action){
+    if(!btnCooldowns[action])return;
+    var btn=document.querySelector(".act-card."+cooldownMap[action]);
+    if(btn){btn.classList.add("btn-loading");btn.disabled=true;}
+  });
 }
 
 // ── LOAD ──
@@ -1115,10 +1225,95 @@ function syncNoteDelete(id){
   fetch(API_URL+"?mode=noteDelete&id="+encodeURIComponent(id)).catch(function(){});
 }
 
+// ── SETTINGS FUNCTIONS ──
+function getBirthdayStr(){
+  var d=BIRTHDAY;
+  return "родилась "+d.getDate()+" "+MONTHS[d.getMonth()]+" "+d.getFullYear();
+}
+
+function openSettings(){
+  document.getElementById("dashboardPage").classList.add("slide-down");
+  document.getElementById("stPage").classList.add("slide-up");
+  document.getElementById("gearBtn").classList.add("active");
+  loadSettingsUI();
+}
+
+function closeSettings(){
+  document.getElementById("dashboardPage").classList.remove("slide-down");
+  document.getElementById("stPage").classList.remove("slide-up");
+  document.getElementById("gearBtn").classList.remove("active");
+  applySettings();
+  updateHeaderDate();
+  renderForDay();
+}
+
+function loadSettingsUI(){
+  var s=getSettings();
+
+  // Имя
+  var nameEl=document.getElementById("stName");
+  if(nameEl)nameEl.value=s.childName||"Стеша";
+
+  // Дата рождения
+  var bdEl=document.getElementById("stBirthday");
+  if(bdEl){
+    var bd=BIRTHDAY;
+    bdEl.value=bd.getFullYear()+"-"+z2(bd.getMonth()+1)+"-"+z2(bd.getDate());
+  }
+
+  // Часовой пояс устройства
+  var tzEl=document.getElementById("stDeviceTz");
+  if(tzEl){
+    var offset=-new Date().getTimezoneOffset()/60;
+    tzEl.textContent="UTC"+(offset>=0?"+":"")+offset;
+  }
+
+  // Граница дня
+  var dbEl=document.getElementById("stDayBoundary");
+  if(dbEl)dbEl.value=String(s.dayBoundary||6);
+
+  // Утреннее ВБ
+  var wbEl=document.getElementById("stMorningWB");
+  if(wbEl)wbEl.value=String(s.morningWBEnd||10);
+
+  // Интервал кормления
+  var fiEl=document.getElementById("stFeedInterval");
+  if(fiEl)fiEl.value=String(s.feedIntervalMin||240);
+
+  // ВБ первое
+  var wbFirstEl=document.getElementById("stWbFirst");
+  if(wbFirstEl)wbFirstEl.value=String(s.wbFirstMin||135);
+
+  // ВБ остальные
+  var wbOtherEl=document.getElementById("stWbOther");
+  if(wbOtherEl)wbOtherEl.value=String(s.wbOtherMin||150);
+
+  // Уведомления
+  var notifyEl=document.getElementById("stNotifyToggle");
+  var notifyStatus=document.getElementById("stNotifyStatus");
+  if(notifyEl&&notifyStatus){
+    var perm=("Notification" in window)?Notification.permission:"denied";
+    notifyEl.checked=(perm==="granted");
+    notifyStatus.textContent=perm==="granted"?"Включены":perm==="denied"?"Заблокированы в браузере":"Нажмите чтобы включить";
+  }
+
+  // Тихие часы
+  var quietEl=document.getElementById("stQuietToggle");
+  if(quietEl)quietEl.checked=!!(s.quietHours);
+}
+
+function onNotifyToggle(checked){
+  if(checked){
+    requestNotifyPermission();
+  }
+  saveSetting("notifyEnabled", checked);
+}
+
 // ── INIT ──
 registerSW();
 updateBell();
 buildDateOptions();
+applySettings(); // применяем настройки до первого рендера
 updateHeaderDate();
 updateHeader();
 
@@ -1171,6 +1366,115 @@ document.addEventListener("visibilitychange",function(){
   </div>
   <div class="nb-list" id="nbList"></div>
   <button class="nb-fab" onclick="addNote()">+</button>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="st-page" id="stPage">
+  <div class="st-header">
+    <div class="st-back" onclick="closeSettings()">← Назад</div>
+    <div class="st-title">⚙️ Настройки</div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="st-list">
+
+    <div class="st-section">
+      <div class="st-section-title">Ребёнок</div>
+      <div class="st-card">
+        <div class="st-row">
+          <div><div class="st-row-label">Имя</div><div class="st-row-sub">Отображается в шапке</div></div>
+          <input class="st-input" id="stName" type="text" placeholder="Имя" maxlength="20" onchange="saveSetting('childName',this.value)" oninput="saveSetting('childName',this.value)">
+        </div>
+        <div class="st-row">
+          <div><div class="st-row-label">Дата рождения</div><div class="st-row-sub">Для расчёта возраста</div></div>
+          <input class="st-input" id="stBirthday" type="date" onchange="saveSetting('birthday',this.value);applySettings();">
+        </div>
+      </div>
+    </div>
+
+    <div class="st-section">
+      <div class="st-section-title">Часовой пояс</div>
+      <div class="st-card">
+        <div class="st-row">
+          <div><div class="st-row-label">Смещение от UTC</div><div class="st-row-sub">Текущий часовой пояс устройства</div></div>
+          <div class="st-row-val" id="stDeviceTz"></div>
+        </div>
+        <div class="st-row">
+          <div><div class="st-row-label">Граница нового дня</div><div class="st-row-sub">Записи до этого часа — прошлый день</div></div>
+          <select class="st-select" id="stDayBoundary" onchange="saveSetting('dayBoundary',this.value);applySettings();">
+            <option value="4">4:00</option>
+            <option value="5">5:00</option>
+            <option value="6" selected>6:00</option>
+            <option value="7">7:00</option>
+          </select>
+        </div>
+        <div class="st-row">
+          <div><div class="st-row-label">Утреннее ВБ до</div><div class="st-row-sub">До этого часа ВБ = 2ч 15м</div></div>
+          <select class="st-select" id="stMorningWB" onchange="saveSetting('morningWBEnd',this.value);applySettings();">
+            <option value="8">8:00</option>
+            <option value="9">9:00</option>
+            <option value="10" selected>10:00</option>
+            <option value="11">11:00</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="st-section">
+      <div class="st-section-title">Уведомления</div>
+      <div class="st-card">
+        <div class="st-row">
+          <div><div class="st-row-label">Уведомления</div><div class="st-row-sub" id="stNotifyStatus">Нажмите чтобы включить</div></div>
+          <label class="st-toggle">
+            <input type="checkbox" id="stNotifyToggle" onchange="onNotifyToggle(this.checked)">
+            <span class="st-toggle-slider"></span>
+          </label>
+        </div>
+        <div class="st-row">
+          <div><div class="st-row-label">Тихие часы</div><div class="st-row-sub">Не беспокоить с 2:00 до 6:00</div></div>
+          <label class="st-toggle">
+            <input type="checkbox" id="stQuietToggle" onchange="saveSetting('quietHours',this.checked)">
+            <span class="st-toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="st-section">
+      <div class="st-section-title">Интервалы</div>
+      <div class="st-card">
+        <div class="st-row">
+          <div><div class="st-row-label">Интервал кормления</div><div class="st-row-sub">Часов между кормлениями</div></div>
+          <select class="st-select" id="stFeedInterval" onchange="saveSetting('feedIntervalMin',parseInt(this.value));applySettings();">
+            <option value="180">3 часа</option>
+            <option value="210">3.5 часа</option>
+            <option value="240" selected>4 часа</option>
+            <option value="270">4.5 часа</option>
+          </select>
+        </div>
+        <div class="st-row">
+          <div><div class="st-row-label">ВБ первое (утреннее)</div><div class="st-row-sub">После первого пробуждения</div></div>
+          <select class="st-select" id="stWbFirst" onchange="saveSetting('wbFirstMin',parseInt(this.value));applySettings();">
+            <option value="105">1ч 45м</option>
+            <option value="120">2ч</option>
+            <option value="135" selected>2ч 15м</option>
+            <option value="150">2ч 30м</option>
+            <option value="165">2ч 45м</option>
+          </select>
+        </div>
+        <div class="st-row">
+          <div><div class="st-row-label">ВБ остальные</div><div class="st-row-sub">После дневных пробуждений</div></div>
+          <select class="st-select" id="stWbOther" onchange="saveSetting('wbOtherMin',parseInt(this.value));applySettings();">
+            <option value="120">2ч</option>
+            <option value="135">2ч 15м</option>
+            <option value="150" selected>2ч 30м</option>
+            <option value="165">2ч 45м</option>
+            <option value="180">3ч</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 </div><!-- /app -->
