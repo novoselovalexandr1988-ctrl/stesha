@@ -681,7 +681,10 @@ function sendAction(action,btnEl,label){
   fetch(url)
     .then(function(r){return r.json();})
     .then(function(data){
-      if(data.ok){ /* тихо — UI уже обновлён */ }
+      if(data.ok){
+        // Обновляем с сервера через 2 сек — получаем правильные rowIndex
+        setTimeout(refreshData, 2000);
+      }
       else if(data.skipped){ /* сетевой дубль — всё ок */ }
       else{
         showToast("❌ "+(data.error||"Ошибка"));
@@ -977,8 +980,10 @@ function render(history){
 
   var lastEventDate=isSleeping?(lastSleep?lastSleep.date:null):(lastWake?lastWake.date:null);
 
-  // FIX: вычисляем totalSleepMin ДО установки currentSleepBase
-  var totalSleepMin=calcDaySleep(parsed,targetLogical);
+  // FIX: totalSleepMin для отображения включает текущий сон
+  // currentSleepBase — только завершённые сны, updateLiveCounter добавляет текущий
+  var completedSleepMin=calcDaySleep(parsed,targetLogical);
+  var totalSleepMin=completedSleepMin;
   if(selectedDayOffset===0&&isSleeping&&lastSleep){
     var cSMin=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
     if(cSMin>=DAY_SLEEP_START&&cSMin<DAY_SLEEP_END)totalSleepMin+=safeMin(minsAgo(lastSleep.date));
@@ -987,7 +992,8 @@ function render(history){
 
   currentStatusDate=lastEventDate;
   currentStatusType=isSleeping?"sleep":"awake";
-  currentSleepBase=totalSleepMin;
+  // currentSleepBase = только завершённые сны, updateLiveCounter добавит текущий
+  currentSleepBase=completedSleepMin;
   // Флаг: текущий сон дневной только если начался между 7:00 и 19:30
   currentSleepIsDaytime=isSleeping&&lastSleep?(function(){
     var sm=lastSleep.date.getHours()*60+lastSleep.date.getMinutes();
