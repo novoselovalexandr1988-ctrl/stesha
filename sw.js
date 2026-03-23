@@ -1,4 +1,4 @@
-var CACHE_NAME = 'stesha-v4';
+var CACHE_NAME = 'stesha-v5';
 
 var APP_SHELL = [
   '/stesha/',
@@ -16,15 +16,27 @@ var ICON_URLS = [
   'https://img.icons8.com/?size=96&id=Sawg2D8Sr9wA&format=png&color=000000'
 ];
 
-// Режимы API которые можно кэшировать (только read-only)
 var CACHEABLE_MODES = ['history', 'refresh', 'notes'];
+
+// Нормализация URL — убираем token чтобы кэш не зависел от него
+function normalizeUrl(url) {
+  try {
+    var u = new URL(url);
+    u.searchParams.delete('token');
+    return u.toString();
+  } catch(e) {
+    // fallback для относительных URL
+    return url.replace(/([?&])token=[^&]*/g, function(m, sep) {
+      return sep === '?' ? '?' : '';
+    }).replace(/\?&/, '?').replace(/[?&]$/, '');
+  }
+}
 
 function isCacheableApiRequest(url) {
   if (url.indexOf('script.google.com') === -1) return false;
   for (var i = 0; i < CACHEABLE_MODES.length; i++) {
     if (url.indexOf('mode=' + CACHEABLE_MODES[i]) !== -1) return true;
   }
-  // Запрос без mode= — это history по умолчанию
   if (url.indexOf('mode=') === -1 && url.indexOf('script.google.com') !== -1) return true;
   return false;
 }
@@ -33,24 +45,21 @@ function isWriteApiRequest(url) {
   return url.indexOf('script.google.com') !== -1 && !isCacheableApiRequest(url);
 }
 
+var OFFLINE_JSON = JSON.stringify({ ok: false, offline: true });
+
 // ── INSTALL ──
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-      // Кэшируем app shell — обязательно
       return cache.addAll(APP_SHELL)
         .then(function() {
-          // Кэшируем шрифты и иконки — опционально, не блокируем install
-          var optionals = FONT_URLS.concat(ICON_URLS);
-          return Promise.all(optionals.map(function(url) {
+          return Promise.all(FONT_URLS.concat(ICON_URLS).map(function(url) {
             return cache.add(url).catch(function(err) {
               console.warn('[SW] Optional cache failed:', url, err);
             });
           }));
         })
-        .catch(function(err) {
-          console.error('[SW] App shell cache failed:', err);
-        });
+        .catch(function(err) { console.error('[SW] App shell cache failed:', err); });
     })
   );
   self.skipWaiting();
@@ -73,10 +82,22 @@ self.addEventListener('activate', function(e) {
 });
 
 // ── FETCH ──
+// SW timeout wrapper — защита от зависания GAS
+function swFetch(request, ms) {
+  ms = ms || 10000;
+  return Promise.race([
+    fetch(request),
+    new Promise(function(_, rej) {
+      setTimeout(function() { rej(new Error('SW timeout')); }, ms);
+    })
+  ]);
+}
+
 self.addEventListener('fetch', function(e) {
   var url = e.request.url;
+  var normUrl = normalizeUrl(url);
 
-  // 1. Шрифты и иконки — cache-first (меняются редко)
+  // 1. Шрифты и иконки — cache-first
   if (url.indexOf('fonts.googleapis.com') !== -1 ||
       url.indexOf('fonts.gstatic.com') !== -1 ||
       url.indexOf('img.icons8.com') !== -1) {
@@ -89,26 +110,29 @@ self.addEventListener('fetch', function(e) {
             caches.open(CACHE_NAME).then(function(cache) { cache.put(e.request, clone); });
           }
           return response;
-        }).catch(function() { return cached; });
+        }).catch(function() {
+          return cached || new Response('', { status: 503 });
+        });
       })
     );
     return;
   }
 
-  // 2. Read-only API (history, refresh, notes) — stale-while-revalidate
+  // 2. Read-only API — stale-while-revalidate с нормализацией URL
   if (isCacheableApiRequest(url)) {
     e.respondWith(
       caches.open(CACHE_NAME).then(function(cache) {
-        return cache.match(e.request).then(function(cached) {
-          var fetchPromise = fetch(e.request).then(function(response) {
+        return cache.match(new Request(normUrl)).then(function(cached) {
+          var fetchPromise = swFetch(e.request).then(function(response) {
             if (response && response.ok) {
-              cache.put(e.request, response.clone());
+              cache.put(new Request(normUrl), response.clone());
             }
             return response;
           }).catch(function() {
-            return cached; // fallback на кэш если сеть упала
+            return cached || new Response(OFFLINE_JSON, {
+              headers: { 'Content-Type': 'application/json' }
+            });
           });
-          // Возвращаем кэш сразу + обновляем в фоне
           return cached || fetchPromise;
         });
       })
@@ -116,23 +140,30 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // 3. Write API (add, edit, delete, device, noteAdd...) — только сеть, не кэшируем
+  // 3. Write API — только сеть, не кэшируем
   if (isWriteApiRequest(url)) {
-    return; // браузер обработает сам
+    e.respondWith(
+      swFetch(e.request).catch(function() {
+        return new Response(OFFLINE_JSON, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+      })
+    );
+    return;
   }
 
-  // 4. App shell и всё остальное — cache-first с network fallback
+  // 4. App shell — cache-first
   e.respondWith(
     caches.match(e.request).then(function(cached) {
       if (cached) return cached;
-      return fetch(e.request).then(function(response) {
+      return swFetch(e.request).then(function(response) {
         if (response && response.status === 200 && response.type === 'basic') {
           var clone = response.clone();
           caches.open(CACHE_NAME).then(function(cache) { cache.put(e.request, clone); });
         }
         return response;
       }).catch(function() {
-        return cached;
+        return cached || new Response('Offline', { status: 503 });
       });
     })
   );
@@ -144,9 +175,7 @@ self.addEventListener('notificationclick', function(e) {
   e.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(list) {
       for (var i = 0; i < list.length; i++) {
-        if (list[i].url.indexOf('stesha') !== -1 && 'focus' in list[i]) {
-          return list[i].focus();
-        }
+        if (list[i].url.indexOf('stesha') !== -1 && 'focus' in list[i]) return list[i].focus();
       }
       if (clients.openWindow) return clients.openWindow('/stesha/');
     })
