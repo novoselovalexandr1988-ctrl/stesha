@@ -658,7 +658,8 @@ function sendAction(action,btnEl,label){
 
   var timeStr=z2(now.getHours())+":"+z2(now.getMinutes());
   var msg=encodeURIComponent(msgMap[action]+" в "+timeStr);
-  var url=apiUrl("mode=add&type="+action+"&message="+msg+"&manualTime="+now.getTime());
+  var opId=action+"_"+Math.floor(now.getTime()/60000);
+  var url=apiUrl("mode=add&type="+action+"&message="+msg+"&manualTime="+now.getTime()+"&opId="+opId);
 
   // Оптимистичное обновление — сразу показываем в UI
   cached.unshift({time:now,type:action,message:decodeURIComponent(msg),rowIndex:null});
@@ -823,6 +824,10 @@ function closeWhModal(){document.getElementById("whModal").classList.remove("sho
 function saveWh(){
   var val=document.getElementById("whInput").value;
   if(!val){showToast("⚠️ Введите значение");return;}
+  var numVal=parseFloat(val);
+  if(isNaN(numVal)){showToast("⚠️ Введите число");return;}
+  if(whType==="weight"&&(numVal<1||numVal>30)){showToast("⚠️ Вес: 1–30 кг");return;}
+  if(whType==="height"&&(numVal<30||numVal>120)){showToast("⚠️ Рост: 30–120 см");return;}
   var btn=document.getElementById("whSaveBtn");
   btn.textContent="⏳...";btn.disabled=true;
   var msg=encodeURIComponent(whType==="weight"?"Вес: "+val+" кг":"Рост: "+val+" см");
@@ -1163,7 +1168,7 @@ function refreshData(){
     .catch(function(){if(btn)btn.classList.remove("spinning");});
 }
 
-document.getElementById("refreshBtn").onclick=refreshData;
+document.getElementById("refreshBtn").onclick=function(){refreshData();showToast("🔄 Обновляем…");};
 
 // ── NOTES ──
 function getNotes(){try{var r=localStorage.getItem(LS_NOTES);return r?JSON.parse(r):[];}catch(e){return[];}}
@@ -1221,7 +1226,7 @@ function renderNotes(){
         +(note.offline?'<span class="nb-offline">офлайн</span>':'')
         +(modStr?'<span class="nb-modified">'+modStr+'</span>':'')
       +'</div>'
-      +'<textarea class="nb-textarea" placeholder="Текст заметки…" onblur="updateNoteText(\''+note.id+'\',this.value)">'+escNote(note.text||'')+'</textarea>'
+      +'<textarea class="nb-textarea" placeholder="Текст заметки…" onblur="updateNoteText(\''+note.id+'\',this.value)" oninput=\"debounceNoteText(\\\'\'+note.id+\'\\\',this.value)\">'+escNote(note.text||'')+'</textarea>'
       +'<div class="nb-footer"><div class="nb-del-btn" onclick="deleteNote(\''+note.id+'\')">🗑</div></div>';
     list.appendChild(card);
   });
@@ -1233,6 +1238,11 @@ function addNote(){
   setTimeout(function(){var tas=document.querySelectorAll(".nb-textarea");if(tas.length)tas[0].focus();},100);
   if(isOnline())syncNoteAdd(note);
   else enqueue({id:"nq"+now.getTime(),url:apiUrl("mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="),label:"Заметка",ts:now.getTime()});
+}
+var _noteDebounce={};
+function debounceNoteText(id,val){
+  clearTimeout(_noteDebounce[id]);
+  _noteDebounce[id]=setTimeout(function(){updateNoteText(id,val);},1200);
 }
 function updateNoteText(id,val){
   var notes=getNotes();
@@ -1250,20 +1260,32 @@ function deleteNote(id){
 function pickNoteDate(id){
   var notes=getNotes();var note=notes.find(function(n){return n.id===id;});if(!note)return;
   var d=new Date(note.ts);
-  var newDate=prompt("Введите дату (ГГГГ-ММ-ДД):",d.getFullYear()+"-"+z2(d.getMonth()+1)+"-"+z2(d.getDate()));
-  if(!newDate||!/^\d{4}-\d{2}-\d{2}$/.test(newDate))return;
-  var p=newDate.split("-");d.setFullYear(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
-  note.ts=d.getTime();note.modified=Date.now();saveNotes(notes);renderNotes();
-  if(isOnline())syncNoteEdit(note);
+  var inp=document.createElement("input");inp.type="date";
+  inp.value=d.getFullYear()+"-"+z2(d.getMonth()+1)+"-"+z2(d.getDate());
+  inp.style.cssText="position:fixed;opacity:0;top:50%;left:50%;width:1px;height:1px;";
+  document.body.appendChild(inp);inp.focus();inp.click();
+  inp.onchange=function(){
+    if(inp.value){var p=inp.value.split("-");d.setFullYear(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+      note.ts=d.getTime();note.modified=Date.now();saveNotes(notes);renderNotes();
+      if(isOnline())syncNoteEdit(note);}
+    if(inp.parentNode)document.body.removeChild(inp);
+  };
+  setTimeout(function(){if(inp.parentNode)document.body.removeChild(inp);},5000);
 }
 function pickNoteTime(id){
   var notes=getNotes();var note=notes.find(function(n){return n.id===id;});if(!note)return;
   var d=new Date(note.ts);
-  var newTime=prompt("Введите время (ЧЧ:ММ):",z2(d.getHours())+":"+z2(d.getMinutes()));
-  if(!newTime||!/^\d{2}:\d{2}$/.test(newTime))return;
-  var p=newTime.split(":");d.setHours(parseInt(p[0]),parseInt(p[1]),0,0);
-  note.ts=d.getTime();note.modified=Date.now();saveNotes(notes);renderNotes();
-  if(isOnline())syncNoteEdit(note);
+  var inp=document.createElement("input");inp.type="time";
+  inp.value=z2(d.getHours())+":"+z2(d.getMinutes());
+  inp.style.cssText="position:fixed;opacity:0;top:50%;left:50%;width:1px;height:1px;";
+  document.body.appendChild(inp);inp.focus();inp.click();
+  inp.onchange=function(){
+    if(inp.value){var p=inp.value.split(":");d.setHours(parseInt(p[0]),parseInt(p[1]),0,0);
+      note.ts=d.getTime();note.modified=Date.now();saveNotes(notes);renderNotes();
+      if(isOnline())syncNoteEdit(note);}
+    if(inp.parentNode)document.body.removeChild(inp);
+  };
+  setTimeout(function(){if(inp.parentNode)document.body.removeChild(inp);},5000);
 }
 function syncNoteAdd(note){
   fetch(apiUrl("mode=noteAdd&id="+encodeURIComponent(note.id)+"&ts="+note.ts+"&text="+encodeURIComponent(note.text||"")))
